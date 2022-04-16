@@ -107,6 +107,11 @@ void Entity::setRotate(float angle)
     data->transform.setRotation(angle);
 }
 
+float Entity::getRotate() const
+{
+    return data->transform.getRotation();
+}
+
 void Entity::setSize(float width, float height)
 {
     data->rectange.setSize(sf::Vector2f(width, height));

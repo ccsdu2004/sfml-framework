@@ -39,7 +39,8 @@ public:
 
     void move(float dx, float dy);
 
-    void setRotate(float rotate);
+    void setRotate(float angle);
+    float getRotate()const;
 
     void setSize(float width, float height);
     sf::Vector2f getSize()const;
