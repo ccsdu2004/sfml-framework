@@ -22,6 +22,10 @@ std::shared_ptr<Application> Application::getInstance()
     return instance;
 }
 
+Application::~Application()
+{
+}
+
 void Application::setBackgroundColor(const sf::Color &color)
 {
     data->backgroundColor = color;
@@ -37,7 +41,7 @@ bool Application::execute(std::shared_ptr<Object> object)
         sf::Event event;
         while (data->window->pollEvent(event)) {
             if ((event.type == sf::Event::Closed) ||
-                    ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
+                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
                 data->window->close();
                 break;
             }

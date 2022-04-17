@@ -11,6 +11,7 @@ class Application : public MessageReceiver
     static std::shared_ptr<Application> instance;
 public:
     static std::shared_ptr<Application> getInstance();
+    virtual ~Application();
 public:
     void setBackgroundColor(const sf::Color &color);
     bool execute(std::shared_ptr<Object> object);

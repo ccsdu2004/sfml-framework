@@ -27,10 +27,20 @@ public:
     Tile(int32_t x, int32_t y, float size = 48.0f);
     ~Tile();
 public:
+    void setData(uint32_t key, const std::any& data);
+    std::any getData(uint32_t key)const;
+
     void setVisible(bool visible);
     bool isVisible()const;
 private:
     std::unique_ptr<class TileData> data;
+};
+
+class TileVisitor
+{
+public:
+    virtual ~TileVisitor() {}
+    virtual void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) = 0;
 };
 
 enum TileMapType {
@@ -46,7 +56,9 @@ public:
     TileMap();
     virtual ~TileMap();
 public:
-    bool init(int32_t width, int32_t height, double tilesize);
+    bool init(int32_t width, int32_t height, float tilesize);
+
+    void accept(TileVisitor* visitor);
 
     float getTileSize()const;
     sf::Vector2i getTileMapSize()const;
@@ -65,3 +77,5 @@ protected:
 protected:
     std::unique_ptr<class TileMapImpl> data;
 };
+
+using TileMapPointer = std::shared_ptr<TileMap>;

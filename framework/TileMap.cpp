@@ -20,6 +20,7 @@ public:
     int32_t type = 0;
     float tileSize = 48.0f;
     Bitmask bitmask;
+    std::map<uint32_t, std::any> datas;
 
     void updatePosition(int x, int y)
     {
@@ -57,6 +58,17 @@ Tile::Tile(int32_t x, int32_t y, float size):
 
 Tile::~Tile()
 {
+}
+
+void Tile::setData(uint32_t key, const std::any &value)
+{
+    data->datas.insert(std::make_pair(key, value));
+}
+
+std::any Tile::getData(uint32_t key) const
+{
+    auto itr = data->datas.find(key);
+    return itr != data->datas.end() ? itr->second : std::any();
 }
 
 void Tile::setVisible(bool visible)
@@ -136,7 +148,20 @@ TileMap::~TileMap()
 {
 }
 
-bool TileMap::init(int width, int height, double tilesize)
+void TileMap::accept(TileVisitor *visitor)
+{
+    if(!visitor)
+        return;
+
+    auto itr = data->tiles.begin();
+    while(itr != data->tiles.end()) {
+        auto id = getPositionByID(itr->first);
+        visitor->visit(id.x, id.y, itr->second);
+        itr ++;
+    }
+}
+
+bool TileMap::init(int width, int height, float tilesize)
 {
     data->font = std::make_shared<sf::Font>();
     data->font->loadFromFile("../resource/FZYTK.TTF");
@@ -218,4 +243,6 @@ void TileMap::draw(sf::RenderTarget &target, sf::RenderStates states) const
             target.draw(*text.second, states);
         }
     }
+
+    Object::draw(target, states);
 }

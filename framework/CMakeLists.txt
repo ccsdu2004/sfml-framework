@@ -41,8 +41,8 @@ add_library(framework
     Animation.h
     MovingSprite.cpp
     MovingSprite.h
-    MinPathFinder.cpp
-    MinPathFinder.h
+    ShortestPathFinder.cpp
+    ShortestPathFinder.h
     Director.cpp
     Director.h
     Util.h

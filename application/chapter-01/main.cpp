@@ -5,6 +5,8 @@
 
 using namespace std;
 
+std::vector<EntityPointer> units;
+
 class Unit : public Entity
 {
 public:
@@ -36,6 +38,9 @@ private:
     {
         (void)button;
         setBackgroundColor(sf::Color::Black);
+
+        for(auto unit : units)
+            unit->setRotate(unit->getRotate() + 15.0f);
     }
 
     void onMouseWheelScroll(float scroll)
@@ -67,6 +72,7 @@ int main()
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 18; j++) {
             auto item = std::make_shared<Unit>(sf::Vector2f(100, 36));
+            units.push_back(std::dynamic_pointer_cast<Entity>(item));
             item->setPosition(xoffset + i * 120, yoffset + j * 40);
             item->setRotate(30.0f);
             object->addChild(item);

@@ -1,7 +1,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
 #include <Entity.h>
-#include <Text.h>
 #include <TileMap.h>
 
 using namespace std;
@@ -20,7 +19,7 @@ int main()
     app->setWindow(window);
 
     auto tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(48, 36, 30);
+    tileMap->init(23, 15, 24);
     tileMap->setTextVisible(true);
 
     auto list = tileMap->getAdjacentTileByPosition(8, 5);

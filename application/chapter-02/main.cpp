@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
-#include <Entity.h>
 #include <Text.h>
 
 using namespace std;

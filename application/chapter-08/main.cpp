@@ -87,11 +87,11 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", 390, 532);
+    auto sprite = createSprite("../resource/images/plane.png", 240, 360);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addSpriteToGroup(sprite, SpriteGroupID_PlayerA);
 
-    auto enemy = createSprite("../resource/images/enemy1.png", 350, 24);
+    auto enemy = createSprite("../resource/images/enemy1.png", 240, 24);
     scene->addSpriteToGroup(enemy, SpriteGroupID_PlayerB);
 
     auto sceneManager = std::make_shared<SceneManager>();
