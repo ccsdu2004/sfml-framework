@@ -1,4 +1,5 @@
 #include <cassert>
+#include <ctime>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/Window/Event.hpp>
 #include <Application.h>
@@ -114,4 +115,5 @@ std::shared_ptr<sf::Texture> Application::loadTexture(const std::string file)
 Application::Application():
     data(new ApplicationData())
 {
+    srand(time(nullptr));
 }

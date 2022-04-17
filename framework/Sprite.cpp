@@ -44,6 +44,16 @@ SpriteGroupPointer Sprite::getSpriteGroup() const
     return data->spriteGroup;
 }
 
+void Sprite::setSpriteColor(const sf::Color &color)
+{
+    data->sprite.setColor(color);
+}
+
+sf::Color Sprite::getSpriteColor() const
+{
+    return data->sprite.getColor();
+}
+
 void Sprite::setTexture(const sf::Texture &texture)
 {
     data->sprite.setTexture(texture);
@@ -56,11 +66,6 @@ void Sprite::setTextureRect(const sf::IntRect &area)
     data->sprite.setTextureRect(area);
 }
 
-void Sprite::onPositionChanged()
-{
-    data->sprite.setPosition(getPosition());
-}
-
 void Sprite::onDraw(sf::RenderTarget &target, sf::RenderStates states)const
 {
     target.draw(data->sprite, states);
@@ -68,7 +73,6 @@ void Sprite::onDraw(sf::RenderTarget &target, sf::RenderStates states)const
 
 void Sprite::onSpriteDeath()
 {
-
 }
 
 

@@ -30,9 +30,6 @@ public:
     Entity(const sf::Vector2f &size = sf::Vector2f());
     virtual ~Entity();
 public:
-    void setParent(std::shared_ptr<Entity> parent);
-    std::shared_ptr<Entity> getParent()const;
-public:
     void setPosition(float x, float y);
     void setPosition(const sf::Vector2f& position);
     sf::Vector2f getPosition()const;

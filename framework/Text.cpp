@@ -1,6 +1,5 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Text.h>
-#include <iostream>
 
 class TextImpl
 {
@@ -101,7 +100,5 @@ void Text::onSizeChanged()
 void Text::onDraw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     Entity::onDraw(target, states);
-
-    states.transform *= getTransform().getInverse();
-    target.draw(*data->text, states);
+    target.draw(*data->text);
 }

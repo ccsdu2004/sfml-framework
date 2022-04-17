@@ -12,15 +12,17 @@ public:
     void setActive(bool active = true);
     bool isActive()const;
 
+    boost::signals2::signal<void(SpritePointer)> spriteDeath;
+
     void setSpriteGroup(SpriteGroupPointer spriteGroup);
     SpriteGroupPointer getSpriteGroup()const;
 
-    boost::signals2::signal<void(SpritePointer)> spriteDeath;
+    void setSpriteColor(const sf::Color& color);
+    sf::Color getSpriteColor()const;
 
     void setTexture(const sf::Texture &texture);
     void setTextureRect(const sf::IntRect &area);
 protected:
-    virtual void onPositionChanged() override;
     virtual void onDraw(sf::RenderTarget &target, sf::RenderStates states)const override;
     virtual void onSpriteDeath();
 private:

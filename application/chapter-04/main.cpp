@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
 #include <Entity.h>
@@ -10,10 +11,9 @@ using namespace std;
 
 std::shared_ptr<TileMap> tileMap;
 
-std::shared_ptr<Object> createSprite(const std::string &image, float x, float y)
+std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto sprite = std::make_shared<Sprite>();
-    sprite->setBackgroundColor(sf::Color::Red);
     sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
     sprite->setTexture(*texture);
@@ -22,7 +22,6 @@ std::shared_ptr<Object> createSprite(const std::string &image, float x, float y)
 
 void clickedTile(int32_t x, int32_t y)
 {
-    std::cout << "clicked tile:" << x << "," << y << std::endl;
     tileMap->getTileByIndex(x, y)->setFillColor(sf::Color::Red);
 }
 
@@ -42,14 +41,21 @@ int main()
     tileMap = TileMap::createTileMap(TileMapType_Hex);
     tileMap->tileClicked.connect(clickedTile);
     tileMap->init(48, 36, 32);
-    tileMap->setMessageReceived(true);
+    tileMap->setMessageReceived(false);
     tileMap->setTextVisible(false);
 
     object->addChild(tileMap);
 
-    object->addChild(createSprite("../resource/icon/nato/units/infantry.png", 10, 10));
-    object->addChild(createSprite("../resource/icon/nato/units/aviation_fr.png", 80, 10));
-    object->addChild(createSprite("../resource/icon/nato/units/armour.png", 150, 10));
+    std::array<std::string, 8> icons = {"antitank.png", "air_defence.png", "antitank.png", "armour.png", "aviation_fr.png", "aviation_rot.pn", "cbrn.png", "hospital.png"};
+
+    for(int i = 0; i < 300; i++) {
+        std::string image("../resource/icon/nato/units/");
+        int index = rand() % 8;
+        image += icons.at(index);
+        auto sprite = createSprite(image, rand() % 800, rand() % 600);
+        sprite->setSpriteColor(sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
+        object->addChild(sprite);
+    }
 
     app->execute(object);
     return 0;

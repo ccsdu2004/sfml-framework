@@ -23,17 +23,17 @@ int main()
     auto font = std::make_shared<sf::Font>();
     font->loadFromFile("../resource/FZYTK.TTF");
 
-    auto text = createText(font);
-    text->setPosition(400, 48);
-    text->setText(L"这是一个文本对象", true);
-    object->addChild(text);
-
-    text = createText(font);
-    text->setStyle(sf::Text::Style::Regular);
-    text->setPosition(400, 84);
-    text->setCharacterSize(16);
-    text->setText(L"又是一个文本对象", false);
-    object->addChild(text);
+    for(int i = 0; i < 100; i++) {
+        auto text = createText(font);
+        text->setPosition(rand() % 800, rand() % 600);
+        text->setText(std::string("Text Object:") + std::to_string(i), rand() % 2 == 0);
+        text->setCharacterSize(rand() % 8 + 12);
+        text->setOutlineColor(sf::Color::White);
+        text->setTextColor(sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
+        text->setOutlineThickness(1.2f);
+        text->setStyle(sf::Text::Style(rand() % 8));
+        object->addChild(text);
+    }
 
     app->execute(object);
     return 0;
@@ -43,11 +43,9 @@ std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
 {
     auto text = std::make_shared<Text>();
     text->setFont(font);
-    text->setCharacterSize(13);
+    text->setCharacterSize(15);
     text->setTextColor(sf::Color::White);
-    text->setSize(150, 32);
-    text->setOutlineColor(sf::Color::Cyan);
-    text->setOutlineThickness(1.0f);
+    text->setSize(150, 48);
     text->setBackgroundColor(sf::Color::Black);
     return text;
 }

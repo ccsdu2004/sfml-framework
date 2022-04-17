@@ -112,7 +112,7 @@ bool SceneManager::process(std::shared_ptr<Message> message)
 {
     if (data->currentScene)
         return data->currentScene->process(message);
-    return false;
+    return Object::process(message);
 }
 
 void SceneManager::update(const sf::Time &time)
@@ -120,10 +120,13 @@ void SceneManager::update(const sf::Time &time)
     if (data->currentScene) {
         data->currentScene->update(time);
     }
+
+    Object::update(time);
 }
 
 void SceneManager::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (data->currentScene)
         data->currentScene->draw(target, states);
+    Object::draw(target, states);
 }

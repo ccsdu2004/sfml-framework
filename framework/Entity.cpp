@@ -70,16 +70,6 @@ Entity::~Entity()
 {
 }
 
-void Entity::setParent(std::shared_ptr<Entity> parent)
-{
-    data->parent = parent;
-}
-
-std::shared_ptr<Entity> Entity::getParent() const
-{
-    return data->parent.lock();
-}
-
 void Entity::setPosition(float x, float y)
 {
     data->transform.setPosition(x, y);
@@ -117,6 +107,7 @@ void Entity::setSize(float width, float height)
     data->rectange.setSize(sf::Vector2f(width, height));
     data->transform.setOrigin(width * 0.5f, height * 0.5f);
     onSizeChanged();
+    onPositionChanged();
 }
 
 sf::Vector2f Entity::getSize() const
@@ -162,8 +153,8 @@ void Entity::setOutlineThickness(float thickness)
 
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    states.transform *= data->transform.getTransform();
-    onDraw(target, states);
+    sf::Transform transform = states.transform * getTransform();
+    onDraw(target, transform);
 }
 
 void Entity::update(const sf::Time &time)
