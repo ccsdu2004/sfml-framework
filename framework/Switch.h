@@ -17,6 +17,7 @@ public:
     void setCurrentItem(uint32_t index);
     uint32_t getCurrentItem()const;
 protected:
+    virtual void onClear();
     void onPositionChanged() override;
     void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:

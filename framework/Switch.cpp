@@ -33,6 +33,7 @@ void Switch::clear()
 {
     data->list.clear();
     data->index = ~0;
+    onClear();
 }
 
 void Switch::addItem(const std::shared_ptr<Entity> entity)
@@ -55,6 +56,10 @@ void Switch::setCurrentItem(uint32_t index)
 uint32_t Switch::getCurrentItem() const
 {
     return data->index;
+}
+
+void Switch::onClear()
+{
 }
 
 void Switch::onPositionChanged()

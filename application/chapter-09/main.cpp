@@ -1,131 +1,134 @@
+#include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
 #include <Entity.h>
-#include <TileMap.h>
 #include <Text.h>
-#include <ShortestPathFinder.h>
+#include <Scene.h>
+#include <Sprite.h>
+#include <Animation.h>
+#include <MovingSprite.h>
+#include <QuadTreeScene.h>
+#include <SpriteGroup.h>
+
+#define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
 using namespace std;
 
-#define START_TILE (sf::Vector2i(0,0))
-#define END_TILE (sf::Vector2i(22,14))
+std::shared_ptr<QuadTreeScene> scene;
 
-#define BLOCK_COLOR sf::Color::Red
-#define PATH_COLOR sf::Color::Blue
-#define NORMAL_COLOR sf::Color::Black
 
-static const int ID_OFFSET = 100;
-
-inline size_t getIDByPosition(int x, int y)
+std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
-    return x * ID_OFFSET + y;
+    auto sprite = std::make_shared<Sprite>();
+    sprite->setPosition(x, y);
+    sprite->setSpriteStatus(SpriteStatus_Normal);
+    auto texture = Application::getInstance()->loadTexture(image);
+    sprite->addTexture(*texture, sf::IntRect());
+    auto size = texture->getSize();
+    sprite->setSize(size.x, size.y);
+    return sprite;
 }
 
-inline sf::Vector2i getPositionByID(size_t id)
+class MyQuadTreeScene : public QuadTreeScene
 {
-    return sf::Vector2i(id / ID_OFFSET, id % ID_OFFSET);
-}
+public:
+    void onConllision(SpritePointer current, const std::set<SpritePointer>& sprites) override
+    {
+        auto animation = createAnimation(current->getPosition());
+        current->setSpriteStatus(SpriteStatus_Death);
+        addChild(animation);
+    }
+private:
+    ObjectPointer createAnimation(const sf::Vector2f& pos)
+    {
+        std::vector<sf::IntRect> areas;
 
-class TileMessageListener : public MessageListener, public TileVisitor
+        for(int i = 0; i < 6; i++) {
+            auto area = sf::IntRect(i * 85, 0, 85, 85);
+            areas.push_back(area);
+        }
+
+        std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+        animation->setDurationPerFrame((rand() % 20) * 0.01f + 0.2f);
+        animation->setSingleShot(true);
+        animation->setPosition(pos);
+        animation->setTexture("../resource/images/blast2.png", areas);
+        animation->start();
+        return animation;
+    }
+};
+
+class SpriteMessageListener : public MessageListener
 {
     // MessageListener interface
 public:
-    TileMessageListener() = delete;
-    TileMessageListener(TileMapPointer inputTileMap):
-        tileMap(inputTileMap)
+    SpriteMessageListener(std::shared_ptr<Sprite> inputSprite):
+        sprite(inputSprite)
     {
-        shortestPathFinder = std::make_shared<ShortestPathFinder>();
     }
 public:
     bool onListener(std::shared_ptr<Message> message) override
     {
         auto sfml = std::dynamic_pointer_cast<SFMLMessage>(message);
         auto event = sfml->getEvent();
-        if (event.type == sf::Event::MouseButtonPressed) {
-            auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
-            auto index = tileMap->getTileIndexByWorldPosition(mousePosition.x, mousePosition.y);
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Key::Left) {
+                if (sprite->getPosition().x > 5)
+                    sprite->move(-5, 0);
+                return true;
+            } else if (event.key.code == sf::Keyboard::Key::Right) {
+                if (sprite->getPosition().x + sprite->getSize().x <
+                    Application::getInstance()->getWindow()->getSize().x - 5)
+                    sprite->move(5, 0);
+                return true;
+            } else if (event.key.code == sf::Keyboard::Key::Space) {
+                auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
+                auto bullet = std::make_shared<MovingSprite>();
+                bullet->addTexture(*texture);
 
-            if(index != START_TILE && index != END_TILE) {
-                auto tile = tileMap->getTileByIndex(index.x, index.y);
-                if(tile->getFillColor() == BLOCK_COLOR)
-                    tile->setFillColor(NORMAL_COLOR);
-                else
-                    tile->setFillColor(BLOCK_COLOR);
-            }
-            return true;
-        } else if(event.type == sf::Event::KeyPressed) {
-            if(event.key.code == sf::Keyboard::Key::Space) {
-                compute();
+                auto position = sprite->getPosition();
+                position.y -= sprite->getSize().y;
+
+                bullet->setPosition(position);
+                bullet->setVelocity(BULLET_SPEED);
+                scene->addSpriteToGroup(bullet, SpriteGroupID_Bullet);
                 return true;
             }
         }
 
         return false;
     }
-
-    void compute()
-    {
-        shortestPathFinder->clear();
-
-        tileMap->accept(this);
-
-        std::vector<uint32_t> output;
-        shortestPathFinder->search(getIDByPosition(START_TILE.x, START_TILE.y), getIDByPosition(END_TILE.x, END_TILE.y), output);
-
-        auto itr = output.begin();
-        while(itr != output.end()) {
-            auto position = getPositionByID(*itr);
-            if(position != START_TILE && position != END_TILE)
-                tileMap->getTileByIndex(position.x, position.y)->setFillColor(PATH_COLOR);
-            itr ++;
-        }
-    }
-
-    void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) override
-    {
-        if(tile->getFillColor() == PATH_COLOR)
-            tile->setFillColor(NORMAL_COLOR);
-
-        auto adjList = tileMap->getAdjacentTileByPosition(x, y);
-        auto itr = adjList.begin();
-        while(itr != adjList.end()) {
-            auto adjTile = tileMap->getTileByIndex(itr->x, itr->y);
-            if(adjTile && adjTile->getFillColor() != BLOCK_COLOR) {
-                shortestPathFinder->addEdge(getIDByPosition(x, y), getIDByPosition(itr->x, itr->y), 1);
-            }
-            itr ++;
-        }
-    }
 private:
-    TileMapPointer tileMap;
-    std::shared_ptr<ShortestPathFinder> shortestPathFinder;
+    std::shared_ptr<Sprite> sprite;
 };
 
 int main()
 {
-    auto size = sf::Vector2f(800, 600);
-    auto setting = sf::ContextSettings();
-    setting.antialiasingLevel = 12;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-9",
-                  sf::Style::Close, setting);
+    auto size = sf::Vector2f(960, 640);
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-8",
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
-    app->setBackgroundColor(sf::Color::Blue);
+    app->setBackgroundColor(sf::Color::Black);
     app->setWindow(window);
 
-    auto tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(23, 15, 24);
-    tileMap->setMessageReceived(true);
-    tileMap->setTextVisible(true);
+    scene = std::make_shared<MyQuadTreeScene>();
+    scene->setName("scene");
 
-    auto listener = std::make_shared<TileMessageListener>(tileMap);
-    tileMap->addMessageListener(listener);
+    auto background = Application::getInstance()->loadTexture("../resource/images/grid.png");
+    scene->setBackground(*background);
 
-    tileMap->getTileByIndex(START_TILE.x, START_TILE.y)->setFillColor(sf::Color::Magenta);
-    tileMap->getTileByIndex(END_TILE.x, END_TILE.y)->setFillColor(sf::Color::Magenta);
+    auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);
+    scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
+    scene->addSpriteToGroup(sprite, SpriteGroupID_PlayerA);
 
-    app->execute(tileMap);
+    auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
+    scene->addSpriteToGroup(enemy, SpriteGroupID_PlayerB);
+
+    auto sceneManager = std::make_shared<SceneManager>();
+    sceneManager->setInitialScene(scene);
+    app->execute(sceneManager);
+
     return 0;
 }
-

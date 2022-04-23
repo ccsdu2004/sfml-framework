@@ -3,11 +3,12 @@
 #include <memory>
 #include <list>
 #include <SFML/Graphics/Rect.hpp>
+#include <Component.h>
 #include <Sprite.h>
 
 class QuadTreeVisitor;
 
-class QuadTree
+class QuadTree : public Component
 {
     friend class QuadTreeData;
 public:

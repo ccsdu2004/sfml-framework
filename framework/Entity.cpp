@@ -196,13 +196,6 @@ uint32_t Entity::getZValue() const
     return data->zValue;
 }
 
-/*
-void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    sf::Transform transform = states.transform * getTransform();
-    onDraw(target, transform);
-}*/
-
 void Entity::update(float deltaTime)
 {
     if (data->bitmask.contain(BITMASK_MOUSE_IN)) {

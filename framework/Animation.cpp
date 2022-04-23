@@ -7,6 +7,7 @@
 class AnimationData
 {
 public:
+    bool started = false;
     bool singleShot = true;
     float duration = 120.0f;
     float currentTime = 0.0f;
@@ -27,6 +28,26 @@ Animation::Animation():
 
 Animation::~Animation()
 {
+}
+
+void Animation::start()
+{
+    data->started = true;
+}
+
+bool Animation::isStarted() const
+{
+    return data->started;
+}
+
+void Animation::pause()
+{
+    data->started = false;
+}
+
+bool Animation::isPaused() const
+{
+    return !data->started;
 }
 
 void Animation::setSingleShot(bool single)
@@ -63,6 +84,9 @@ void Animation::setTexture(const std::string &image, const std::vector<sf::IntRe
 
 void Animation::onUpdate(float deltaTime)
 {
+    if(isPaused())
+        return;
+
     data->currentTime += deltaTime;
     if(data->currentTime > data->duration) {
         data->currentTime = 0.0f;

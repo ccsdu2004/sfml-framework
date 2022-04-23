@@ -26,15 +26,16 @@ public:
     virtual ~ComponentPool() {}
 public:
     template<class T>
-    void addComponent(std::shared_ptr<T> pointer = nullptr)
+    void addComponent(std::shared_ptr<T> pointer)
     {
         auto component = getComponent<T>();
         if (component)
             return;
 
+        if(!pointer)
+            return;
+
         static_assert (std::is_base_of<Component, T>() && "component must be derived of Component");
-        if (!pointer)
-            pointer = std::make_shared<T>();
         components.push_back(pointer);
     }
 

@@ -27,8 +27,8 @@ add_library(framework
     TileMapImpl.h
     Scene.cpp
     Scene.h
-    BattleScene.cpp
-    BattleScene.h
+    QuadTreeScene.cpp
+    QuadTreeScene.h
     NameHolder.cpp
     NameHolder.h
     Component.h

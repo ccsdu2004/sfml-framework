@@ -25,6 +25,7 @@ ObjectPointer createAnimation()
 
     animation->setBackgroundColor(sf::Color::White);
     animation->setTexture("../resource/images/blast2.png", areas);
+    animation->start();
     return animation;
 }
 

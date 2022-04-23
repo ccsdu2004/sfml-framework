@@ -8,6 +8,12 @@ public:
     Animation();
     ~Animation();
 public:
+    void start();
+    bool isStarted()const;
+
+    void pause();
+    bool isPaused()const;
+
     void setSingleShot(bool single = true);
     bool getSingleShot()const;
 

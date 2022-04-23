@@ -7,7 +7,7 @@ class SpriteGroupData
 public:
     SpriteGroupID groupID;
     std::list<SpritePointer> sprites;
-    Scene* scene = nullptr;
+    Scene* scene;
 };
 
 SpriteGroup::SpriteGroup(SpriteGroupID id):
@@ -35,15 +35,27 @@ void SpriteGroup::addSprite(SpritePointer sprite)
     data->sprites.push_back(sprite);
 }
 
+void SpriteGroup::removeSprite(SpritePointer sprite)
+{
+    data->sprites.remove(sprite);
+}
+
+/*
 void SpriteGroup::removeDeathSprite()
 {
+    auto itr = data->sprites.begin();
+    while(itr != data->sprites.end()) {
+        std::cout << (*itr)->getSpriteStatus() << std::endl;
+        itr ++;
+    }
+
     data->sprites.remove_if([&](SpritePointer sprite) {
         if(sprite->getSpriteStatus() == SpriteStatus_Death)
             return false;
         data->scene->removeChild(sprite);
         return true;
     });
-}
+}*/
 
 void SpriteGroup::accept(ObjectVisitor *visitor)
 {

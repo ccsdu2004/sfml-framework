@@ -21,14 +21,13 @@ public:
 
     SpriteGroup() = delete;
     SpriteGroup(SpriteGroupID id);
-    ~SpriteGroup();
+    virtual ~SpriteGroup();
 public:
     void setScene(Scene* scene);
 
     SpriteGroupID getSpriteGroupID()const;
-
     void addSprite(SpritePointer sprite);
-    void removeDeathSprite();
+    void removeSprite(SpritePointer sprite);
 
     void accept(ObjectVisitor* visitor);
 private:
