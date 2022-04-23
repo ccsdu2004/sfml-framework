@@ -6,8 +6,10 @@
 class SpriteData
 {
 public:
-    sf::Sprite sprite;
-    bool active = true;
+    std::vector<sf::Sprite> sprites;
+    std::map<SpriteAttribute, uint32_t> spriteAttribute;
+    SpriteStatus spriteStatus;
+    sf::Color spriteColor = sf::Color::White;
     SpriteGroupPointer spriteGroup;
 };
 
@@ -20,18 +22,29 @@ Sprite::~Sprite()
 {
 }
 
-void Sprite::setActive(bool active)
+void Sprite::setSpriteAttribute(SpriteAttribute attribute, uint32_t value)
 {
-    if(active != data->active && data->active) {
-        onSpriteDeath();
-        spriteDeath(std::dynamic_pointer_cast<Sprite>(shared_from_this()));
-    }
-    data->active = active;
+    data->spriteAttribute.insert(std::make_pair(attribute, value));
 }
 
-bool Sprite::isActive() const
+uint32_t Sprite::getSpriteAttribute(SpriteAttribute attribute) const
 {
-    return data->active;
+    auto itr = data->spriteAttribute.find(attribute);
+    return itr == data->spriteAttribute.end() ? ~0 : itr->second;
+}
+
+void Sprite::setSpriteStatus(SpriteStatus status)
+{
+    if (status != data->spriteStatus) {
+        data->spriteStatus = status;
+        spriteStatusChanged(std::dynamic_pointer_cast<Sprite>(shared_from_this()));
+        onSpriteStatusChanged();
+    }
+}
+
+SpriteStatus Sprite::getSpriteStatus() const
+{
+    return data->spriteStatus;
 }
 
 void Sprite::setSpriteGroup(SpriteGroupPointer spriteGroup)
@@ -46,33 +59,39 @@ SpriteGroupPointer Sprite::getSpriteGroup() const
 
 void Sprite::setSpriteColor(const sf::Color &color)
 {
-    data->sprite.setColor(color);
+    data->spriteColor = color;
 }
 
 sf::Color Sprite::getSpriteColor() const
 {
-    return data->sprite.getColor();
+    return data->spriteColor;
 }
 
-void Sprite::setTexture(const sf::Texture &texture)
+void Sprite::addTexture(const sf::Texture &texture, const sf::IntRect &area)
 {
-    data->sprite.setTexture(texture);
-    auto box = data->sprite.getLocalBounds();
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    if (area.width != 0)
+        sprite.setTextureRect(area);
+    auto box = sprite.getLocalBounds();
+    data->sprites.push_back(sprite);
     setSize(box.width, box.height);
 }
 
-void Sprite::setTextureRect(const sf::IntRect &area)
+void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    data->sprite.setTextureRect(area);
+    for (auto itr = data->sprites.begin(); itr != data->sprites.end(); itr++) {
+        (*itr).setColor(data->spriteColor);
+        target.draw(*itr, states);
+    }
+
+    if (data->sprites.empty())
+        Entity::onDrawObject(target, states);
 }
 
-void Sprite::onDraw(sf::RenderTarget &target, sf::RenderStates states)const
+void Sprite::onSpriteStatusChanged()
 {
-    target.draw(data->sprite, states);
-}
 
-void Sprite::onSpriteDeath()
-{
 }
 
 

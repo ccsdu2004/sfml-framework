@@ -11,7 +11,7 @@ public:
     virtual ~BattleScene();
 public:
     void addSpriteToGroup(SpritePointer sprite, SpriteGroupID group);
-    void update(const sf::Time& time) override;
+    void update(float deltaTime) override;
 private:
     std::unique_ptr<class BattleSceneData> data;
 };

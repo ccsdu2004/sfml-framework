@@ -3,7 +3,8 @@
 class MovingSpriteData
 {
 public:
-    sf::Vector2f speed;
+    sf::Vector2f velocity;
+    sf::Vector2f accelerate;
 };
 
 MovingSprite::MovingSprite():
@@ -16,20 +17,30 @@ MovingSprite::~MovingSprite()
 
 }
 
-void MovingSprite::setSpeed(const sf::Vector2f& speed)
+void MovingSprite::setAcclerate(const sf::Vector2f &accelerate)
 {
-    data->speed = speed;
+    data->accelerate = accelerate;
 }
 
-sf::Vector2f MovingSprite::getSpeed()const
+sf::Vector2f MovingSprite::getAccelerate() const
 {
-    return data->speed;
+    return data->accelerate;
 }
 
-void MovingSprite::onUpdate(const sf::Time &time)
+void MovingSprite::setVelocity(const sf::Vector2f& velocity)
 {
-    float diff = time.asSeconds();
-    sf::Vector2f delta(data->speed.x * diff, data->speed.y * diff);
+    data->velocity = velocity;
+}
+
+sf::Vector2f MovingSprite::getVelocity()const
+{
+    return data->velocity;
+}
+
+void MovingSprite::onUpdate(float deltaTime)
+{
+    sf::Vector2f delta(data->velocity * deltaTime);
     move(delta.x, delta.y);
+    data->velocity += data->accelerate * deltaTime;
 }
 

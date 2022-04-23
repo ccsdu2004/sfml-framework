@@ -1,7 +1,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Text.h>
 
-class TextImpl
+class TextData
 {
 public:
     HMode hMode = HMode_Center;
@@ -11,7 +11,7 @@ public:
 
 Text::Text(const sf::Vector2f &size):
     Entity(size),
-    data(new TextImpl)
+    data(new TextData)
 {
     data->text = std::make_shared<sf::Text>();
     data->text->setCharacterSize(18);
@@ -97,8 +97,8 @@ void Text::onSizeChanged()
     onPositionChanged();
 }
 
-void Text::onDraw(sf::RenderTarget &target, sf::RenderStates states) const
+void Text::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    Entity::onDraw(target, states);
+    Entity::onDrawObject(target, states);
     target.draw(*data->text);
 }

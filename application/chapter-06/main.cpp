@@ -1,17 +1,36 @@
 #include <iostream>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
-#include <Entity.h>
 #include <Scene.h>
-#include <Sprite.h>
-#include <Switch.h>
 #include <Animation.h>
+
+#define WIN_SIZE 640
 
 using namespace std;
 
+ObjectPointer createAnimation()
+{
+    std::vector<sf::IntRect> areas;
+
+    for(int i = 0; i < 6; i++) {
+        auto area = sf::IntRect(i * 85, 0, 85, 85);
+        areas.push_back(area);
+    }
+
+    std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+    animation->setDurationPerFrame((rand() % 20) * 0.01f + 0.2f);
+    animation->setSingleShot(false);
+    animation->setPosition(
+        rand() % WIN_SIZE, rand() % WIN_SIZE);
+
+    animation->setBackgroundColor(sf::Color::White);
+    animation->setTexture("../resource/images/blast2.png", areas);
+    return animation;
+}
+
 int main()
 {
-    auto size = sf::Vector2f(960, 640);
+    auto size = sf::Vector2f(WIN_SIZE, WIN_SIZE);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-6",
                   sf::Style::Close);
     window->setVerticalSyncEnabled(true);
@@ -23,24 +42,11 @@ int main()
     auto scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto background = Application::getInstance()->loadTexture("../resource/images/grid.png");
     scene->setBackground(*background);
 
-    std::vector<sf::IntRect> areas;
-
-    for(int i = 0; i < 6; i++) {
-        auto area = sf::IntRect(i * 85, 0, 85, 85);
-        areas.push_back(area);
-    }
-
-    std::shared_ptr<Animation> animation = std::make_shared<Animation>();
-    animation->setDurationPerFrame(120.0f);
-    animation->setSingleShot(false);
-    animation->setPosition(size.x * 0.5 - 32, size.y * 0.5 - 32);
-
-    animation->setTexture("../resource/images/blast2.png", areas);
-
-    scene->addChild(animation);
+    for(int i = 0; i < 100; i++)
+        scene->addChild(createAnimation());
 
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->setInitialScene(scene);

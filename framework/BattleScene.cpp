@@ -12,7 +12,7 @@ class SpriteVisitor;
 class BattleSceneData : public ObjectVisitor
 {
 public:
-    BattleSceneData(BattleScene* inputScene):
+    BattleSceneData(BattleScene *inputScene):
         scene(inputScene)
     {
         auto windowSize = Application::getInstance()->getWindow()->getSize();
@@ -26,7 +26,7 @@ public:
 
     void updateSprite();
 
-    BattleScene* scene = nullptr;
+    BattleScene *scene = nullptr;
     std::map<SpriteGroupID, SpriteGroupPointer> spriteGroups;
     std::shared_ptr<QuadTree> quadTree;
 };
@@ -34,7 +34,7 @@ public:
 class SpriteVisitor : public ObjectVisitor
 {
 public:
-    SpriteVisitor(BattleScene& inputScene):
+    SpriteVisitor(BattleScene &inputScene):
         scene(inputScene)
     {
     }
@@ -43,34 +43,34 @@ public:
     {
         auto quadTree = scene.data.get()->quadTree;
         auto items = quadTree->search(sprite->getBoundingBox());
-        if(items.size() > 1) {
-            for(auto item : items) {
-                item->setActive(false);
+        if (items.size() > 1) {
+            for (auto item : items) {
+                item->setSpriteStatus(SpriteStatus_Death);
 
                 std::shared_ptr<Animation> animation = std::make_shared<Animation>();
                 animation->setSingleShot(false);
-                animation->setPosition(sprite->getCenter());
+                animation->setPosition(sprite->getPosition());
 
                 std::vector<sf::IntRect> areas;
 
-                for(int i = 0; i < 6; i++) {
+                for (int i = 0; i < 6; i++) {
                     auto area = sf::IntRect(i * 85, 0, 85, 85);
                     areas.push_back(area);
                 }
-                animation->setTexture("../resource/images/blast2.png", areas);
 
+                animation->setTexture("../resource/images/blast2.png", areas);
                 scene.addChild(animation);
             }
         }
     }
 private:
-    BattleScene& scene;
+    BattleScene &scene;
 };
 
 BattleScene::BattleScene():
     data(new BattleSceneData(this))
 {
-    for(auto i = 0; i != SpriteGroupID::SpriteGroupID_Max; i++) {
+    for (auto i = 0; i != SpriteGroupID::SpriteGroupID_Max; i++) {
         auto group = SpriteGroup::createSpriteGroup(static_cast<SpriteGroupID>(i));
         group->setScene(this);
         data->spriteGroups.insert(std::make_pair(static_cast<SpriteGroupID>(i), group));
@@ -79,7 +79,6 @@ BattleScene::BattleScene():
 
 BattleScene::~BattleScene()
 {
-
 }
 
 void BattleScene::addSpriteToGroup(SpritePointer sprite, SpriteGroupID group)
@@ -91,10 +90,10 @@ void BattleScene::addSpriteToGroup(SpritePointer sprite, SpriteGroupID group)
     addChild(sprite);
 }
 
-void BattleScene::update(const sf::Time &time)
+void BattleScene::update(float deltaTime)
 {
     data->quadTree->clear();
-    Scene::update(time);
+    Scene::update(deltaTime);
     accept(data.get());
 
     data->updateSprite();

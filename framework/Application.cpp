@@ -54,7 +54,7 @@ bool Application::execute(std::shared_ptr<Object> object)
         data->window->clear(data->backgroundColor);
         data->window->setActive(true);
 
-        object->update(clock.restart());
+        object->update(clock.restart().asSeconds());
 
         data->window->draw(*object);
 

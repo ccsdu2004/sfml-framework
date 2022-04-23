@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <memory>
 #include <boost/signals2.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -27,7 +28,7 @@ public:
     Tile(int32_t x, int32_t y, float size = 48.0f);
     ~Tile();
 public:
-    void setData(uint32_t key, const std::any& data);
+    void setData(uint32_t key, const std::any &data);
     std::any getData(uint32_t key)const;
 
     void setVisible(bool visible);
@@ -58,7 +59,7 @@ public:
 public:
     bool init(int32_t width, int32_t height, float tilesize);
 
-    void accept(TileVisitor* visitor);
+    void accept(TileVisitor *visitor);
 
     float getTileSize()const;
     sf::Vector2i getTileMapSize()const;

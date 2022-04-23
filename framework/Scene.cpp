@@ -58,8 +58,8 @@ void Scene::draw(sf::RenderTarget &target, sf::RenderStates states) const
 class SceneManagerImpl
 {
 public:
-    std::shared_ptr<Scene> currentScene;
-    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
+    ScenePointer currentScene;
+    std::unordered_map<std::string, ScenePointer> scenes;
 };
 
 SceneManager::SceneManager():
@@ -71,7 +71,7 @@ SceneManager::~SceneManager()
 {
 }
 
-void SceneManager::setInitialScene(std::shared_ptr<Scene> scene)
+void SceneManager::setInitialScene(ScenePointer scene)
 {
     if (!scene)
         return;
@@ -79,7 +79,7 @@ void SceneManager::setInitialScene(std::shared_ptr<Scene> scene)
     data->scenes.insert(std::make_pair(scene->getName(), scene));
 }
 
-void SceneManager::addScene(std::shared_ptr<Scene> scene)
+void SceneManager::addScene(ScenePointer scene)
 {
     if (!scene)
         return;
@@ -115,13 +115,13 @@ bool SceneManager::process(std::shared_ptr<Message> message)
     return Object::process(message);
 }
 
-void SceneManager::update(const sf::Time &time)
+void SceneManager::update(float deltaTime)
 {
     if (data->currentScene) {
-        data->currentScene->update(time);
+        data->currentScene->update(deltaTime);
     }
 
-    Object::update(time);
+    Object::update(deltaTime);
 }
 
 void SceneManager::draw(sf::RenderTarget &target, sf::RenderStates states) const

@@ -7,10 +7,13 @@ public:
     MovingSprite();
     ~MovingSprite();
 public:
-    void setSpeed(const sf::Vector2f& speed);
-    sf::Vector2f getSpeed()const;
+    void setAcclerate(const sf::Vector2f& accelerate);
+    sf::Vector2f getAccelerate()const;
+
+    void setVelocity(const sf::Vector2f& velocity);
+    sf::Vector2f getVelocity()const;
 private:
-    void onUpdate(const sf::Time &time) override;
+    void onUpdate(float deltaTime) override;
 private:
     std::unique_ptr<class MovingSpriteData> data;
 };

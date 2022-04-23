@@ -2,10 +2,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Application.h>
 #include <Entity.h>
-#include <Text.h>
 #include <Scene.h>
-#include <Sprite.h>
-#include "MovingSprite.h"
+#include <MovingSprite.h>
 
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
@@ -15,10 +13,10 @@ std::shared_ptr<Scene> scene;
 
 std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
-    auto sprite = std::make_shared<Sprite>();
+    auto sprite = std::make_shared<MovingSprite>();
     sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
-    sprite->setTexture(*texture);
+    sprite->addTexture(*texture);
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
     return sprite;
@@ -39,24 +37,24 @@ public:
         auto event = sfml->getEvent();
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Key::A) {
-                if(sprite->getPosition().x > 5)
+                if (sprite->getPosition().x > 5)
                     sprite->move(-5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::D) {
-                if(sprite->getPosition().x + sprite->getSize().x < Application::getInstance()->getWindow()->getSize().x - 5)
+                if (sprite->getPosition().x + sprite->getSize().x <
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
                 auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
                 auto bullet = std::make_shared<MovingSprite>();
-                bullet->setTexture(*texture);
+                bullet->addTexture(*texture);
 
-                auto position = sprite->getCenter();
-                position.x -= bullet->getSize().x * 0.5f;
+                auto position = sprite->getPosition();
                 position.y -= sprite->getSize().y;
 
                 bullet->setPosition(position);
-                bullet->setSpeed(BULLET_SPEED);
+                bullet->setVelocity(BULLET_SPEED);
                 scene->addChild(bullet);
                 return true;
             }
@@ -85,11 +83,11 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", 390, 532);
+    auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
 
-    auto enemy = createSprite("../resource/images/enemy1.png", 350, 24);
+    auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
     scene->addChild(enemy);
 
     auto sceneManager = std::make_shared<SceneManager>();

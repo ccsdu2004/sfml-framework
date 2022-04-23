@@ -8,16 +8,15 @@
 
 using namespace std;
 
-std::shared_ptr<Object> createSprite(const std::string &image, float x, float y)
+std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto sprite = std::make_shared<Sprite>();
-    sprite->setBackgroundColor(sf::Color::Red);
+    sprite->setSpriteColor(sf::Color::Yellow);
     sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
-    sprite->setTexture(*texture);
+    sprite->addTexture(*texture);
     return sprite;
 }
-
 
 class SpriteMessageListener : public MessageListener
 {
@@ -38,8 +37,16 @@ public:
                     sprite->move(-5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::D) {
-                if(sprite->getPosition().x + sprite->getSize().x < Application::getInstance()->getWindow()->getSize().x - 5)
+                if(sprite->getPosition().x < Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
+                return true;
+            } else if (event.key.code == sf::Keyboard::Key::W) {
+                if(sprite->getPosition().y > 5)
+                    sprite->move(0, -5);
+                return true;
+            } else if (event.key.code == sf::Keyboard::Key::X) {
+                if(sprite->getPosition().y < Application::getInstance()->getWindow()->getSize().y - 5)
+                    sprite->move(0, 5);
                 return true;
             }
         }
@@ -68,17 +75,10 @@ int main()
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png", 400, 320);
-    //scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
+    scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
 
-    /*auto sceneManager = std::make_shared<SceneManager>();
-    sceneManager->setInitialScene(scene);
-    sceneManager->addChild(sprite);
-    app->execute(sceneManager);*/
-
-    auto object = std::make_shared<Object>();
-    object->addChild(sprite);
-    app->execute(object);
+    app->execute(scene);
 
     return 0;
 }

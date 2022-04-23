@@ -20,10 +20,10 @@ public:
     virtual void visitComponent(ComponentPointer component) = 0;
 };
 
-class ComponentHolder
+class ComponentPool
 {
 public:
-    virtual ~ComponentHolder() {}
+    virtual ~ComponentPool() {}
 public:
     template<class T>
     void addComponent(std::shared_ptr<T> pointer = nullptr)
@@ -39,7 +39,7 @@ public:
     }
 
     template<class T>
-    T *getComponent()const
+    std::shared_ptr<T> getComponent()const
     {
         auto  itr = components.begin();
         while (itr != components.end()) {
@@ -48,6 +48,7 @@ public:
                 return ptr;
             itr ++;
         }
+        return nullptr;
     }
 
     void acceptComponent(ComponentVisitor *visitor)
@@ -64,3 +65,5 @@ public:
 private:
     std::list<ComponentPointer> components;
 };
+
+using ComponentPoolPointer = std::shared_ptr<ComponentPool>;

@@ -11,7 +11,7 @@ class Unit : public Entity
 {
 public:
     Unit(const sf::Vector2f &size = sf::Vector2f()):
-        Entity(size)
+        Entity(size, CornerStyle())
     {
         setOutlineColor(sf::Color::Yellow);
         setOutlineThickness(1.0f);
@@ -39,7 +39,7 @@ private:
         (void)button;
         setBackgroundColor(sf::Color::Black);
 
-        for(auto unit : units)
+        for (auto unit : units)
             unit->setRotate(unit->getRotate() + 15.0f);
     }
 
@@ -57,7 +57,7 @@ private:
 int main()
 {
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(800, 600), "Chapter-1",
-                  sf::Style::Close);
+                                                     sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();

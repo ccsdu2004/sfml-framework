@@ -5,8 +5,9 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Object.h>
 #include <Message.h>
+#include <Component.h>
 
-class Application : public MessageReceiver
+class Application : public MessageReceiver, public ComponentPool
 {
     static std::shared_ptr<Application> instance;
 public:

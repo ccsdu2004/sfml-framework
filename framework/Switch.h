@@ -11,14 +11,14 @@ public:
     void prev();
 
     void clear();
-    void addEntity(EntityPointer entity);
+    void addItem(EntityPointer entity);
 
-    uint32_t getEntityCount()const;
-    void setCurrent(uint32_t index);
-    uint32_t getCurrent()const;
+    uint32_t getItemCount()const;
+    void setCurrentItem(uint32_t index);
+    uint32_t getCurrentItem()const;
 protected:
     void onPositionChanged() override;
-    void onDraw(sf::RenderTarget &target, sf::RenderStates states)const override;
+    void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
     std::unique_ptr<class SwitchData> data;
 };

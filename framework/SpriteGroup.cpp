@@ -38,7 +38,7 @@ void SpriteGroup::addSprite(SpritePointer sprite)
 void SpriteGroup::removeDeathSprite()
 {
     data->sprites.remove_if([&](SpritePointer sprite) {
-        if(sprite->isActive())
+        if(sprite->getSpriteStatus() == SpriteStatus_Death)
             return false;
         data->scene->removeChild(sprite);
         return true;

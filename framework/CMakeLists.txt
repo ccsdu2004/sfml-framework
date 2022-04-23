@@ -1,5 +1,6 @@
 add_library(framework
     Def.h
+    CornerStyle.h
     ObjectFactory.h
     Message.h
     MessageReceiver.cpp
@@ -35,6 +36,7 @@ add_library(framework
     Sprite.h
     SpriteGroup.cpp
     SpriteGroup.h
+    SpritePool.h
     Switch.cpp
     Switch.h
     Animation.cpp
@@ -46,4 +48,10 @@ add_library(framework
     Director.cpp
     Director.h
     Util.h
+    Widget/WidgetStyle.h
+    Widget/WidgetStyle.cpp
+    Widget/Widget.h
+    Widget/Widget.cpp
+    Widget/Desktop.h
+    Widget/Desktop.cpp
     )

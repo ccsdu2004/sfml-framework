@@ -9,7 +9,6 @@ class ObjectData
 {
 public:
     std::list<std::shared_ptr<Object>> children;
-    std::map<uint32_t, std::any> data;
 };
 
 Object::Object():
@@ -19,19 +18,6 @@ Object::Object():
 
 Object::~Object()
 {
-}
-
-void Object::setData(uint32_t key, const std::any &value)
-{
-    data->data.insert(std::make_pair(key, value));
-}
-
-std::any Object::getData(uint32_t key) const
-{
-    auto itr = data->data.find(key);
-    if(itr == data->data.end())
-        return std::any();
-    return itr->second;
 }
 
 void Object::addChild(std::shared_ptr<Object> child)
@@ -46,11 +32,11 @@ void Object::removeChild(std::shared_ptr<Object> child)
 
 void Object::accept(ObjectVisitor *visitor)
 {
-    if(!visitor)
+    if (!visitor)
         return;
 
     auto itr = data->children.begin();
-    while(itr != data->children.end()) {
+    while (itr != data->children.end()) {
         auto object = *itr;
         visitor->visit(object);
         visitor->visitObject<Entity>(object);
@@ -64,33 +50,43 @@ void Object::accept(ObjectVisitor *visitor)
 bool Object::process(std::shared_ptr<Message> message)
 {
     auto itr = data->children.begin();
-    while(itr != data->children.end()) {
+    while (itr != data->children.end()) {
         auto child = *itr;
-        if(child->process(message))
+        if (child->process(message))
             return true;
         itr ++;
     }
     return MessageReceiver::process(message);
 }
 
-void Object::update(const sf::Time &time)
+void Object::update(float deltaTime)
 {
     auto itr = data->children.begin();
-    while(itr != data->children.end()) {
+    while (itr != data->children.end()) {
         auto child = *itr;
-        child->update(time);
+        child->update(deltaTime);
         itr ++;
     }
 }
 
 void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    auto entity = dynamic_cast<const Entity *>(this);
+    if (entity)
+        states.transform *= entity->getTransform();
+
+    onDrawObject(target, states);
+
     auto itr = data->children.begin();
-    while(itr != data->children.end()) {
+    while (itr != data->children.end()) {
         auto child = *itr;
         child->draw(target, states);
         itr ++;
     }
+}
+
+void Object::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
+{
 }
 
 ObjectVisitor::~ObjectVisitor()

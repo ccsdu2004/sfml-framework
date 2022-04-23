@@ -1,6 +1,7 @@
 #include <vector>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Switch.h>
+#include <iostream>
 
 class SwitchData
 {
@@ -34,26 +35,24 @@ void Switch::clear()
     data->index = ~0;
 }
 
-void Switch::addEntity(const std::shared_ptr<Entity> entity)
+void Switch::addItem(const std::shared_ptr<Entity> entity)
 {
-    if(entity) {
-        auto pos = getPosition();
-        entity->setPosition(pos.x, pos.y);
+    if (entity) {
         data->list.push_back(entity);
     }
 }
 
-uint32_t Switch::getEntityCount()const
+uint32_t Switch::getItemCount()const
 {
     return data->list.size();
 }
 
-void Switch::setCurrent(uint32_t index)
+void Switch::setCurrentItem(uint32_t index)
 {
     data->index = index;
 }
 
-uint32_t Switch::getCurrent() const
+uint32_t Switch::getCurrentItem() const
 {
     return data->index;
 }
@@ -62,17 +61,19 @@ void Switch::onPositionChanged()
 {
     auto pos = getPosition();
     auto itr = data->list.begin();
-    while(itr != data->list.end()) {
+    while (itr != data->list.end()) {
         auto entity = *itr;
         entity->setPosition(pos.x, pos.y);
         itr ++;
     }
 }
 
-void Switch::onDraw(sf::RenderTarget &target, sf::RenderStates states)const
+void Switch::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    if(data->list.size() <= data->index)
+    if (data->list.size() <= data->index)
         return;
 
-    data->list[data->index]->draw(target, states);
+    auto current = data->list[data->index];
+    // data->list[data->index]->setPosition(10, 10);
+    data->list[data->index]->draw(target, getTransform());
 }

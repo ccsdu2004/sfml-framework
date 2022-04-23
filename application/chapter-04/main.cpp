@@ -16,7 +16,7 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
     auto sprite = std::make_shared<Sprite>();
     sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
-    sprite->setTexture(*texture);
+    sprite->addTexture(*texture);
     return sprite;
 }
 
@@ -46,14 +46,59 @@ int main()
 
     object->addChild(tileMap);
 
-    std::array<std::string, 8> icons = {"antitank.png", "air_defence.png", "antitank.png", "armour.png", "aviation_fr.png", "aviation_rot.pn", "cbrn.png", "hospital.png"};
+    std::vector<std::string> units = {
+        "./../resource/icon/nato/units/air_defence.png",
+        "./../resource/icon/nato/units/ammunition.png",
+        "./../resource/icon/nato/units/antitank.png",
+        "./../resource/icon/nato/units/armour.png",
+        "./../resource/icon/nato/units/aviation_fr.png",
+        "./../resource/icon/nato/units/aviation_rot.png",
+        "./../resource/icon/nato/units/bridge.png",
+        "./../resource/icon/nato/units/cbrn.png",
+        "./../resource/icon/nato/units/combatservicesupport.png",
+        "./../resource/icon/nato/units/electronicwarfare.png",
+        "./../resource/icon/nato/units/engenier.png",
+        "./../resource/icon/nato/units/expliosive.png"
+    };
 
-    for(int i = 0; i < 300; i++) {
-        std::string image("../resource/icon/nato/units/");
-        int index = rand() % 8;
-        image += icons.at(index);
-        auto sprite = createSprite(image, rand() % 800, rand() % 600);
-        sprite->setSpriteColor(sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
+    std::vector<std::string> sizes = {
+        "./../resource/icon/nato/sizes/army.png",
+        "./../resource/icon/nato/sizes/army_group.png",
+        "./../resource/icon/nato/sizes/battalion.png",
+        "./../resource/icon/nato/sizes/brigade.png",
+        "./../resource/icon/nato/sizes/company.png",
+        "./../resource/icon/nato/sizes/corps.png",
+        "./../resource/icon/nato/sizes/crew.png",
+        "./../resource/icon/nato/sizes/division.png",
+        "./../resource/icon/nato/sizes/fireteam.png",
+        "./../resource/icon/nato/sizes/group.png",
+        "./../resource/icon/nato/sizes/maneuver_team.png",
+        "./../resource/icon/nato/sizes/platoon.png",
+        "./../resource/icon/nato/sizes/region.png",
+        "./../resource/icon/nato/sizes/section.png"
+    };
+
+    std::vector<std::string> modifers = {
+        "./../resource/icon/nato/modifiers/airborne.png",
+        "./../resource/icon/nato/modifiers/airmobile.png",
+        "./../resource/icon/nato/modifiers/airmobile_ol.png",
+        "./../resource/icon/nato/modifiers/amphibious.png",
+        "./../resource/icon/nato/modifiers/motorized.png",
+        "./../resource/icon/nato/modifiers/mountain.png",
+        "./../resource/icon/nato/modifiers/paratrooper.png",
+        "./../resource/icon/nato/modifiers/rocket.png",
+        "./../resource/icon/nato/modifiers/wheeled.png"
+    };
+
+    std::vector<sf::Color> spriteColor = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
+
+    for(int i = 0; i < 30; i++) {
+        auto sprite = createSprite(units.at(rand() % units.size()), rand() % 800, rand() % 600);
+        int index = rand() % modifers.size();
+        sprite->addTexture(*Application::getInstance()->loadTexture(modifers[index]));
+        index = rand() % sizes.size();
+        sprite->addTexture(*Application::getInstance()->loadTexture(sizes[index]));
+        sprite->setSpriteColor(spriteColor[rand() % spriteColor.size()]);
         object->addChild(sprite);
     }
 

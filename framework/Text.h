@@ -26,8 +26,8 @@ public:
 public:
     void onPositionChanged()override;
     void onSizeChanged()override;
-    void onDraw(sf::RenderTarget &target, sf::RenderStates states)const override;
+    void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
-    std::unique_ptr<class TextImpl> data;
+    std::unique_ptr<class TextData> data;
 };
 

@@ -1,7 +1,9 @@
 #pragma once
+#include <optional>
 #include <memory>
 #include <SFML/Graphics/Color.hpp>
 #include <Object.h>
+#include <CornerStyle.h>
 
 enum HMode : int32_t {
     HMode_Left = 0,
@@ -24,17 +26,19 @@ class Entity : public Object
 {
     friend class EntityMouseListener;
 public:
-    static sf::Vector2f adjustPosition(const sf::FloatRect& box,
+    static sf::Vector2f adjustPosition(const sf::FloatRect &box,
                                        const sf::Vector2f &target, HMode h, VMode v, float xmargin = 3.0f, float ymargin = 3.0f);
 
-    Entity(const sf::Vector2f &size = sf::Vector2f());
+    Entity(const sf::Vector2f &size = sf::Vector2f(),
+           const std::optional<CornerStyle> &cornerStyle = std::optional<CornerStyle>());
     virtual ~Entity();
 public:
     void setPosition(float x, float y);
-    void setPosition(const sf::Vector2f& position);
+    void setPosition(const sf::Vector2f &position);
     sf::Vector2f getPosition()const;
 
     void move(float dx, float dy);
+    void move(float distance);
 
     void setRotate(float angle);
     float getRotate()const;
@@ -42,7 +46,6 @@ public:
     void setSize(float width, float height);
     sf::Vector2f getSize()const;
 
-    sf::Vector2f getCenter()const;
     sf::FloatRect getBoundingBox()const;
 
     sf::Transform getTransform()const;
@@ -52,12 +55,14 @@ public:
 
     void setOutlineColor(const sf::Color &color);
     void setOutlineThickness(float thickness = 1.0f);
+
+    void setZValue(uint32_t z);
+    uint32_t getZValue()const;
 public:
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-    void update(const sf::Time &time) override;
+    void update(float deltaTime) override;
 protected:
-    virtual void onUpdate(const sf::Time &time);
-    virtual void onDraw(sf::RenderTarget &target, sf::RenderStates states)const;
+    virtual void onUpdate(float deltaTime);
+    virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     virtual void onMouseEnter();
     virtual void onMouseExit();

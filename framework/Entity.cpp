@@ -1,9 +1,11 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <RoundedRectangleShape.h>
 #include <Application.h>
 #include <Entity.h>
 #include <Bitmask.h>
+#include <Util.h>
 #include <iostream>
 
 #define BITMASK_MOUSE_IN        0
@@ -13,14 +15,23 @@
 class EntityImpl
 {
 public:
-    EntityImpl()
+    EntityImpl(const std::optional<CornerStyle> &cornerStyle)
     {
-        rectange.setCornerPointCount(12);
-        rectange.setCornersRadius(3.0f);
+        if (cornerStyle.has_value()) {
+            auto style = cornerStyle.value();
+
+            roundedRectangle = std::make_shared<sf::RoundedRectangleShape>();
+            roundedRectangle->setCornerPointCount(style.pointCount);
+            roundedRectangle->setCornersRadius(style.radius);
+        } else {
+            rectangle = std::make_shared<sf::RectangleShape>();
+        }
     }
 
     std::weak_ptr<Entity> parent;
-    sf::RoundedRectangleShape rectange;
+    std::shared_ptr<sf::RoundedRectangleShape> roundedRectangle;
+    std::shared_ptr<sf::RectangleShape> rectangle;
+    uint32_t zValue = 0;
     sf::Transformable transform;
     Bitmask bitmask;
 };
@@ -38,7 +49,8 @@ private:
     Entity &entity;
 };
 
-sf::Vector2f Entity::adjustPosition(const sf::FloatRect &box, const sf::Vector2f &target, HMode h, VMode v, float xmargin, float ymargin)
+sf::Vector2f Entity::adjustPosition(const sf::FloatRect &box, const sf::Vector2f &target, HMode h,
+                                    VMode v, float xmargin, float ymargin)
 {
     sf::Vector2f ret;
     if (h == HMode::HMode_Left)
@@ -57,10 +69,13 @@ sf::Vector2f Entity::adjustPosition(const sf::FloatRect &box, const sf::Vector2f
     return ret;
 }
 
-Entity::Entity(const sf::Vector2f &size):
-    data(new EntityImpl())
+Entity::Entity(const sf::Vector2f &size, const std::optional<CornerStyle> &cornerStyle):
+    data(new EntityImpl(cornerStyle))
 {
-    data->rectange.setSize(size);
+    if (data->rectangle)
+        data->rectangle->setSize(size);
+    else
+        data->roundedRectangle->setSize(size);
     data->transform.setOrigin(size.x * 0.5f, size.y * 0.5f);
     auto listener = std::make_shared<EntityMouseListener>(*this);
     addMessageListener(listener);
@@ -92,6 +107,13 @@ void Entity::move(float dx, float dy)
     setPosition(position.x + dx, position.y + dy);
 }
 
+void Entity::move(float distance)
+{
+    float dx = distance * std::cos(TO_RADIAN * getRotate());
+    float dy = distance * std::sin(TO_RADIAN * getRotate());
+    move(dx, dy);
+}
+
 void Entity::setRotate(float angle)
 {
     data->transform.setRotation(angle);
@@ -104,7 +126,13 @@ float Entity::getRotate() const
 
 void Entity::setSize(float width, float height)
 {
-    data->rectange.setSize(sf::Vector2f(width, height));
+    if (isEqual(width, getSize().x) && isEqual(height, getSize().y))
+        return;
+
+    if (data->rectangle)
+        data->rectangle->setSize(sf::Vector2f(width, height));
+    else
+        data->roundedRectangle->setSize(sf::Vector2f(width, height));
     data->transform.setOrigin(width * 0.5f, height * 0.5f);
     onSizeChanged();
     onPositionChanged();
@@ -112,13 +140,9 @@ void Entity::setSize(float width, float height)
 
 sf::Vector2f Entity::getSize() const
 {
-    return data->rectange.getSize();
-}
-
-sf::Vector2f Entity::getCenter() const
-{
-    auto box = getBoundingBox();
-    return sf::Vector2f(box.left + box.width * 0.5f, box.top + box.height * 0.5f);
+    if (data->rectangle)
+        return data->rectangle->getSize();
+    return data->roundedRectangle->getSize();
 }
 
 sf::FloatRect Entity::getBoundingBox() const
@@ -133,31 +157,53 @@ sf::Transform Entity::getTransform() const
 
 void Entity::setBackgroundColor(const sf::Color &color)
 {
-    data->rectange.setFillColor(color);
+    if (data->rectangle)
+        data->rectangle->setFillColor(color);
+    else
+        data->roundedRectangle->setFillColor(color);
 }
 
 sf::Color Entity::getBackgroundColor() const
 {
-    return data->rectange.getFillColor();
+    if (data->rectangle)
+        return data->rectangle->getFillColor();
+    return data->roundedRectangle->getFillColor();
 }
 
 void Entity::setOutlineColor(const sf::Color &color)
 {
-    data->rectange.setOutlineColor(color);
+    if (data->rectangle)
+        data->rectangle->setOutlineColor(color);
+    else
+        data->roundedRectangle->setOutlineColor(color);
 }
 
 void Entity::setOutlineThickness(float thickness)
 {
-    data->rectange.setOutlineThickness(thickness);
+    if (data->rectangle)
+        data->rectangle->setOutlineThickness(thickness);
+    else
+        data->roundedRectangle->setOutlineThickness(thickness);
 }
 
+void Entity::setZValue(uint32_t z)
+{
+    data->zValue = z;
+}
+
+uint32_t Entity::getZValue() const
+{
+    return data->zValue;
+}
+
+/*
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     sf::Transform transform = states.transform * getTransform();
     onDraw(target, transform);
-}
+}*/
 
-void Entity::update(const sf::Time &time)
+void Entity::update(float deltaTime)
 {
     if (data->bitmask.contain(BITMASK_MOUSE_IN)) {
         auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
@@ -168,17 +214,20 @@ void Entity::update(const sf::Time &time)
         }
     }
 
-    onUpdate(time);
+    onUpdate(deltaTime);
 }
 
-void Entity::onUpdate(const sf::Time &time)
+void Entity::onUpdate(float deltaTime)
 {
-    (void)time;
+    (void)deltaTime;
 }
 
-void Entity::onDraw(sf::RenderTarget &target, sf::RenderStates states) const
+void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(data->rectange, states);
+    if (data->rectangle)
+        target.draw(*data->rectangle, states);
+    else
+        target.draw(*data->roundedRectangle, states);
 }
 
 void Entity::onMouseEnter()
