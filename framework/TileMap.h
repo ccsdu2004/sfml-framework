@@ -40,7 +40,6 @@ private:
 class TileVisitor
 {
 public:
-    virtual ~TileVisitor() {}
     virtual void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) = 0;
 };
 

@@ -34,8 +34,6 @@ add_library(framework
     Component.h
     Sprite.cpp
     Sprite.h
-    SpriteGroup.cpp
-    SpriteGroup.h
     SpritePool.h
     Switch.cpp
     Switch.h
@@ -45,6 +43,8 @@ add_library(framework
     MovingSprite.h
     ShortestPathFinder.cpp
     ShortestPathFinder.h
+    SpriteDeleter.h
+    SpriteDeleter.cpp
     Director.cpp
     Director.h
     Util.h

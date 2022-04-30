@@ -13,7 +13,7 @@ public:
     void setVelocity(const sf::Vector2f& velocity);
     sf::Vector2f getVelocity()const;
 private:
-    void onUpdate(float deltaTime) override;
+    void onUpdateObject(float deltaTime) override;
 private:
     std::unique_ptr<class MovingSpriteData> data;
 };

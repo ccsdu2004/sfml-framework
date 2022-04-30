@@ -16,6 +16,9 @@ public:
     WidgetPointer getFocusWidget()const;
     void setFocusWidget(WidgetPointer widget);
 
+    WidgetPointer getPopupWidget()const;
+    void setPopupWidget(WidgetPointer widget);
+
     WidgetPointer widgetBelowCursor()const;
     bool isTopWidget(WidgetPointer widget)const;
 

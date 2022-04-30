@@ -9,6 +9,7 @@ class ObjectData
 {
 public:
     std::list<std::shared_ptr<Object>> children;
+    std::weak_ptr<Object> parent;
 };
 
 Object::Object():
@@ -30,21 +31,19 @@ void Object::removeChild(std::shared_ptr<Object> child)
     data->children.remove(child);
 }
 
-void Object::accept(ObjectVisitor *visitor)
+void Object::removeChild(std::function<bool (std::shared_ptr<Object>)> fn)
+{
+    data->children.remove_if(fn);
+}
+
+void Object::acceptObject(ObjectVisitor *visitor)
 {
     if (!visitor)
         return;
 
-    auto itr = data->children.begin();
-    while (itr != data->children.end()) {
-        auto object = *itr;
-        visitor->visit(object);
-        visitor->visitObject<Entity>(object);
-        visitor->visitObject<Sprite>(object);
-        visitor->visitObject<Switch>(object);
-        visitor->visitObject<Animation>(object);
-        itr ++;
-    }
+    std::for_each(data->children.begin(), data->children.end(), [visitor](std::shared_ptr<Object> object) {
+        visitor->visitObject(object);
+    });
 }
 
 bool Object::process(std::shared_ptr<Message> message)
@@ -61,12 +60,11 @@ bool Object::process(std::shared_ptr<Message> message)
 
 void Object::update(float deltaTime)
 {
-    auto itr = data->children.begin();
-    while (itr != data->children.end()) {
-        auto child = *itr;
-        child->update(deltaTime);
-        itr ++;
-    }
+    std::for_each(data->children.begin(), data->children.end(), [deltaTime](std::shared_ptr<Object> object) {
+        object->update(deltaTime);
+    });
+
+    onUpdateObject(deltaTime);
 }
 
 void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -77,16 +75,20 @@ void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
     onDrawObject(target, states);
 
-    auto itr = data->children.begin();
-    while (itr != data->children.end()) {
-        auto child = *itr;
-        child->draw(target, states);
-        itr ++;
-    }
+    std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
+        object->draw(target, states);
+    });
 }
 
 void Object::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    (void)target;
+    (void)states;
+}
+
+void Object::onUpdateObject(float deltaTime)
+{
+    (void)deltaTime;
 }
 
 ObjectVisitor::~ObjectVisitor()
@@ -94,28 +96,7 @@ ObjectVisitor::~ObjectVisitor()
 
 }
 
-void ObjectVisitor::visit(ObjectPointer object)
+void ObjectVisitor::visitObject(ObjectPointer object)
 {
     (void)object;
 }
-
-void ObjectVisitor::visit(EntityPointer entity)
-{
-    (void)entity;
-}
-
-void ObjectVisitor::visit(SpritePointer sprite)
-{
-    (void)sprite;
-}
-
-void ObjectVisitor::visit(SwitchPointer switchObject)
-{
-    (void)switchObject;
-}
-
-void ObjectVisitor::visit(AnimationPointer animation)
-{
-    (void)animation;
-}
-

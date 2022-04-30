@@ -58,10 +58,8 @@ public:
 
     void setZValue(uint32_t z);
     uint32_t getZValue()const;
-public:
-    void update(float deltaTime) override;
 protected:
-    virtual void onUpdate(float deltaTime);
+    virtual void onUpdateObject(float deltaTime) override;
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     virtual void onMouseEnter();

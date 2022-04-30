@@ -196,8 +196,9 @@ uint32_t Entity::getZValue() const
     return data->zValue;
 }
 
-void Entity::update(float deltaTime)
+void Entity::onUpdateObject(float deltaTime)
 {
+    (void)deltaTime;
     if (data->bitmask.contain(BITMASK_MOUSE_IN)) {
         auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
         auto contain = getBoundingBox().contains(mousePosition.x, mousePosition.y);
@@ -206,13 +207,6 @@ void Entity::update(float deltaTime)
             onMouseExit();
         }
     }
-
-    onUpdate(deltaTime);
-}
-
-void Entity::onUpdate(float deltaTime)
-{
-    (void)deltaTime;
 }
 
 void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const

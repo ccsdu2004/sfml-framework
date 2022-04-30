@@ -54,7 +54,6 @@ protected:
     virtual void onPositionChanged() override;
     virtual void onSizeChanged() override;
 
-    virtual void onUpdate(float deltaTime)override;
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
     std::unique_ptr<class WidgetData> data;

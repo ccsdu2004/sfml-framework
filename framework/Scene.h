@@ -3,6 +3,7 @@
 #include <Object.h>
 #include <NameHolder.h>
 #include <Component.h>
+#include <Sprite.h>
 
 class Scene : public Object, public NameHolder, public ComponentPool
 {
@@ -10,6 +11,7 @@ public:
     Scene();
     virtual ~Scene();
 public:
+    sf::FloatRect getBoundingBox()const;
     void setBackground(const sf::Texture &texture);
 public:
     virtual void initial();
@@ -18,6 +20,7 @@ public:
     virtual void release();
 public:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    virtual void onUpdateObject(float deltaTime) override;
 private:
     std::unique_ptr<class SceneData> data;
 };
@@ -36,7 +39,7 @@ public:
     void switchTo(const std::string &scene);
 public:
     bool process(std::shared_ptr<Message> message)override;
-    void update(float deltaTime) override;
+    void onUpdateObject(float deltaTime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
     std::unique_ptr<class SceneManagerImpl> data;

@@ -1,9 +1,46 @@
 #include <iostream>
+#include <map>
 #include <optional>
 #include <unordered_map>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Scene.h>
+#include <Application.h>
+
+/*
+class SpriteOperators
+{
+public:
+    SpriteOperators(SpritePointer inputSprite, const std::list<SpriteOperatorPointer>& inputOperators):
+        sprite(inputSprite),
+        operators(inputOperators)
+    {
+    }
+
+    void update(std::shared_ptr<Scene> scene, float difTime)
+    {
+        auto itr = operators.begin();
+        while(itr != operators.end()) {
+            SpriteOperatorPointer spriteOperator = *itr;
+            if(spriteOperator->execute(sprite, scene, difTime) && spriteOperator->getType() == SpriteOperator_Deleter) {
+                needToRemoveSprite = true;
+                return;
+            }
+            itr ++;
+        }
+    }
+
+    bool needRemoveSprite()
+    {
+        return needToRemoveSprite;
+    }
+
+private:
+    SpritePointer sprite;
+    std::list<SpriteOperatorPointer> operators;
+    bool needToRemoveSprite = false;
+};
+*/
 
 class SceneData
 {
@@ -24,6 +61,12 @@ Scene::Scene():
 
 Scene::~Scene()
 {
+}
+
+sf::FloatRect Scene::getBoundingBox() const
+{
+    auto size = Application::getInstance()->getWindow()->getSize();
+    return sf::FloatRect(0, 0, size.x, size.y);
 }
 
 void Scene::setBackground(const sf::Texture &texture)
@@ -53,6 +96,11 @@ void Scene::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(data->backgrpundSprite, states);
     Object::draw(target, states);
+}
+
+void Scene::onUpdateObject(float deltaTime)
+{
+    Object::onUpdateObject(deltaTime);
 }
 
 class SceneManagerImpl
@@ -115,13 +163,13 @@ bool SceneManager::process(std::shared_ptr<Message> message)
     return Object::process(message);
 }
 
-void SceneManager::update(float deltaTime)
+void SceneManager::onUpdateObject(float deltaTime)
 {
     if (data->currentScene) {
         data->currentScene->update(deltaTime);
     }
 
-    Object::update(deltaTime);
+    Object::onUpdateObject(deltaTime);
 }
 
 void SceneManager::draw(sf::RenderTarget &target, sf::RenderStates states) const

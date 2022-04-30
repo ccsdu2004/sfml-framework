@@ -2,6 +2,11 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Sprite.h>
+#include <Bitmask.h>
+#include <iostream>
+
+#define SPRITE_BITMASK_CONTROLLABLE 0
+#define SPRITE_BITMASK_USABLE       1
 
 class SpriteData
 {
@@ -10,12 +15,15 @@ public:
     std::map<SpriteAttribute, uint32_t> spriteAttribute;
     SpriteStatus spriteStatus;
     sf::Color spriteColor = sf::Color::White;
-    SpriteGroupPointer spriteGroup;
+    SpriteGroupID spriteGroupID;
+    Bitmask bitmask;
 };
 
 Sprite::Sprite():
     data(new SpriteData())
 {
+    data->bitmask.setBit(SPRITE_BITMASK_CONTROLLABLE, true);
+    data->bitmask.setBit(SPRITE_BITMASK_USABLE, true);
 }
 
 Sprite::~Sprite()
@@ -47,14 +55,40 @@ SpriteStatus Sprite::getSpriteStatus() const
     return data->spriteStatus;
 }
 
-void Sprite::setSpriteGroup(SpriteGroupPointer spriteGroup)
+void Sprite::setSpriteGroup(SpriteGroupID groupID)
 {
-    data->spriteGroup = spriteGroup;
+    data->spriteGroupID = groupID;
 }
 
-SpriteGroupPointer Sprite::getSpriteGroup() const
+SpriteGroupID Sprite::getSpriteGroup() const
 {
-    return data->spriteGroup;
+    return data->spriteGroupID;
+}
+
+void Sprite::setControllable(bool controllable)
+{
+    if(data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE) != controllable) {
+        data->bitmask.setBit(SPRITE_BITMASK_CONTROLLABLE, controllable);
+        onControllableChanged();
+    }
+}
+
+bool Sprite::isControllable()const
+{
+    return data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE);
+}
+
+void Sprite::setUsable(bool usable)
+{
+    if(data->bitmask.contain(SPRITE_BITMASK_USABLE) != usable) {
+        data->bitmask.setBit(SPRITE_BITMASK_USABLE, usable);
+        onUsableChanged();
+    }
+}
+
+bool Sprite::isUsable() const
+{
+    return data->bitmask.contain(SPRITE_BITMASK_USABLE);
 }
 
 void Sprite::setSpriteColor(const sf::Color &color)
@@ -91,7 +125,17 @@ void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 
 void Sprite::onSpriteStatusChanged()
 {
-
 }
 
+void Sprite::onControllableChanged()
+{
+}
 
+void Sprite::onUsableChanged()
+{
+}
+
+void SpriteVisitor::visitSprite(SpritePointer sprite)
+{
+    (void)sprite;
+}

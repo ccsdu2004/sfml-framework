@@ -8,7 +8,7 @@
 #include <Animation.h>
 #include <MovingSprite.h>
 #include <QuadTreeScene.h>
-#include <SpriteGroup.h>
+#include <SpriteDeleter.h>
 
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
@@ -32,18 +32,18 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 class MyQuadTreeScene : public QuadTreeScene
 {
 public:
-    void onConllision(SpritePointer current, const std::set<SpritePointer>& sprites) override
+    void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites) override
     {
+        (void)sprites;
         auto animation = createAnimation(current->getPosition());
-        current->setSpriteStatus(SpriteStatus_Death);
         addChild(animation);
     }
 private:
-    ObjectPointer createAnimation(const sf::Vector2f& pos)
+    ObjectPointer createAnimation(const sf::Vector2f &pos)
     {
         std::vector<sf::IntRect> areas;
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             auto area = sf::IntRect(i * 85, 0, 85, 85);
             areas.push_back(area);
         }
@@ -91,7 +91,8 @@ public:
 
                 bullet->setPosition(position);
                 bullet->setVelocity(BULLET_SPEED);
-                scene->addSpriteToGroup(bullet, SpriteGroupID_Bullet);
+                bullet->setSpriteGroup(SpriteGroupID_Bullet);
+                scene->addChild(bullet);
                 return true;
             }
         }
@@ -105,7 +106,7 @@ private:
 int main()
 {
     auto size = sf::Vector2f(960, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-8",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-9",
                   sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
@@ -116,15 +117,24 @@ int main()
     scene = std::make_shared<MyQuadTreeScene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/grid.png");
+    scene->addConllisionGroupID(SpriteGroupID_Bullet);
+    scene->addConllisionGroupID(SpriteGroupID_PlayerA);
+    scene->addConllisionGroupID(SpriteGroupID_PlayerB);
+
+    auto spriteDeleter = SpriteDeleter::create(SpriteDeleter_Slop);
+    scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
+
+    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);
+    sprite->setSpriteGroup(SpriteGroupID_PlayerB);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
-    scene->addSpriteToGroup(sprite, SpriteGroupID_PlayerA);
+    scene->addChild(sprite);
 
     auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
-    scene->addSpriteToGroup(enemy, SpriteGroupID_PlayerB);
+    enemy->setSpriteGroup(SpriteGroupID_PlayerB);
+    scene->addChild(enemy);
 
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->setInitialScene(scene);

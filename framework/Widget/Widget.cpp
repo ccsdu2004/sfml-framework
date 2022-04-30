@@ -208,11 +208,6 @@ void Widget::onSizeChanged()
     setHeightRange(heightRange);
 }
 
-void Widget::onUpdate(float deltaTime)
-{
-
-}
-
 void Widget::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (!isVisible())

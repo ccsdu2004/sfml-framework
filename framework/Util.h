@@ -1,6 +1,9 @@
 #pragma once
 #include <cmath>
 #include <utility>
+#include <boost/mp11.hpp>
+#include <boost/describe/enum.hpp>
+#include <boost/describe/enumerators.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #define R3 1.73205
@@ -93,3 +96,25 @@ inline T clamp(T value, const Range<T> &range)
 inline constexpr auto PI = 3.1415926f;
 inline constexpr auto TO_RADIAN = PI / 180.0f;
 inline constexpr auto TO_DEGREE = 180.0f / PI;
+
+template<class E>
+std::string toString(E e)
+{
+    std::string string;
+    boost::mp11::mp_for_each< boost::describe::describe_enumerators<E> >([&](auto U) {
+        if (U.value == e)
+            string = U.name;
+    });
+    return string;
+}
+
+template<class E>
+E fromString(const std::string &string, E defaultE)
+{
+    E value = defaultE;
+    boost::mp11::mp_for_each< boost::describe::describe_enumerators<E> >([&](auto U) {
+        if (string == U.name)
+            value = U.value;
+    });
+    return value;
+}

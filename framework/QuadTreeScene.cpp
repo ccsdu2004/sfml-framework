@@ -1,10 +1,10 @@
 #include <map>
-#include <array>
+#include <vector>
 #include <QuadTree.h>
 #include <QuadTreeScene.h>
-#include <SpriteGroup.h>
 #include <Application.h>
 #include <Animation.h>
+#include <SpriteDeleter.h>
 #include <iostream>
 
 class SpriteVisitor;
@@ -19,29 +19,57 @@ public:
         quadTree = std::make_shared<QuadTree>(sf::FloatRect(0.0f, 0.0f, windowSize.x, windowSize.y), 0, 5);
     }
 
-    void visit(SpritePointer sprite) override
+    void visitObject(ObjectPointer object) override
     {
-        quadTree->insert(sprite);
+        auto sprite = std::dynamic_pointer_cast<Sprite>(object);
+        if(sprite)
+            quadTree->insert(sprite);
     }
 
-    void visitSpriteGroup();
+    bool shouldDeleteSprite(ObjectPointer object)const
+    {
+        if(!object)
+            return false;
+
+        auto sprite = std::dynamic_pointer_cast<Sprite>(object);
+        if(!sprite)
+            return false;
+
+        auto find = spriteDeleters.find(sprite->getSpriteGroup());
+        if(find != spriteDeleters.end()) {
+            auto list = find->second;
+            for(auto itr = list.begin(); itr != list.end(); itr++) {
+                auto spriteDeleter = *itr;
+                if(spriteDeleter->shouldDelete(sprite))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 
     QuadTreeScene& scene;
-    std::map<SpriteGroupID, SpriteGroupPointer> spriteGroups;
+    std::vector<SpriteGroupID> conllisionPair;
     std::shared_ptr<QuadTree> quadTree;
+    std::map<SpriteGroupID, std::list<SpriteDeleterPointer>> spriteDeleters;
 };
 
-class SpriteVisitor : public ObjectVisitor
+class SpriteSearchVisitor : public ObjectVisitor
 {
 public:
-    SpriteVisitor(QuadTreeScene &inputScene):
+    SpriteSearchVisitor(QuadTreeScene &inputScene):
         scene(inputScene)
     {
     }
 
-    void visit(SpritePointer sprite) override
+    void visitObject(ObjectPointer object) override
     {
-        if(sprite->getSpriteStatus() == SpriteStatus_Death)
+        auto sprite = std::dynamic_pointer_cast<Sprite>(object);
+        if(!sprite || sprite->getSpriteStatus() == SpriteStatus_Death)
+            return;
+
+        auto find = std::find(scene.data->conllisionPair.begin(), scene.data->conllisionPair.end(), sprite->getSpriteGroup());
+        if(find == scene.data->conllisionPair.end())
             return;
 
         auto quadTree = scene.data.get()->quadTree;
@@ -56,26 +84,27 @@ private:
 QuadTreeScene::QuadTreeScene():
     data(new QuadTreeSceneData(*this))
 {
-    for (auto i = 0; i != SpriteGroupID::SpriteGroupID_Max; i++) {
-        auto group = SpriteGroup::createSpriteGroup(static_cast<SpriteGroupID>(i));
-        group->setScene(this);
-        data->spriteGroups.insert(std::make_pair(static_cast<SpriteGroupID>(i), group));
-    }
 }
 
 QuadTreeScene::~QuadTreeScene()
 {
 }
 
-void QuadTreeScene::addSpriteToGroup(SpritePointer sprite, SpriteGroupID group)
+void QuadTreeScene::addSpriteDeleter(SpriteGroupID groupID, SpriteDeleterPointer deleter)
 {
-    auto itr = data->spriteGroups.find(group);
-    if(itr == data->spriteGroups.end())
+    if(!deleter)
         return;
 
-    itr->second->addSprite(sprite);
-    sprite->setSpriteGroup(itr->second);
-    addChild(sprite);
+    deleter->setScene(std::dynamic_pointer_cast<Scene>(shared_from_this()));
+
+    auto itr = data->spriteDeleters.find(groupID);
+    if(itr != data->spriteDeleters.end())
+        itr->second.push_back(deleter);
+    else {
+        auto group = groupID;
+        auto node = std::make_pair<SpriteGroupID, std::list<SpriteDeleterPointer>>(std::move(group), {deleter});
+        data->spriteDeleters.insert(node);
+    }
 }
 
 void QuadTreeScene::onConllision(SpritePointer current, const std::set<SpritePointer>& sprites)
@@ -84,20 +113,21 @@ void QuadTreeScene::onConllision(SpritePointer current, const std::set<SpritePoi
     (void)sprites;
 }
 
-void QuadTreeScene::update(float deltaTime)
+void QuadTreeScene::onUpdateObject(float deltaTime)
 {
     data->quadTree->clear();
-    Scene::update(deltaTime);
-    accept(data.get());
+    Scene::onUpdateObject(deltaTime);
 
-    data->visitSpriteGroup();
+    acceptObject(data.get());
+
+    SpriteSearchVisitor visitor(*this);
+    acceptObject(&visitor);
+
+    auto deleter = std::bind(&QuadTreeSceneData::shouldDeleteSprite, data.get(), std::placeholders::_1);
+    removeChild(deleter);
 }
 
-void QuadTreeSceneData::visitSpriteGroup()
+void QuadTreeScene::addConllisionGroupID(SpriteGroupID groupID)
 {
-    for(uint32_t i = SpriteGroupID::SpriteGroupID_PlayerA; i < SpriteGroupID::SpriteGroupID_Max; i++) {
-        auto spriteGroup = spriteGroups[SpriteGroupID(i)];
-        SpriteVisitor visitor(scene);
-        spriteGroup->accept(&visitor);
-    }
+    data->conllisionPair.push_back(groupID);
 }

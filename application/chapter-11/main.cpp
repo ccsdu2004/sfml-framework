@@ -12,7 +12,7 @@ using namespace std;
 std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto pool = Application::getInstance()->getComponent<SpritePool<Sprite>>();
-    auto sprite = pool->findSrpte();
+    auto sprite = pool->createOrAwakeSprite();
     sprite->setSpriteColor(sf::Color::Yellow);
     sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
@@ -39,17 +39,17 @@ public:
                     sprite->move(-5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::D) {
-                if (sprite->getPosition().x + sprite->getSize().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                if (sprite->getPosition().x <
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::W) {
-                if (sprite->getPosition().x > 5)
+                if (sprite->getPosition().y > 5)
                     sprite->move(0, -5);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::X) {
-                if (sprite->getPosition().x + sprite->getSize().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                if (sprite->getPosition().y <
+                    Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
             }
@@ -65,7 +65,7 @@ int main()
 {
     auto size = sf::Vector2f(800, 640);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-10",
-                                                     sf::Style::Close);
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();

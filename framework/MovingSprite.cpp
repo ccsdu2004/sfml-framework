@@ -37,8 +37,9 @@ sf::Vector2f MovingSprite::getVelocity()const
     return data->velocity;
 }
 
-void MovingSprite::onUpdate(float deltaTime)
+void MovingSprite::onUpdateObject(float deltaTime)
 {
+    Sprite::onUpdateObject(deltaTime);
     sf::Vector2f delta(data->velocity * deltaTime);
     move(delta.x, delta.y);
     data->velocity += data->accelerate * deltaTime;

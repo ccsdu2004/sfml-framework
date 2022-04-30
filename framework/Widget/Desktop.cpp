@@ -11,6 +11,7 @@ public:
 
     std::list<WidgetPointer> widgets;
     WidgetPointer focusedWidget;
+    WidgetPointer popupWidget;
     WidgetPointer belowCursorWidget;
 
     ComponentPoolPointer stylePointer;
@@ -70,6 +71,21 @@ void Desktop::setFocusWidget(WidgetPointer widget)
     }
 }
 
+WidgetPointer Desktop::getPopupWidget()const
+{
+    return data->popupWidget;
+}
+
+void Desktop::setPopupWidget(WidgetPointer widget)
+{
+    if (!widget)
+        return;
+
+    if (widget != data->popupWidget) {
+        data->popupWidget = widget;
+    }
+}
+
 WidgetPointer Desktop::widgetBelowCursor() const
 {
     return data->belowCursorWidget;
@@ -105,4 +121,7 @@ void Desktop::draw(sf::RenderTarget &target, sf::RenderStates states) const
         (*itr)->draw(target, states);
         itr ++;
     }
+
+    if(data->popupWidget)
+        data->popupWidget->draw(target,states);
 }

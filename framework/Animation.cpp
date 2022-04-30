@@ -82,7 +82,7 @@ void Animation::setTexture(const std::string &image, const std::vector<sf::IntRe
     }
 }
 
-void Animation::onUpdate(float deltaTime)
+void Animation::onUpdateObject(float deltaTime)
 {
     if(isPaused())
         return;

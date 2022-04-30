@@ -8,6 +8,8 @@
 #include <Animation.h>
 #include <MovingSprite.h>
 #include <QuadTreeScene.h>
+#include <SpriteDeleter.h>
+#include <SpritePool.h>
 
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
@@ -15,6 +17,17 @@ using namespace std;
 
 std::shared_ptr<QuadTreeScene> scene;
 
+class Bullet : public MovingSprite
+{
+public:
+    Bullet()
+    {
+        auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
+        addTexture(*texture);
+        setVelocity(BULLET_SPEED);
+        setSpriteGroup(SpriteGroupID_Bullet);
+    }
+};
 
 std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
@@ -81,16 +94,13 @@ public:
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
-                auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
-                auto bullet = std::make_shared<MovingSprite>();
-                bullet->addTexture(*texture);
+                auto spritePool = scene->getComponent<SpritePool<Bullet>>();
+                std::shared_ptr<Bullet> bullet = spritePool->createOrAwakeSprite();
 
                 auto position = sprite->getPosition();
                 position.y -= sprite->getSize().y;
-
                 bullet->setPosition(position);
-                bullet->setVelocity(BULLET_SPEED);
-                bullet->setSpriteGroup(SpriteGroupID_Bullet);
+
                 scene->addChild(bullet);
                 return true;
             }
@@ -102,10 +112,28 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
+void initSpritePool(std::shared_ptr<SpritePool<Bullet>> pool)
+{
+    std::shared_ptr<Bullet> bullet;
+
+#define ADD_BULLET(color)\
+    bullet = pool->addSprite();\
+    bullet->setSpriteStatus(SpriteStatus_Death);\
+    bullet->setSpriteColor(color);
+
+    ADD_BULLET(sf::Color::Black)
+    ADD_BULLET(sf::Color::Red)
+    ADD_BULLET(sf::Color::Green)
+    ADD_BULLET(sf::Color::Blue)
+    ADD_BULLET(sf::Color::Yellow)
+    ADD_BULLET(sf::Color::Magenta)
+    ADD_BULLET(sf::Color::Cyan)
+}
+
 int main()
 {
     auto size = sf::Vector2f(960, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-8",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-12",
                   sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
@@ -116,9 +144,14 @@ int main()
     scene = std::make_shared<MyQuadTreeScene>();
     scene->setName("scene");
 
-    scene->addConllisionGroupID(SpriteGroupID_Bullet);
-    scene->addConllisionGroupID(SpriteGroupID_PlayerA);
+    auto spritePool = std::make_shared<SpritePool<Bullet>>();
+    initSpritePool(spritePool);
+    scene->addComponent(spritePool);
+
     scene->addConllisionGroupID(SpriteGroupID_PlayerB);
+
+    auto spriteDeleter = SpriteDeleter::create(SpriteDeleter_Slop);
+    scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
 
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);

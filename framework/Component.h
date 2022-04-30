@@ -2,6 +2,7 @@
 #include <list>
 #include <memory>
 #include <type_traits>
+#include <iostream>
 
 class Component
 {

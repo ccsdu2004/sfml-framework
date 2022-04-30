@@ -1,7 +1,14 @@
 #pragma once
 #include <memory>
 #include <boost/signals2.hpp>
+#include <boost/describe.hpp>
 #include <Entity.h>
+
+class SpriteVisitor
+{
+public:
+    virtual void visitSprite(SpritePointer sprite);
+};
 
 enum SpriteAttribute : uint32_t {
     SpriteAttribute_Hp = 0,
@@ -10,10 +17,17 @@ enum SpriteAttribute : uint32_t {
     SpriteAttribute_Defence,
     SpriteAttribute_2,
     SpriteAttribute_3,
-    SpriteAttribute_4,
-    SpriteAttribute_5,
     SpriteAttribute_Max
 };
+
+BOOST_DESCRIBE_ENUM(SpriteAttribute,
+                    SpriteAttribute_Hp,
+                    SpriteAttribute_Sp,
+                    SpriteAttribute_Attack,
+                    SpriteAttribute_Defence,
+                    SpriteAttribute_2,
+                    SpriteAttribute_3,
+                    SpriteAttribute_Max)
 
 enum SpriteStatus : uint32_t {
     SpriteStatus_Death = 0,
@@ -23,10 +37,18 @@ enum SpriteStatus : uint32_t {
     SpriteStatus_Overwhelming,
     SpriteStatus_2,
     SpriteStatus_3,
-    SpriteStatus_4,
-    SpriteStatus_5,
     SpriteStatus_Max
 };
+
+BOOST_DESCRIBE_ENUM(SpriteStatus,
+                    SpriteStatus_Death,
+                    SpriteStatus_Normal,
+                    SpriteStatus_Freeze,
+                    SpriteStatus_RamPage,
+                    SpriteStatus_Overwhelming,
+                    SpriteStatus_2,
+                    SpriteStatus_3,
+                    SpriteStatus_Max)
 
 class Sprite : public Entity
 {
@@ -40,11 +62,17 @@ public:
     void setSpriteStatus(SpriteStatus status);
     SpriteStatus getSpriteStatus()const;
 
+    void setSpriteGroup(SpriteGroupID groupID);
+    SpriteGroupID getSpriteGroup()const;
+
+    void setControllable(bool controllable);
+    bool isControllable()const;
+
+    void setUsable(bool usable);
+    bool isUsable()const;
+
     boost::signals2::signal<void(SpritePointer)> spriteStatusChanged;
 public:
-    void setSpriteGroup(SpriteGroupPointer spriteGroup);
-    SpriteGroupPointer getSpriteGroup()const;
-
     void setSpriteColor(const sf::Color &color);
     sf::Color getSpriteColor()const;
 
@@ -52,8 +80,12 @@ public:
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
     virtual void onSpriteStatusChanged();
+    virtual void onControllableChanged();
+    virtual void onUsableChanged();
 private:
     std::unique_ptr<class SpriteData> data;
 };
 
 using SpriteWeakPointer = std::weak_ptr<Sprite>;
+
+

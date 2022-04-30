@@ -20,7 +20,7 @@ public:
     void setDurationPerFrame(float duration = 200.0f);
     void setTexture(const std::string &image, const std::vector<sf::IntRect> &list);
 protected:
-    void onUpdate(float deltaTime) override;
+    void onUpdateObject(float deltaTime) override;
 private:
     std::unique_ptr<class AnimationData> data;
 };

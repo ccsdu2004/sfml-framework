@@ -13,17 +13,24 @@ public:
         static_assert (std::is_base_of<Sprite, T>() && "T must be derived of Sprite");
     }
 public:
-    std::shared_ptr<T> findSrpte()
+    std::shared_ptr<T> createOrAwakeSprite()
     {
         auto itr = sprites.begin();
         while (itr != sprites.end()) {
-            if ((*itr)->getSpriteStatus() == SpriteStatus::SpriteStatus_Death)
-                return *itr;
+            auto sprite = *itr;
+            if (sprite->getSpriteStatus() == SpriteStatus::SpriteStatus_Death) {
+                sprite->setSpriteStatus(SpriteStatus::SpriteStatus_Normal);
+                return sprite;
+            }
             itr ++;
         }
 
+        return addSprite();
+    }
+
+    auto addSprite() -> std::shared_ptr<T>
+    {
         auto sprite = std::make_shared<T>();
-        sprite->setSpriteStatus(SpriteStatus::SpriteStatus_Death);
         sprites.push_back(sprite);
         return sprite;
     }

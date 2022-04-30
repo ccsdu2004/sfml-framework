@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <functional>
 #include <SFML/Graphics/Drawable.hpp>
 #include <Def.h>
 #include <Message.h>
@@ -15,15 +16,17 @@ public:
 public:
     void addChild(std::shared_ptr<Object> child);
     void removeChild(std::shared_ptr<Object> child);
+    void removeChild(std::function<bool(std::shared_ptr<Object>)> fn);
 
-    virtual void accept(ObjectVisitor *visitor);
+    void acceptObject(ObjectVisitor *visitor);
 
     bool process(std::shared_ptr<Message> message)override;
-    virtual void update(float deltaTime);
+    void update(float deltaTime);
 
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const;
+    virtual void onUpdateObject(float deltaTime);
 private:
     std::unique_ptr<class ObjectData> data;
 };
@@ -33,17 +36,5 @@ class ObjectVisitor
 public:
     virtual ~ObjectVisitor();
 public:
-    template<class Type>
-    void visitObject(ObjectPointer object)
-    {
-        auto item = std::dynamic_pointer_cast<Type>(object);
-        if (item)
-            visit(item);
-    }
-
-    virtual void visit(ObjectPointer object);
-    virtual void visit(EntityPointer entity);
-    virtual void visit(SpritePointer sprite);
-    virtual void visit(SwitchPointer switchObject);
-    virtual void visit(AnimationPointer animation);
+    virtual void visitObject(ObjectPointer object);
 };
