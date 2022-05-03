@@ -12,11 +12,14 @@ public:
     virtual ~QuadTreeScene();
 public:
     void addSpriteDeleter(SpriteGroupID groupID, SpriteDeleterPointer deleter);
+    void addSpriteController(SpriteGroupID groupID, SpriteControllerPointer controller);
 
     void addConllisionGroupID(SpriteGroupID groupID);
 private:
     virtual void onConllision(SpritePointer current, const std::set<SpritePointer>& sprites);
+    void onUpdateChildren(float deltaTime)override;
     void onUpdateObject(float deltaTime) override;
+    virtual void onUpdateMyScene(float deltaTime);
 private:
     std::unique_ptr<class QuadTreeSceneData> data;
 };

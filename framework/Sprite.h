@@ -68,9 +68,6 @@ public:
     void setControllable(bool controllable);
     bool isControllable()const;
 
-    void setUsable(bool usable);
-    bool isUsable()const;
-
     boost::signals2::signal<void(SpritePointer)> spriteStatusChanged;
 public:
     void setSpriteColor(const sf::Color &color);

@@ -1,12 +1,11 @@
 #pragma once
 #include <cmath>
+#include <string>
 #include <utility>
 #include <boost/mp11.hpp>
 #include <boost/describe/enum.hpp>
 #include <boost/describe/enumerators.hpp>
 #include <SFML/System/Vector2.hpp>
-
-#define R3 1.73205
 
 template <class T>
 inline T distance2(T x1, T y1, T x2, T y2)
@@ -40,9 +39,9 @@ inline auto length(const sf::Vector2f &vector) noexcept
 }
 
 template<class T>
-inline bool isEqual(T a, T b)
+inline bool isEqual(T a, T b, T t = 1e-6)
 {
-    return std::fabs(a - b) < 1e-6;
+    return std::fabs(a - b) < t;
 }
 
 template<class T>
@@ -117,4 +116,19 @@ E fromString(const std::string &string, E defaultE)
             value = U.value;
     });
     return value;
+}
+
+inline float clipAngle(float angle)
+{
+    if(angle > 360.0)
+        return angle - 360;
+    else if(angle < 0)
+        return 360 + angle;
+    return angle;
+}
+
+inline bool shouldRandDoIt(int p)
+{
+    int value = rand() % 100 + 1;
+    return p >= value;
 }

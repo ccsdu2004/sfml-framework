@@ -7,7 +7,9 @@
 enum MessageType {
     Message_SFML = 0,
     Message_UPDATE,
-    Message_USER
+    Message_USER,
+    Message_StateMachine,
+    Message_Max
 };
 
 class Message

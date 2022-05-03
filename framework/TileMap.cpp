@@ -20,7 +20,6 @@ public:
     int32_t type = 0;
     float tileSize = 48.0f;
     Bitmask bitmask;
-    std::map<uint32_t, std::any> datas;
 
     void updatePosition(int x, int y)
     {
@@ -58,17 +57,6 @@ Tile::Tile(int32_t x, int32_t y, float size):
 
 Tile::~Tile()
 {
-}
-
-void Tile::setData(uint32_t key, const std::any &value)
-{
-    data->datas.insert(std::make_pair(key, value));
-}
-
-std::any Tile::getData(uint32_t key) const
-{
-    auto itr = data->datas.find(key);
-    return itr != data->datas.end() ? itr->second : std::any();
 }
 
 void Tile::setVisible(bool visible)

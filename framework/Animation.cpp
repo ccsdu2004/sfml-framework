@@ -95,6 +95,9 @@ void Animation::onUpdateObject(float deltaTime)
 
     if(getCurrentItem() > getItemCount() && !data->singleShot)
         setCurrentItem(0);
+    else if(getCurrentItem() > getItemCount() && getCurrentItem() != (uint32_t)~0) {
+        finished();
+    }
 }
 
 

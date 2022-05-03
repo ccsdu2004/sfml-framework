@@ -79,6 +79,5 @@ void Switch::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
         return;
 
     auto current = data->list[data->index];
-    // data->list[data->index]->setPosition(10, 10);
     data->list[data->index]->draw(target, getTransform());
 }

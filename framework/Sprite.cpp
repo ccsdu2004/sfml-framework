@@ -6,7 +6,6 @@
 #include <iostream>
 
 #define SPRITE_BITMASK_CONTROLLABLE 0
-#define SPRITE_BITMASK_USABLE       1
 
 class SpriteData
 {
@@ -23,7 +22,6 @@ Sprite::Sprite():
     data(new SpriteData())
 {
     data->bitmask.setBit(SPRITE_BITMASK_CONTROLLABLE, true);
-    data->bitmask.setBit(SPRITE_BITMASK_USABLE, true);
 }
 
 Sprite::~Sprite()
@@ -76,19 +74,6 @@ void Sprite::setControllable(bool controllable)
 bool Sprite::isControllable()const
 {
     return data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE);
-}
-
-void Sprite::setUsable(bool usable)
-{
-    if(data->bitmask.contain(SPRITE_BITMASK_USABLE) != usable) {
-        data->bitmask.setBit(SPRITE_BITMASK_USABLE, usable);
-        onUsableChanged();
-    }
-}
-
-bool Sprite::isUsable() const
-{
-    return data->bitmask.contain(SPRITE_BITMASK_USABLE);
 }
 
 void Sprite::setSpriteColor(const sf::Color &color)

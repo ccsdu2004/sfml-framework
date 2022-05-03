@@ -1,5 +1,6 @@
 add_library(framework
     Def.h
+    MapList.h
     CornerStyle.h
     ObjectFactory.h
     Message.h
@@ -7,6 +8,8 @@ add_library(framework
     MessageListener.cpp
     Object.h
     Object.cpp
+    Task.h
+    Task.cpp
     Application.cpp
     Application.h
     RoundedRectangleShape.h
@@ -45,6 +48,10 @@ add_library(framework
     ShortestPathFinder.h
     SpriteDeleter.h
     SpriteDeleter.cpp
+    SpriteController.h
+    SpriteController.cpp
+    StateMachine.h
+    StateMachine.cpp
     Director.cpp
     Director.h
     Util.h

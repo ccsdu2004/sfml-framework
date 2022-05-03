@@ -109,9 +109,9 @@ void Entity::move(float dx, float dy)
 
 void Entity::move(float distance)
 {
-    float dx = distance * std::cos(TO_RADIAN * getRotate());
-    float dy = distance * std::sin(TO_RADIAN * getRotate());
-    move(dx, dy);
+    float dx = distance * std::sin(TO_RADIAN * getRotate());
+    float dy = distance * std::cos(TO_RADIAN * getRotate());
+    move(-dx, dy);
 }
 
 void Entity::setRotate(float angle)
@@ -122,6 +122,22 @@ void Entity::setRotate(float angle)
 float Entity::getRotate() const
 {
     return data->transform.getRotation();
+}
+
+void Entity::setScale(float scale)
+{
+    if(scale <= 0.0f)
+        return;
+    if(isEqual(scale, getScale()))
+        return;
+
+    data->transform.setScale(scale, scale);
+    onScaleChanged();
+}
+
+float Entity::getScale() const
+{
+    return data->transform.getScale().x;
 }
 
 void Entity::setSize(float width, float height)
@@ -251,6 +267,11 @@ void Entity::onPositionChanged()
 
 void Entity::onSizeChanged()
 {
+}
+
+void Entity::onScaleChanged()
+{
+
 }
 
 bool EntityMouseListener::onListener(std::shared_ptr<Message> message)

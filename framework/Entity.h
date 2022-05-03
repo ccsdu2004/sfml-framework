@@ -43,6 +43,9 @@ public:
     void setRotate(float angle);
     float getRotate()const;
 
+    void setScale(float scale);
+    float getScale()const;
+
     void setSize(float width, float height);
     sf::Vector2f getSize()const;
 
@@ -71,6 +74,8 @@ protected:
 
     virtual void onPositionChanged();
     virtual void onSizeChanged();
+
+    virtual void onScaleChanged();
 private:
     std::unique_ptr<class EntityImpl> data;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <boost/signals2.hpp>
 #include <Switch.h>
 
 class Animation final : public Switch
@@ -13,6 +14,8 @@ public:
 
     void pause();
     bool isPaused()const;
+
+    boost::signals2::signal<void()> finished;
 
     void setSingleShot(bool single = true);
     bool getSingleShot()const;

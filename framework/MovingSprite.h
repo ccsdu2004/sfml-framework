@@ -12,6 +12,9 @@ public:
 
     void setVelocity(const sf::Vector2f& velocity);
     sf::Vector2f getVelocity()const;
+
+    void setRotateVelocity(float velocity);
+    float getRotateVelocity()const;
 private:
     void onUpdateObject(float deltaTime) override;
 private:

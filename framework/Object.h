@@ -17,15 +17,17 @@ public:
     void addChild(std::shared_ptr<Object> child);
     void removeChild(std::shared_ptr<Object> child);
     void removeChild(std::function<bool(std::shared_ptr<Object>)> fn);
+    void foreachChild(std::function<void(std::shared_ptr<Object>)> fn);
 
     void acceptObject(ObjectVisitor *visitor);
-
+public:
     bool process(std::shared_ptr<Message> message)override;
     void update(float deltaTime);
 
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const;
+    virtual void onUpdateChildren(float deltaTime);
     virtual void onUpdateObject(float deltaTime);
 private:
     std::unique_ptr<class ObjectData> data;

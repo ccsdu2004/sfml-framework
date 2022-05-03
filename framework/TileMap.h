@@ -1,5 +1,5 @@
 #pragma once
-#include <any>
+#include <optional>
 #include <memory>
 #include <boost/signals2.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -28,9 +28,6 @@ public:
     Tile(int32_t x, int32_t y, float size = 48.0f);
     ~Tile();
 public:
-    void setData(uint32_t key, const std::any &data);
-    std::any getData(uint32_t key)const;
-
     void setVisible(bool visible);
     bool isVisible()const;
 private:
@@ -46,6 +43,18 @@ public:
 enum TileMapType {
     TileMapType_Hex = 0,
     TileMapType_Grid
+};
+
+enum TileDirection {
+    TileDirection_0 = 0,
+    TileDirection_60 = 60,
+    TileDirection_90 = 90,
+    TileDirection_120 = 120,
+    TileDirection_180 = 180,
+    TileDirection_240 = 240,
+    TileDirection_270 = 270,
+    TileDirection_300 = 300,
+    TileDirection_Max,
 };
 
 class TileMap : public Object, public Component
@@ -68,6 +77,7 @@ public:
     bool isTextVisible()const;
 public:
     virtual std::vector<sf::Vector2i> getAdjacentTileByPosition(int32_t x, int32_t y) = 0;
+    virtual std::optional<sf::Vector2i> getAdjacentTileByDirection(int32_t x, int32_t y, TileDirection direction) = 0;
     virtual sf::Vector2f getWorldPositionByTileIndex(int32_t x, int32_t y) = 0;
     virtual sf::Vector2i getTileIndexByWorldPosition(int32_t x, int32_t y) = 0;
 

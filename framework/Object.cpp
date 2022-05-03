@@ -36,6 +36,11 @@ void Object::removeChild(std::function<bool (std::shared_ptr<Object>)> fn)
     data->children.remove_if(fn);
 }
 
+void Object::foreachChild(std::function<void (std::shared_ptr<Object>)> fn)
+{
+    std::for_each(data->children.begin(), data->children.end(), fn);
+}
+
 void Object::acceptObject(ObjectVisitor *visitor)
 {
     if (!visitor)
@@ -60,10 +65,7 @@ bool Object::process(std::shared_ptr<Message> message)
 
 void Object::update(float deltaTime)
 {
-    std::for_each(data->children.begin(), data->children.end(), [deltaTime](std::shared_ptr<Object> object) {
-        object->update(deltaTime);
-    });
-
+    onUpdateChildren(deltaTime);
     onUpdateObject(deltaTime);
 }
 
@@ -84,6 +86,13 @@ void Object::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 {
     (void)target;
     (void)states;
+}
+
+void Object::onUpdateChildren(float deltaTime)
+{
+    std::for_each(data->children.begin(), data->children.end(), [deltaTime](std::shared_ptr<Object> object) {
+        object->update(deltaTime);
+    });
 }
 
 void Object::onUpdateObject(float deltaTime)

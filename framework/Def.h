@@ -36,5 +36,8 @@ using SceneWeakPointer = std::weak_ptr<Scene>;
 class SpriteDeleter;
 using SpriteDeleterPointer = std::shared_ptr<SpriteDeleter>;
 
-class SpriteOperator;
-using SpriteOperatorPointer = std::shared_ptr<SpriteOperator>;
+class SpriteController;
+using SpriteControllerPointer = std::shared_ptr<SpriteController>;
+
+class State;
+class StateMachine;
