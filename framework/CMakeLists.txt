@@ -1,6 +1,5 @@
 add_library(framework
     Def.h
-    MapList.h
     CornerStyle.h
     ObjectFactory.h
     Message.h
@@ -38,6 +37,8 @@ add_library(framework
     Sprite.cpp
     Sprite.h
     SpritePool.h
+    SpriteDecorator.h
+    SpriteDecorator.cpp
     Switch.cpp
     Switch.h
     Animation.cpp

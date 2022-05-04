@@ -91,7 +91,6 @@ public:
     StatePointer errorState;
     StatePointer currentState;
     bool running = false;
-    //std::set<StatePointer> stateSet;
 
     struct StateTransition {
         std::shared_ptr<State> to;

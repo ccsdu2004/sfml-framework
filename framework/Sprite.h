@@ -74,6 +74,9 @@ public:
     sf::Color getSpriteColor()const;
 
     void addTexture(const sf::Texture &texture, const sf::IntRect &area = sf::IntRect());
+
+    void setDecorator(SpriteDecoratorPointer spriteDecorator);
+    void clearDecorator();
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
     virtual void onSpriteStatusChanged();

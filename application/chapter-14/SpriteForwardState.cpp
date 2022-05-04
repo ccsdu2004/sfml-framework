@@ -7,7 +7,6 @@ SpriteForwardState::SpriteForwardState(std::shared_ptr<TileMap> inputTileMap, Ob
 {
 }
 
-
 void SpriteForwardState::onEnter()
 {
     if(getTarget().expired())

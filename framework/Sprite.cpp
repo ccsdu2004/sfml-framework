@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Sprite.h>
+#include <SpriteDecorator.h>
 #include <Bitmask.h>
 #include <iostream>
 
@@ -15,6 +16,7 @@ public:
     SpriteStatus spriteStatus;
     sf::Color spriteColor = sf::Color::White;
     SpriteGroupID spriteGroupID;
+    SpriteDecoratorPointer spriteDecorator;
     Bitmask bitmask;
 };
 
@@ -97,8 +99,21 @@ void Sprite::addTexture(const sf::Texture &texture, const sf::IntRect &area)
     setSize(box.width, box.height);
 }
 
+void Sprite::setDecorator(SpriteDecoratorPointer spriteDecorator)
+{
+    data->spriteDecorator = spriteDecorator;
+}
+
+void Sprite::clearDecorator()
+{
+    data->spriteDecorator.reset();
+}
+
 void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    if(data->spriteDecorator)
+        data->spriteDecorator->draw(target, states, this);
+
     for (auto itr = data->sprites.begin(); itr != data->sprites.end(); itr++) {
         (*itr).setColor(data->spriteColor);
         target.draw(*itr, states);

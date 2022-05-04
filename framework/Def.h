@@ -20,8 +20,8 @@ using EntityPointer = std::shared_ptr<Entity>;
 class Sprite;
 using SpritePointer = std::shared_ptr<Sprite>;
 
-class SpriteGroup;
-using SpriteGroupPointer = std::shared_ptr<SpriteGroup>;
+class SpriteDecorator;
+using SpriteDecoratorPointer = std::shared_ptr<SpriteDecorator>;
 
 class Switch;
 using SwitchPointer = std::shared_ptr<Switch>;

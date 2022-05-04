@@ -20,7 +20,6 @@ void MineSweeperScene::initial()
     stateMachine = std::make_shared<StateMachine>();
 
     errorState = std::make_shared<SpriteErrorState>(mineSweeper);
-    //stateMachine->addState(errorState);
 
     animationState = std::make_shared<SpriteAnimationState>(std::dynamic_pointer_cast<MineSweeperScene>(shared_from_this()), mineSweeper);
     animationState->setName("removemine");
