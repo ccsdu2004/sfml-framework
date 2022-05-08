@@ -103,6 +103,20 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(960, 640);
@@ -135,6 +149,14 @@ int main()
     auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
     enemy->setSpriteGroup(SpriteGroupID_PlayerB);
     scene->addChild(enemy);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"精灵删除器", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->setInitialScene(scene);

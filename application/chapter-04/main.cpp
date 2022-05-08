@@ -20,6 +20,20 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
     return sprite;
 }
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 void clickedTile(int32_t x, int32_t y)
 {
     tileMap->getTileByIndex(x, y)->setFillColor(sf::Color::Red);
@@ -41,7 +55,7 @@ int main()
     tileMap = TileMap::createTileMap(TileMapType_Hex);
     tileMap->tileClicked.connect(clickedTile);
     tileMap->init(48, 36, 32);
-    tileMap->setMessageReceived(false);
+    tileMap->setMessageReceived(true);
     tileMap->setTextVisible(false);
 
     object->addChild(tileMap);
@@ -101,6 +115,14 @@ int main()
         sprite->setSpriteColor(spriteColor[rand() % spriteColor.size()]);
         object->addChild(sprite);
     }
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"精灵", false);
+    text->setPosition(80, 30);
+    object->addChild(text);
 
     app->execute(object);
     return 0;

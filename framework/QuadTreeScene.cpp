@@ -38,8 +38,10 @@ public:
             return;
 
         auto sprite = std::dynamic_pointer_cast<Sprite>(object);
-        if(!sprite)
+        if(!sprite) {
+            object->update(deltaTime);
             return;
+        }
 
         if(!sprite->isControllable())
             sprite->update(deltaTime);
@@ -173,6 +175,8 @@ void QuadTreeScene::onUpdateChildren(float deltaTime)
 void QuadTreeScene::onUpdateObject(float deltaTime)
 {
     (void)deltaTime;
+    Scene::onUpdateObject(deltaTime);
+
     data->quadTree->clear();
 
     acceptObject(data.get());

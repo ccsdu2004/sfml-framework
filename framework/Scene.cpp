@@ -7,41 +7,6 @@
 #include <Scene.h>
 #include <Application.h>
 
-/*
-class SpriteOperators
-{
-public:
-    SpriteOperators(SpritePointer inputSprite, const std::list<SpriteOperatorPointer>& inputOperators):
-        sprite(inputSprite),
-        operators(inputOperators)
-    {
-    }
-
-    void update(std::shared_ptr<Scene> scene, float difTime)
-    {
-        auto itr = operators.begin();
-        while(itr != operators.end()) {
-            SpriteOperatorPointer spriteOperator = *itr;
-            if(spriteOperator->execute(sprite, scene, difTime) && spriteOperator->getType() == SpriteOperator_Deleter) {
-                needToRemoveSprite = true;
-                return;
-            }
-            itr ++;
-        }
-    }
-
-    bool needRemoveSprite()
-    {
-        return needToRemoveSprite;
-    }
-
-private:
-    SpritePointer sprite;
-    std::list<SpriteOperatorPointer> operators;
-    bool needToRemoveSprite = false;
-};
-*/
-
 class SceneData
 {
 public:
@@ -96,11 +61,6 @@ void Scene::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(data->backgrpundSprite, states);
     Object::draw(target, states);
-}
-
-void Scene::onUpdateObject(float deltaTime)
-{
-    Object::onUpdateObject(deltaTime);
 }
 
 class SceneManagerImpl

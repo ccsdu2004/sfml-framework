@@ -3,8 +3,9 @@
 #include <memory>
 #include <type_traits>
 #include <iostream>
+#include <Updater.h>
 
-class Component
+class Component : public Updater
 {
 public:
     virtual ~Component()
@@ -61,6 +62,15 @@ public:
         auto itr = components.begin();
         while (itr != components.end()) {
             visitor->visitComponent(*itr);
+            itr ++;
+        }
+    }
+
+    void updateComponent(float deltaTime)
+    {
+        auto itr = components.begin();
+        while (itr != components.end()) {
+            (*itr)->update(deltaTime);
             itr ++;
         }
     }

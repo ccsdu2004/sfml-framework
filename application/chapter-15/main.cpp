@@ -13,9 +13,15 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto sprite = std::make_shared<Sprite>();
     sprite->setSpriteColor(sf::Color::Yellow);
-    sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
     sprite->addTexture(*texture);
+
+    auto spriteRing = std::make_shared<SpriteRingDecorator>();
+    //spriteRing->setScaleFactor(1.0f);
+    spriteRing->setFillColor(sf::Color::Red);
+    sprite->setDecorator(spriteRing);
+
+    sprite->setPosition(x, y);
     return sprite;
 }
 
@@ -58,11 +64,27 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(800, 640);
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-15",
-                  sf::Style::Close);
+                  sf::Style::Close, settings);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -77,13 +99,16 @@ int main()
 
     auto sprite = createSprite("../resource/images/plane.png", 400, 320);
 
-    auto spriteRing = std::make_shared<SpriteRing>();
-    spriteRing->setScaleFactor(0.9f);
-    spriteRing->setFillColor(sf::Color::Red);
-    sprite->setDecorator(spriteRing);
-
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"精灵装饰器", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     app->execute(scene);
 

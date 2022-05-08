@@ -15,7 +15,6 @@ using namespace std;
 
 std::shared_ptr<QuadTreeScene> scene;
 
-
 std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto sprite = std::make_shared<Sprite>();
@@ -31,6 +30,10 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 class MyQuadTreeScene : public QuadTreeScene
 {
 public:
+    MyQuadTreeScene()
+    {
+    }
+public:
     void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites) override
     {
         (void)sprites;
@@ -38,20 +41,23 @@ public:
         addChild(animation);
     }
 private:
-    ObjectPointer createAnimation(const sf::Vector2f &pos)
+    std::shared_ptr<Animation> createAnimation(const sf::Vector2f& pos)
     {
         std::vector<sf::IntRect> areas;
 
-        for (int i = 0; i < 6; i++) {
+        for(int i = 0; i < 6; i++) {
             auto area = sf::IntRect(i * 85, 0, 85, 85);
             areas.push_back(area);
         }
 
         std::shared_ptr<Animation> animation = std::make_shared<Animation>();
-        animation->setDurationPerFrame((rand() % 20) * 0.01f + 0.2f);
+        animation->setDurationPerFrame(0.2f);
         animation->setSingleShot(true);
         animation->setPosition(pos);
+
+        animation->setBackgroundColor(sf::Color::White);
         animation->setTexture("../resource/images/blast2.png", areas);
+        animation->setCurrentItem(0);
         animation->start();
         return animation;
     }
@@ -102,6 +108,20 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(960, 640);
@@ -131,6 +151,14 @@ int main()
     auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
     enemy->setSpriteGroup(SpriteGroupID_PlayerB);
     scene->addChild(enemy);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"四叉树场景", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->setInitialScene(scene);

@@ -6,7 +6,6 @@
 #include <Entity.h>
 #include <Bitmask.h>
 #include <Util.h>
-#include <iostream>
 
 #define BITMASK_MOUSE_IN        0
 #define BITMASK_MOUSE_PRESSED   1
@@ -116,7 +115,10 @@ void Entity::move(float distance)
 
 void Entity::setRotate(float angle)
 {
-    data->transform.setRotation(angle);
+    if (data->transform.getRotation() != angle) {
+        data->transform.setRotation(angle);
+        onRotateChanged();
+    }
 }
 
 float Entity::getRotate() const
@@ -126,9 +128,9 @@ float Entity::getRotate() const
 
 void Entity::setScale(float scale)
 {
-    if(scale <= 0.0f)
+    if (scale <= 0.0f)
         return;
-    if(isEqual(scale, getScale()))
+    if (isEqual(scale, getScale()))
         return;
 
     data->transform.setScale(scale, scale);
@@ -267,6 +269,11 @@ void Entity::onPositionChanged()
 
 void Entity::onSizeChanged()
 {
+}
+
+void Entity::onRotateChanged()
+{
+
 }
 
 void Entity::onScaleChanged()

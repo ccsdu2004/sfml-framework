@@ -32,19 +32,19 @@ public:
         auto sfml = std::dynamic_pointer_cast<SFMLMessage>(message);
         auto event = sfml->getEvent();
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Key::A) {
+            if (event.key.code == sf::Keyboard::Key::Left) {
                 if(sprite->getPosition().x > 5)
                     sprite->move(-5, 0);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::D) {
+            } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if(sprite->getPosition().x < Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::W) {
+            } else if (event.key.code == sf::Keyboard::Key::Up) {
                 if(sprite->getPosition().y > 5)
                     sprite->move(0, -5);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::X) {
+            } else if (event.key.code == sf::Keyboard::Key::Down) {
                 if(sprite->getPosition().y < Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
@@ -56,6 +56,20 @@ public:
 private:
     std::shared_ptr<Sprite> sprite;
 };
+
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
 
 int main()
 {
@@ -77,6 +91,14 @@ int main()
     auto sprite = createSprite("../resource/images/plane.png", 400, 320);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"消息监听", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     app->execute(scene);
 

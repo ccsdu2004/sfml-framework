@@ -57,6 +57,11 @@ void MineSweeperScene::initial()
 
     stateMachine->setErrorState(errorState);
     stateMachine->start();
+
+    auto text = createText();
+    text->setText(L"状态机", false);
+    text->setPosition(80, 30);
+    addChild(text);
 }
 
 void MineSweeperScene::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
@@ -117,6 +122,23 @@ void MineSweeperScene::removeMine(size_t tileID)
 std::shared_ptr<TileMap> MineSweeperScene::getTileMap() const
 {
     return tileMap;
+}
+
+std::shared_ptr<Text> MineSweeperScene::createText()
+{
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
 }
 
 bool MineSweeperScene::shouldRemovalMine()

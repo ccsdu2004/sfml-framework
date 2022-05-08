@@ -6,7 +6,7 @@
 
 enum MessageType {
     Message_SFML = 0,
-    Message_UPDATE,
+    Message_SOUND,
     Message_USER,
     Message_StateMachine,
     Message_Max
@@ -47,23 +47,6 @@ public:
     }
 private:
     sf::Event event;
-};
-
-class UpdateMessage : public Message
-{
-public:
-    UpdateMessage(const sf::Time &inputTime):
-        Message(Message_UPDATE),
-        time(inputTime)
-    {
-    }
-public:
-    sf::Time getTime()const
-    {
-        return time;
-    }
-private:
-    sf::Time time;
 };
 
 class MessageListener

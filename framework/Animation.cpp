@@ -88,6 +88,7 @@ void Animation::onUpdateObject(float deltaTime)
         return;
 
     data->currentTime += deltaTime;
+
     if(data->currentTime > data->duration) {
         data->currentTime = 0.0f;
         next();
@@ -99,7 +100,3 @@ void Animation::onUpdateObject(float deltaTime)
         finished();
     }
 }
-
-
-
-

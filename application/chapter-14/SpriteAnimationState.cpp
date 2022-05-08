@@ -17,6 +17,7 @@ void SpriteAnimationState::onEnter()
     tileID = getTileIDByPosition(tileIndex.x, tileIndex.y);
 
     animation->setPosition(sprite->getPosition().x * 0.5, 0.5 * sprite->getPosition().y);
+    //animation->setPosition(0, 0);
     sprite->addChild(animation);
     animation->start();
 }

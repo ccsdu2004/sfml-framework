@@ -81,7 +81,11 @@ protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
     virtual void onSpriteStatusChanged();
     virtual void onControllableChanged();
-    virtual void onUsableChanged();
+
+    virtual void onPositionChanged() override;
+    virtual void onSizeChanged() override;
+    virtual void onRotateChanged() override;
+    virtual void onScaleChanged() override;
 private:
     std::unique_ptr<class SpriteData> data;
 };

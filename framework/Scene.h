@@ -5,7 +5,7 @@
 #include <Component.h>
 #include <Sprite.h>
 
-class Scene : public Object, public NameHolder, public ComponentPool
+class Scene : public Object, public ComponentPool
 {
 public:
     Scene();
@@ -20,7 +20,6 @@ public:
     virtual void release();
 public:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-    virtual void onUpdateObject(float deltaTime) override;
 private:
     std::unique_ptr<class SceneData> data;
 };

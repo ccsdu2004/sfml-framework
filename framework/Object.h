@@ -4,10 +4,11 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <Def.h>
 #include <Message.h>
+#include <NameHolder.h>
 
 class ObjectVisitor;
 
-class Object : public sf::Drawable, public MessageReceiver,
+class Object : public sf::Drawable, public MessageReceiver, public NameHolder,
     public std::enable_shared_from_this<Object>
 {
 public:

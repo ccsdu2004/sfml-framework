@@ -31,6 +31,7 @@ public:
     auto addSprite() -> std::shared_ptr<T>
     {
         auto sprite = std::make_shared<T>();
+        sprite->setSpriteStatus(SpriteStatus::SpriteStatus_Normal);
         sprites.push_back(sprite);
         return sprite;
     }

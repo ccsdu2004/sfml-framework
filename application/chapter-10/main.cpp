@@ -101,6 +101,20 @@ private:
     std::shared_ptr<ShortestPathFinder> shortestPathFinder;
 };
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(800, 600);
@@ -124,6 +138,14 @@ int main()
 
     tileMap->getTileByIndex(START_TILE.x, START_TILE.y)->setFillColor(sf::Color::Magenta);
     tileMap->getTileByIndex(END_TILE.x, END_TILE.y)->setFillColor(sf::Color::Magenta);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"最短路径", false);
+    text->setPosition(80, 30);
+    tileMap->addChild(text);
 
     app->execute(tileMap);
     return 0;

@@ -1,4 +1,5 @@
 #include <MovingSprite.h>
+#include <iostream>
 
 class MovingSpriteData
 {

@@ -61,6 +61,20 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(800, 640);
@@ -80,6 +94,14 @@ int main()
 
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"组件系统", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     auto sprite = createSprite("../resource/images/plane.png", 400, 320);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));

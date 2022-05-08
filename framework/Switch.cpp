@@ -36,7 +36,7 @@ void Switch::clear()
     onClear();
 }
 
-void Switch::addItem(const std::shared_ptr<Entity> entity)
+void Switch::addItem(const EntityPointer entity)
 {
     if (entity) {
         data->list.push_back(entity);
@@ -62,22 +62,15 @@ void Switch::onClear()
 {
 }
 
-void Switch::onPositionChanged()
-{
-    auto pos = getPosition();
-    auto itr = data->list.begin();
-    while (itr != data->list.end()) {
-        auto entity = *itr;
-        entity->setPosition(pos.x, pos.y);
-        itr ++;
-    }
-}
-
 void Switch::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (data->list.size() <= data->index)
         return;
 
     auto current = data->list[data->index];
-    data->list[data->index]->draw(target, getTransform());
+    data->list[data->index]->draw(target, states);
 }
+
+
+
+

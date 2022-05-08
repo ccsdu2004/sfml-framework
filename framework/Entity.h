@@ -74,7 +74,7 @@ protected:
 
     virtual void onPositionChanged();
     virtual void onSizeChanged();
-
+    virtual void onRotateChanged();
     virtual void onScaleChanged();
 private:
     std::unique_ptr<class EntityImpl> data;

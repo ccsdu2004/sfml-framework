@@ -1,10 +1,13 @@
 add_library(framework
     Def.h
+    Updater.h
     CornerStyle.h
     ObjectFactory.h
     Message.h
     MessageReceiver.cpp
     MessageListener.cpp
+    StopWatch.h
+    StopWatch.cpp
     Object.h
     Object.cpp
     Task.h
@@ -13,6 +16,8 @@ add_library(framework
     Application.h
     RoundedRectangleShape.h
     RoundedRectangleShape.cpp
+    FanShape.h
+    FanShape.cpp
     WindowObject.h
     WindowObject.cpp
     Entity.cpp
@@ -55,6 +60,8 @@ add_library(framework
     StateMachine.cpp
     Director.cpp
     Director.h
+    SoundManager.h
+    SoundManager.cpp
     Util.h
     Widget/WidgetStyle.h
     Widget/WidgetStyle.cpp

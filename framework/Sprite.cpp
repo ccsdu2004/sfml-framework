@@ -67,7 +67,7 @@ SpriteGroupID Sprite::getSpriteGroup() const
 
 void Sprite::setControllable(bool controllable)
 {
-    if(data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE) != controllable) {
+    if (data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE) != controllable) {
         data->bitmask.setBit(SPRITE_BITMASK_CONTROLLABLE, controllable);
         onControllableChanged();
     }
@@ -111,8 +111,8 @@ void Sprite::clearDecorator()
 
 void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    if(data->spriteDecorator)
-        data->spriteDecorator->draw(target, states, this);
+    if (data->spriteDecorator)
+        target.draw(*data->spriteDecorator.get(), states);
 
     for (auto itr = data->sprites.begin(); itr != data->sprites.end(); itr++) {
         (*itr).setColor(data->spriteColor);
@@ -125,14 +125,37 @@ void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 
 void Sprite::onSpriteStatusChanged()
 {
+    if (data->spriteDecorator)
+        data->spriteDecorator->update(this);
 }
 
 void Sprite::onControllableChanged()
 {
+    if (data->spriteDecorator)
+        data->spriteDecorator->update(this);
 }
 
-void Sprite::onUsableChanged()
+void Sprite::onPositionChanged()
 {
+    if (data->spriteDecorator)
+        data->spriteDecorator->update(this);
+}
+
+void Sprite::onSizeChanged()
+{
+    if (data->spriteDecorator)
+        data->spriteDecorator->update(this);
+}
+
+void Sprite::onRotateChanged()
+{
+    if (data->spriteDecorator)
+        data->spriteDecorator->update(this);
+}
+
+void Sprite::onScaleChanged()
+{
+
 }
 
 void SpriteVisitor::visitSprite(SpritePointer sprite)

@@ -2,6 +2,7 @@
 #include <StateMachine.h>
 #include <QuadTreeScene.h>
 #include <TileMap.h>
+#include <Text.h>
 #include <MovingSprite.h>
 
 static inline const int TILE_ID_OFFSET = 10000;
@@ -21,6 +22,8 @@ public:
     void removeMine(size_t tileID);
     std::shared_ptr<TileMap> getTileMap()const;
 private:
+    std::shared_ptr<Text> createText();
+
     void addMine(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile);
 
     std::shared_ptr<MovingSprite> createSprite(const std::string &image, float x, float y);

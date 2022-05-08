@@ -3,6 +3,7 @@
 #include <Application.h>
 #include <Scene.h>
 #include <Animation.h>
+#include <Text.h>
 
 #define WIN_SIZE 640
 
@@ -29,6 +30,20 @@ ObjectPointer createAnimation()
     return animation;
 }
 
+std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
+{
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(18);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+    return text;
+}
+
 int main()
 {
     auto size = sf::Vector2f(WIN_SIZE, WIN_SIZE);
@@ -48,6 +63,14 @@ int main()
 
     for(int i = 0; i < 100; i++)
         scene->addChild(createAnimation());
+
+    auto font = std::make_shared<sf::Font>();
+    font->loadFromFile("../resource/FZYTK.TTF");
+
+    auto text = createText(font);
+    text->setText(L"动画", false);
+    text->setPosition(80, 30);
+    scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->setInitialScene(scene);
