@@ -4,11 +4,10 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <Def.h>
 #include <Message.h>
-#include <NameHolder.h>
 
 class ObjectVisitor;
 
-class Object : public sf::Drawable, public MessageReceiver, public NameHolder,
+class Object : public sf::Drawable, public MessageReceiver,
     public std::enable_shared_from_this<Object>
 {
 public:
@@ -22,7 +21,7 @@ public:
 
     void acceptObject(ObjectVisitor *visitor);
 public:
-    bool process(std::shared_ptr<Message> message)override;
+    virtual bool process(std::shared_ptr<Message> message)override;
     void update(float deltaTime);
 
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

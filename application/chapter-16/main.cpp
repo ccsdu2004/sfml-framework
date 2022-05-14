@@ -41,22 +41,22 @@ public:
         auto event = sfml->getEvent();
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Key::Left) {
-                if(sprite->getPosition().x > 5)
+                if (sprite->getPosition().x > 5)
                     sprite->move(-5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
-                if(sprite->getPosition().x < Application::getInstance()->getWindow()->getSize().x - 5)
+                if (sprite->getPosition().x < Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Up) {
-                if(sprite->getPosition().y > 5)
+                if (sprite->getPosition().y > 5)
                     sprite->move(0, -5);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Down) {
-                if(sprite->getPosition().y < Application::getInstance()->getWindow()->getSize().y - 5)
+                if (sprite->getPosition().y < Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
-            } else if(event.key.code == sf::Keyboard::Key::Space) {
+            } else if (event.key.code == sf::Keyboard::Key::Space) {
                 sprite->setRotate(sprite->getRotate() + 15);
                 return true;
             }
@@ -68,27 +68,13 @@ private:
     std::shared_ptr<Sprite> sprite;
 };
 
-std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
-{
-    auto text = std::make_shared<Text>();
-    text->setFont(font);
-    text->setCharacterSize(18);
-    text->setTextColor(sf::Color::White);
-    text->setSize(120, 36);
-    text->setBackgroundColor(sf::Color::Black);
-
-    text->setOutlineColor(sf::Color::Yellow);
-    text->setOutlineThickness(0.6f);
-    return text;
-}
-
 int main()
 {
     auto size = sf::Vector2f(800, 640);
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-16",
-                  sf::Style::Close, settings);
+                                                     sf::Style::Close, settings);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -109,7 +95,7 @@ int main()
     auto font = std::make_shared<sf::Font>();
     font->loadFromFile("../resource/FZYTK.TTF");
 
-    auto text = createText(font);
+    auto text = scene->createToastText();
     text->setText(L"精灵视野", false);
     text->setPosition(80, 30);
     scene->addChild(text);

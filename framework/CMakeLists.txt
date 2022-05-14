@@ -69,4 +69,6 @@ add_library(framework
     Widget/Widget.cpp
     Widget/Desktop.h
     Widget/Desktop.cpp
+    Widget/MouseArea.h
+    Widget/MouseArea.cpp
     )

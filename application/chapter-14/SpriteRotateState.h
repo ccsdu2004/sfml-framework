@@ -5,6 +5,7 @@
 #include <MovingSprite.h>
 #include <StateMachine.h>
 #include <Util.h>
+#include <iostream>
 
 #define ROTATE_SPEED 18.0f
 
@@ -40,8 +41,8 @@ public:
         (void)deltaTime;
         auto sprite = std::dynamic_pointer_cast<MovingSprite>(getTarget().lock());
 
-        if(isEqual(300.0f - sprite->getRotate(), startAngle, 1.0f)) {
-            sprite->setRotate(startAngle - 60.0f);
+        float diffAngle = fabsf(startAngle - sprite->getRotate());
+        if(isEqual(diffAngle, 60.0f, 1.0f) || isEqual(diffAngle, 300.0f, 1.0f)) {
             setFinished();
         }
     }
@@ -81,8 +82,8 @@ public:
         (void)deltaTime;
         auto sprite = std::dynamic_pointer_cast<MovingSprite>(getTarget().lock());
 
-        if(isEqual(sprite->getRotate(), startAngle + 60.0f, 1.0f)) {
-            sprite->setRotate(startAngle + 60.0f);
+        float diffAngle = fabsf(sprite->getRotate() - startAngle);
+        if(isEqual(diffAngle, 60.0f, 1.0f) || isEqual(diffAngle, 300.0f, 1.0f)) {
             setFinished();
         }
     }

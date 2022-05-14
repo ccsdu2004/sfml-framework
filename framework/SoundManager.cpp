@@ -24,10 +24,11 @@ public:
     bool playSound(std::shared_ptr<SoundMessage> message)
     {
         auto currentMessage = std::dynamic_pointer_cast<SoundMessagePlaySound>(message);
-        std::string file = currentMessage->getFile();
+
         auto sound = std::make_shared<sf::Music>();
-        if(!sound->openFromFile(file))
+        if(!sound->openFromFile(currentMessage->getFile())) {
             return false;
+        }
 
         sounds.push_back(sound);
         sound->play();

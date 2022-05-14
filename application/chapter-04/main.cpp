@@ -36,7 +36,9 @@ std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
 
 void clickedTile(int32_t x, int32_t y)
 {
-    tileMap->getTileByIndex(x, y)->setFillColor(sf::Color::Red);
+    auto tile = tileMap->getTileByIndex(x,y);
+    if(tile)
+        tile->setFillColor(sf::Color::Red);
 }
 
 int main()

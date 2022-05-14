@@ -26,12 +26,27 @@ Desktop::~Desktop()
 {
 }
 
-void Desktop::addWidget(WidgetPointer widget, int x, int y)
+void Desktop::addWidget(WidgetPointer widget, float x, float y)
 {
     if (!widget)
         return;
 
     widget->setPosition(x, y);
+    data->widgets.push_back(widget);
+}
+
+void Desktop::addWidget(WidgetPointer widget, HMode hmode, VMode vmode, float xoffset,
+                        float yoffset)
+{
+    if (!widget)
+        return;
+
+    auto windowSize = Application::getInstance()->getWindow()->getSize();
+
+    auto size = widget->getSize();
+    sf::FloatRect area(0, 0, windowSize.x, windowSize.y);
+    auto position = Widget::adjustPosition(area, size, hmode, vmode, xoffset, yoffset);
+    widget->setPosition(position);
     data->widgets.push_back(widget);
 }
 
@@ -114,6 +129,14 @@ bool Desktop::process(std::shared_ptr<Message> message)
     return MessageReceiver::process(message);
 }
 
+void Desktop::update(float deltaTime)
+{
+    std::for_each(data->widgets.begin(),
+    data->widgets.end(), [deltaTime](std::shared_ptr<Widget> widget) {
+        widget->update(deltaTime);
+    });
+}
+
 void Desktop::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     auto itr = data->widgets.begin();
@@ -122,6 +145,7 @@ void Desktop::draw(sf::RenderTarget &target, sf::RenderStates states) const
         itr ++;
     }
 
-    if(data->popupWidget)
-        data->popupWidget->draw(target,states);
+    if (data->popupWidget)
+        data->popupWidget->draw(target, states);
 }
+

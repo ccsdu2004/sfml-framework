@@ -16,8 +16,9 @@ void SpriteAnimationState::onEnter()
     auto tileIndex = tileMap->getTileIndexByWorldPosition(spritePosition.x, spritePosition.y);
     tileID = getTileIDByPosition(tileIndex.x, tileIndex.y);
 
-    animation->setPosition(sprite->getPosition().x * 0.5, 0.5 * sprite->getPosition().y);
-    //animation->setPosition(0, 0);
+    //animation->setPosition(sprite->getPosition().x * 0.5, 0.5 * sprite->getPosition().y);
+    auto box = animation->getBoundingBox();
+    animation->setPosition(box.width, box.height);
     sprite->addChild(animation);
     animation->start();
 }
@@ -28,6 +29,11 @@ void SpriteAnimationState::onLeave()
     if(scene.expired())
         return;
     scene.lock()->removeMine(tileID);
+}
+
+void SpriteAnimationState::update(float deltaTime)
+{
+
 }
 
 AnimationPointer SpriteAnimationState::createAnimation()

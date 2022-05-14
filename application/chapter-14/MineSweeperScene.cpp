@@ -1,4 +1,4 @@
-#include <Application.h>
+#include "Application.h"
 #include "MineSweeperScene.h"
 #include "SpriteErrorState.h"
 #include "SpriteAnimationState.h"
@@ -21,7 +21,8 @@ void MineSweeperScene::initial()
 
     errorState = std::make_shared<SpriteErrorState>(mineSweeper);
 
-    animationState = std::make_shared<SpriteAnimationState>(std::dynamic_pointer_cast<MineSweeperScene>(shared_from_this()), mineSweeper);
+    animationState = std::make_shared<SpriteAnimationState>(std::dynamic_pointer_cast<MineSweeperScene>
+                     (shared_from_this()), mineSweeper);
     animationState->setName("removemine");
 
     forwardState = std::make_shared<SpriteForwardState>(tileMap, mineSweeper);
@@ -33,24 +34,34 @@ void MineSweeperScene::initial()
     turnRightState = std::make_shared<SpriteTurnRightState>(mineSweeper);
     turnRightState->setName("turnright");
 
-    stateMachine->addTransition(forwardState, animationState, std::bind(&MineSweeperScene::shouldRemovalMine, this), 100);
+    stateMachine->addState(forwardState);
+    stateMachine->addState(animationState);
+    stateMachine->addState(turnLeftState);
+    stateMachine->addState(turnRightState);
+
+    stateMachine->addTransition(forwardState, animationState,
+                                std::bind(&MineSweeperScene::shouldRemovalMine, this), 100);
     stateMachine->addTransition(forwardState, turnLeftState, []()->bool{return true;}, 30);
     stateMachine->addTransition(forwardState, turnRightState, []()->bool{return true;}, 30);
-    stateMachine->addTransition(forwardState, forwardState, std::bind(&MineSweeperScene::shouldForward, this), 40);
+    stateMachine->addTransition(forwardState, forwardState, std::bind(&MineSweeperScene::shouldForward,
+                                this), 40);
 
-    stateMachine->addTransition(animationState, forwardState, std::bind(&MineSweeperScene::shouldForward, this), 60);
+    stateMachine->addTransition(animationState, forwardState,
+                                std::bind(&MineSweeperScene::shouldForward, this), 60);
     stateMachine->addTransition(animationState, turnLeftState, []()->bool{return true;}, 30);
     stateMachine->addTransition(animationState, turnRightState, []()->bool{return true;}, 30);
 
-    stateMachine->addTransition(turnLeftState, forwardState, std::bind(&MineSweeperScene::shouldForward, this), 40);
+    stateMachine->addTransition(turnLeftState, forwardState, std::bind(&MineSweeperScene::shouldForward,
+                                this), 40);
     stateMachine->addTransition(turnLeftState, turnLeftState, []()->bool{return true;}, 30);
     stateMachine->addTransition(turnLeftState, turnRightState, []()->bool{return true;}, 30);
 
-    stateMachine->addTransition(turnRightState, forwardState, std::bind(&MineSweeperScene::shouldForward, this), 40);
+    stateMachine->addTransition(turnRightState, forwardState,
+                                std::bind(&MineSweeperScene::shouldForward, this), 40);
     stateMachine->addTransition(turnRightState, turnLeftState, []()->bool{return true;}, 30);
     stateMachine->addTransition(turnRightState, turnRightState, []()->bool{return true;}, 30);
 
-    if(shouldRemovalMine())
+    if (shouldRemovalMine())
         stateMachine->setInitState(animationState);
     else
         stateMachine->setInitState(forwardState);
@@ -58,24 +69,24 @@ void MineSweeperScene::initial()
     stateMachine->setErrorState(errorState);
     stateMachine->start();
 
-    auto text = createText();
+    auto text = createToastText();
     text->setText(L"状态机", false);
-    text->setPosition(80, 30);
     addChild(text);
 }
 
 void MineSweeperScene::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 {
-    if(x == 0 || x == 17)
+    if (x == 0 || x == 17)
         return;
 
     int flag = rand() % 3;
-    if(flag == 0) {
+    if (flag == 0) {
         addMine(x, y, tile);
     }
 
-    if(x == 8 && y == 6 && !mineSweeper) {
-        mineSweeper = createSprite("../resource/images/tank.png", tile->getPosition().x, tile->getPosition().y);
+    if (x == 8 && y == 6 && !mineSweeper) {
+        mineSweeper = createSprite("../resource/images/tank.png", tile->getPosition().x,
+                                   tile->getPosition().y);
         currentTile.x = x;
         currentTile.y = y;
         addChild(mineSweeper);
@@ -84,7 +95,8 @@ void MineSweeperScene::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 
 void MineSweeperScene::addMine(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 {
-    auto sprite = createSprite("../resource/images/cross.png", tile->getPosition().x, tile->getPosition().y); // size.x * 0.5f, 600);
+    auto sprite = createSprite("../resource/images/cross.png", tile->getPosition().x,
+                               tile->getPosition().y); // size.x * 0.5f, 600);
     sprite->setScale(0.5f);
     sprite->setSpriteGroup(SpriteGroupID_PlayerA);
     sprite->setSpriteColor(sf::Color::Red);
@@ -92,7 +104,8 @@ void MineSweeperScene::addMine(uint32_t x, uint32_t y, std::shared_ptr<Tile> til
     addChild(sprite);
 }
 
-std::shared_ptr<MovingSprite> MineSweeperScene::createSprite(const std::string &image, float x, float y)
+std::shared_ptr<MovingSprite> MineSweeperScene::createSprite(const std::string &image, float x,
+        float y)
 {
     auto sprite = std::make_shared<MovingSprite>();
     sprite->setPosition(x, y);
@@ -113,7 +126,7 @@ void MineSweeperScene::onUpdateMyScene(float deltaTime)
 void MineSweeperScene::removeMine(size_t tileID)
 {
     auto find = mines.find(tileID);
-    if(find != mines.end()) {
+    if (find != mines.end()) {
         removeChild(find->second);
         mines.erase(find);
     }
@@ -122,23 +135,6 @@ void MineSweeperScene::removeMine(size_t tileID)
 std::shared_ptr<TileMap> MineSweeperScene::getTileMap() const
 {
     return tileMap;
-}
-
-std::shared_ptr<Text> MineSweeperScene::createText()
-{
-    auto font = std::make_shared<sf::Font>();
-    font->loadFromFile("../resource/FZYTK.TTF");
-
-    auto text = std::make_shared<Text>();
-    text->setFont(font);
-    text->setCharacterSize(18);
-    text->setTextColor(sf::Color::White);
-    text->setSize(120, 36);
-    text->setBackgroundColor(sf::Color::Black);
-
-    text->setOutlineColor(sf::Color::Yellow);
-    text->setOutlineThickness(0.6f);
-    return text;
 }
 
 bool MineSweeperScene::shouldRemovalMine()
@@ -154,8 +150,9 @@ bool MineSweeperScene::shouldForward()
     auto position = mineSweeper->getPosition();
     auto tileIndex = tileMap->getTileIndexByWorldPosition(position.x, position.y);
     int direction = mineSweeper->getRotate();
-    auto targetTileIndex = tileMap->getAdjacentTileByDirection(tileIndex.x, tileIndex.y, (TileDirection)direction);
-    if(targetTileIndex.has_value()) {
+    auto targetTileIndex = tileMap->getAdjacentTileByDirection(tileIndex.x, tileIndex.y,
+                           (TileDirection)direction);
+    if (targetTileIndex.has_value()) {
         tileIndex = targetTileIndex.value();
         return nullptr != tileMap->getTileByIndex(tileIndex.x, tileIndex.y);
     }

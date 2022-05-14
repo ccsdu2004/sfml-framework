@@ -61,8 +61,8 @@ sf::Vector2f FanShape::getPoint(std::size_t index) const
 
     index -= 1;
     const float step = (data->rangeAngle.high - data->rangeAngle.low) * 0.01f;
-    sf::Vector2f point(data->radius + data->radius * std::cos(data->rangeAngle.low / 180.0 * M_PI + step * index / 180.0f * M_PI - M_PI_2),
-                       data->radius + data->radius * std::sin(data->rangeAngle.low / 180.0 * M_PI + step * index / 180.0f * M_PI - M_PI_2));
+    sf::Vector2f point(data->radius + data->radius * std::cos(data->rangeAngle.low / 180.0f * M_PI + step * index / 180.0f * M_PI - M_PI_2),
+                       data->radius + data->radius * std::sin(data->rangeAngle.low / 180.0f * M_PI + step * index / 180.0f * M_PI - M_PI_2));
 
     return point;
 }

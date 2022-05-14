@@ -20,6 +20,9 @@ public:
 
     void setHeight(float height);
     float getHeight()const;
+
+    void setHintSize(const sf::Vector2f& size);
+    sf::Vector2f getHintSize()const;
 public:
     void setParent(std::weak_ptr<Widget> parent);
     std::weak_ptr<Widget> getParent()const;
@@ -40,6 +43,9 @@ public:
 
     void setFocused(bool focus = true);
     bool isFocused()const;
+
+    void setMovable(bool enable);
+    bool isMovable()const;
 public:
     bool isUnderMouse();
     bool containsPoint(const sf::Vector2i &point);
@@ -50,6 +56,7 @@ protected:
     virtual void onVisibleChanged();
     virtual void onGainFocus();
     virtual void onLostFocus();
+    virtual void onMovableChanged();
 
     virtual void onPositionChanged() override;
     virtual void onSizeChanged() override;

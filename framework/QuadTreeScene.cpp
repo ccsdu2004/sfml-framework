@@ -109,8 +109,9 @@ public:
 
         auto quadTree = scene.data.get()->quadTree;
         auto items = quadTree->search(sprite->getBoundingBox());
-        if (items.size() > 1)
+        if (items.size() > 1) {
             scene.onConllision(sprite, items);
+        }
     }
 private:
     QuadTreeScene &scene;

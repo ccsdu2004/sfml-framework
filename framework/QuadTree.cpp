@@ -25,9 +25,7 @@ public:
         for (int i = 0; i < 4; i++)
             if (leaf[i]) {
                 leaf[i]->clear();
-                leaf[i].reset();
             }
-        tree = nullptr;
         objects.clear();
     }
 

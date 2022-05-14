@@ -37,6 +37,10 @@ bool Application::execute(std::shared_ptr<Object> object)
     assert(data->window);
     assert(object);
 
+    auto fn = [&]()->std::shared_ptr<MessageReceiver> {return object;};
+    auto listener = std::make_shared<ProxyMessageListener<Object>>(fn);
+    addMessageListener(listener);
+
     sf::Clock clock;
     while (data->window->isOpen()) {
         sf::Event event;

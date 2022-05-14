@@ -8,9 +8,11 @@ public:
     bool active = true;
     bool visible = true;
     bool focus = false;
+    bool movable = false;
     float padding = 3.0f;
     RangeFloat widthRange = {0.0f, 3000.0f};
     RangeFloat heightRange = {0.0f, 3000.0f};
+    sf::Vector2f hintSize;
 };
 
 Widget::Widget(const sf::Vector2f &size,
@@ -95,6 +97,16 @@ RangeFloat Widget::getHeightRange() const
     return data->heightRange;
 }
 
+void Widget::setHintSize(const sf::Vector2f &size)
+{
+    data->hintSize = size;
+}
+
+sf::Vector2f Widget::getHintSize() const
+{
+    return data->hintSize;
+}
+
 void Widget::setActive(bool active)
 {
     if (isActive() == active)
@@ -151,6 +163,20 @@ bool Widget::isFocused() const
     return data->focus;
 }
 
+void Widget::setMovable(bool enable)
+{
+    if(data->movable != enable)
+    {
+        data->movable = enable;
+        onMovableChanged();
+    }
+}
+
+bool Widget::isMovable()const
+{
+    return data->movable;
+}
+
 bool Widget::isUnderMouse()
 {
     auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
@@ -194,6 +220,11 @@ void Widget::onLostFocus()
 
 }
 
+void Widget::onMovableChanged()
+{
+
+}
+
 void Widget::onPositionChanged()
 {
 
@@ -215,3 +246,4 @@ void Widget::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 
     Entity::onDrawObject(target, states);
 }
+

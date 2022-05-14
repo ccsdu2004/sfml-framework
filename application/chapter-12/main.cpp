@@ -90,7 +90,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x + sprite->getSize().x <
-                    Application::getInstance()->getWindow()->getSize().x - 5)
+                        Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
@@ -130,25 +130,11 @@ void initSpritePool(std::shared_ptr<SpritePool<Bullet>> pool)
     ADD_BULLET(sf::Color::Cyan)
 }
 
-std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
-{
-    auto text = std::make_shared<Text>();
-    text->setFont(font);
-    text->setCharacterSize(18);
-    text->setTextColor(sf::Color::White);
-    text->setSize(120, 36);
-    text->setBackgroundColor(sf::Color::Black);
-
-    text->setOutlineColor(sf::Color::Yellow);
-    text->setOutlineThickness(0.6f);
-    return text;
-}
-
 int main()
 {
     auto size = sf::Vector2f(960, 640);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-12",
-                  sf::Style::Close);
+                                                     sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -182,7 +168,7 @@ int main()
     auto font = std::make_shared<sf::Font>();
     font->loadFromFile("../resource/FZYTK.TTF");
 
-    auto text = createText(font);
+    auto text = scene->createToastText();
     text->setText(L"精灵池", false);
     text->setPosition(80, 30);
     scene->addChild(text);

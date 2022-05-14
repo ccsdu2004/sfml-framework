@@ -5,10 +5,12 @@ SpriteForwardState::SpriteForwardState(std::shared_ptr<TileMap> inputTileMap, Ob
     State(inputSprite),
     tileMap(inputTileMap)
 {
+    setName("forward");
 }
 
 void SpriteForwardState::onEnter()
 {
+    std::cout << "enter forward" << std::endl;
     if(getTarget().expired())
         return;
 

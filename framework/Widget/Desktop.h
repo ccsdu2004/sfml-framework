@@ -3,13 +3,15 @@
 #include <Widget/Widget.h>
 #include <Widget/WidgetStyle.h>
 
-class Desktop : public sf::Drawable, public MessageReceiver
+class Desktop : public sf::Drawable, public MessageReceiver, public Component
 {
 public:
     Desktop();
     ~Desktop();
 public:
-    void addWidget(WidgetPointer widget, int x, int y);
+    void addWidget(WidgetPointer widget, float x, float y);
+    void addWidget(WidgetPointer widget, HMode hmode, VMode vmode, float xoffset = 3.0f,
+                   float yoffset = 3.0f);
     void removeWidget(WidgetPointer widget);
     void clearAllWidgets();
 public:
@@ -25,6 +27,7 @@ public:
     ComponentPoolPointer getStylePointer()const;
 public:
     bool process(std::shared_ptr<Message> message) override;
+    void update(float deltaTime) override;
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
     std::unique_ptr<class DesktopData> data;

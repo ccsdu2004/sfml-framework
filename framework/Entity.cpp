@@ -316,8 +316,10 @@ bool EntityMouseListener::onListener(std::shared_ptr<Message> message)
             entity.onMouseWheelScroll(sfmlMessage->getEvent().mouseWheelScroll.delta);
             return true;
         } else if (sfmlMessage->getEvent().type == sf::Event::MouseMoved) {
-            auto button = sfmlMessage->getEvent().mouseButton;
-            entity.onMouseMoved(button.x, button.y);
+            auto position = sf::Mouse::getPosition(
+                                *Application::getInstance()->getWindow());
+
+            entity.onMouseMoved(position.x, position.y);
             return true;
         }
     }

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <list>
+#include <functional>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -8,7 +9,7 @@ enum MessageType {
     Message_SFML = 0,
     Message_SOUND,
     Message_USER,
-    Message_StateMachine,
+    Message_STATE,
     Message_Max
 };
 
@@ -134,4 +135,26 @@ public:
 private:
     std::list<std::shared_ptr<MessageListener>> listeners;
     bool active = true;
+};
+
+template<class T>
+class ProxyMessageListener : public MessageListener
+{
+public:
+    ProxyMessageListener() = delete;
+    ProxyMessageListener(std::function<std::shared_ptr<MessageReceiver>()> inputFunction):
+        function(inputFunction)
+    {
+        static_assert (std::is_base_of<MessageReceiver, T>() && "T must be derived of MessageReceiver");
+    }
+public:
+    bool onListener(std::shared_ptr<Message> message)
+    {
+        auto receiver = function();
+        if (receiver)
+            receiver->process(message);
+        return false;
+    }
+private:
+    std::function<std::shared_ptr<MessageReceiver>()> function;
 };

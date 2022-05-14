@@ -2,8 +2,55 @@
 #include <functional>
 #include <Def.h>
 #include <NameHolder.h>
+#include <Message.h>
 
-class State : public NameHolder
+enum StateMessage_Event {
+    StateMessage_Event_Switch = 0,
+    StateMessage_Event_Max
+};
+
+class StateMessage : public Message
+{
+public:
+    StateMessage():
+        Message(Message_STATE)
+    {
+    }
+
+    virtual ~StateMessage()
+    {
+    }
+};
+
+class StateSwitchMessage : public StateMessage
+{
+public:
+    explicit StateSwitchMessage(const std::string& inputState):
+        targetState(inputState)
+    {
+    }
+
+    StateSwitchMessage(const std::string& inputState,std::function<bool()> inputChecker):
+        targetState(inputState),
+        checker(inputChecker)
+    {
+    }
+
+    std::string getTargetState()const
+    {
+        return targetState;
+    }
+
+    bool shouldSwitch()
+    {
+        return checker ? checker() : true;
+    }
+private:
+    std::string targetState;
+    std::function<bool()> checker;
+};
+
+class State : public NameHolder, public MessageReceiver
 {
     friend class StateMachine;
 public:
@@ -33,16 +80,20 @@ private:
 
 using StatePointer = std::shared_ptr<State>;
 
-class StateMachine : public std::enable_shared_from_this<StateMachine>
+class StateMachine : public MessageReceiver, public std::enable_shared_from_this<StateMachine>
 {
+    friend class StateMachineListener;
 public:
     StateMachine();
     virtual ~StateMachine();
 public:
     StatePointer getCurrentState()const;
     void setInitState(StatePointer state);
+    void addState(StatePointer state);
+
     void setErrorState(StatePointer state);
-    void addTransition(StatePointer from, StatePointer to, std::function<bool()> fn, int probability = 100);
+    void addTransition(StatePointer from, StatePointer to, std::function<bool()> fn,
+                       int probability = 100);
 public:
     bool start();
     bool isRunning()const;

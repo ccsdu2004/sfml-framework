@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Scene.h>
+#include <Widget/Desktop.h>
 #include <Application.h>
 
 class SceneData
@@ -40,6 +41,24 @@ void Scene::setBackground(const sf::Texture &texture)
     data->backgrpundSprite.setTexture(texture);
 }
 
+std::shared_ptr<Text> Scene::createToastText()
+{
+    auto font = Application::getInstance()->loadFont("../resource/FZYTK.TTF");
+
+    auto text = std::make_shared<Text>();
+    text->setFont(font);
+    text->setCharacterSize(15);
+    text->setTextColor(sf::Color::White);
+    text->setSize(120, 36);
+    text->setBackgroundColor(sf::Color::Black);
+
+    text->setOutlineColor(sf::Color::Yellow);
+    text->setOutlineThickness(0.6f);
+
+    text->setPosition(80.0f, 30.0f);
+    return text;
+}
+
 void Scene::initial()
 {
 
@@ -57,10 +76,30 @@ void Scene::release()
 {
 }
 
+bool Scene::process(std::shared_ptr<Message> message)
+{
+    bool done = false;
+    auto desktop = getComponent<Desktop>();
+    if (desktop)
+        done = desktop->process(message);
+    return done ? true : Object::process(message);
+}
+
 void Scene::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(data->backgrpundSprite, states);
     Object::draw(target, states);
+
+    auto desktop = getComponent<Desktop>();
+    if (desktop)
+        desktop->draw(target, states);
+}
+
+void Scene::onUpdateObject(float deltaTime)
+{
+    auto desktop = getComponent<Desktop>();
+    if (desktop)
+        desktop->update(deltaTime);
 }
 
 class SceneManagerImpl

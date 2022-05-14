@@ -40,4 +40,7 @@ class SpriteController;
 using SpriteControllerPointer = std::shared_ptr<SpriteController>;
 
 class State;
+using StatePointer = std::shared_ptr<State>;
+
 class StateMachine;
+

@@ -150,10 +150,11 @@ void SpriteFanShapeDecorator::update(const Sprite *sprite)
 
     data->fan.setRangeAngle(angle - data->includeAngle * 0.5f,
                             angle + data->includeAngle * 0.5f);
+    data->fan.setPosition(sprite->getPosition() - sf::Vector2f(radius, radius));
 }
 
 void SpriteFanShapeDecorator::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(data->fan, states);
+    target.draw(data->fan, sf::Transform());
 }
 

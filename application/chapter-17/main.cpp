@@ -53,6 +53,14 @@ public:
         (void)sprites;
         auto animation = createAnimation(current->getPosition());
         addChild(animation);
+
+        std::for_each(sprites.begin(), sprites.end(), [&current](SpritePointer sprite) {
+            if(current != sprite)
+                sprite->setSpriteStatus(SpriteStatus_Death);
+        });
+
+        auto message = std::make_shared<SoundMessagePlaySound>("../resource/sound/blast.wav");
+        Application::getInstance()->getComponent<SoundManager>()->process(message);
     }
 private:
     ObjectPointer createAnimation(const sf::Vector2f &pos)
@@ -66,7 +74,6 @@ private:
 
         std::shared_ptr<Animation> animation = std::make_shared<Animation>();
         animation->setTexture("../resource/images/blast2.png", areas);
-        animation->setName("animation");
         animation->setDurationPerFrame(0.12f);
         animation->setSingleShot(true);
         animation->setPosition(pos);
@@ -162,6 +169,9 @@ int main()
     scene->addConllisionGroupID(SpriteGroupID_PlayerB);
 
     auto spriteDeleter = SpriteDeleter::create(SpriteDeleter_Slop);
+    scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
+
+    spriteDeleter = SpriteDeleter::create(SpriteDeleter_Direct);
     scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
 
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
