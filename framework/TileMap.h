@@ -83,6 +83,7 @@ public:
 
     boost::signals2::signal<void(int32_t, int32_t)> tileClicked;
 protected:
+    void update(float deltaTime)override;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     std::unique_ptr<class TileMapImpl> data;

@@ -35,6 +35,11 @@ public:
         sprites.push_back(sprite);
         return sprite;
     }
+
+    void update(float deltaTime)override
+    {
+        (void)deltaTime;
+    }
 private:
     std::list<std::shared_ptr<T>> sprites;
 };

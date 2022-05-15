@@ -196,6 +196,10 @@ void QuadTree::accept(QuadTreeVisitor *visitor)
     }
 }
 
+void QuadTree::update(float deltaTime)
+{
+    (void)deltaTime;
+}
 sf::FloatRect QuadTree::getBox() const
 {
     return data->box;

@@ -17,6 +17,7 @@ public:
     ~QuadTree();
 public:
     void accept(QuadTreeVisitor *visitor);
+    void update(float deltaTime) override;
 
     sf::FloatRect getBox()const;
     std::list<QuadTree *> getChildTree()const;

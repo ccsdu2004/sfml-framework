@@ -6,6 +6,7 @@
 #include <boost/describe/enum.hpp>
 #include <boost/describe/enumerators.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 template <class T>
 inline T distance2(T x1, T y1, T x2, T y2)
@@ -13,10 +14,11 @@ inline T distance2(T x1, T y1, T x2, T y2)
     return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 }
 
-inline float distance(const sf::Vector2f& a, const sf::Vector2f& b)
+inline float distance(const sf::Vector2f &a, const sf::Vector2f &b)
 {
     return std::sqrt(distance2(a.x, a.y, b.x, b.y));
 }
+
 template<class T>
 inline T clamp(T value, T low, T high)
 {
@@ -50,7 +52,8 @@ inline bool isEqual(T a, T b, T t = 1e-6)
 
 template<class T>
 struct Range {
-    Range() {}
+    Range()
+    {}
 
     Range(T inputLow, T inputHigh):
         low(inputLow),
@@ -124,9 +127,9 @@ E fromString(const std::string &string, E defaultE)
 
 inline float clipAngle(float angle)
 {
-    if(angle > 360.0)
+    if (angle > 360.0)
         return angle - 360;
-    else if(angle < 0)
+    else if (angle < 0)
         return 360 + angle;
     return angle;
 }
@@ -135,4 +138,17 @@ inline bool shouldRandDoIt(int p)
 {
     int value = rand() % 100 + 1;
     return p >= value;
+}
+
+inline sf::Color blendColors(const sf::Color &firstColor, const sf::Color &secondColor,
+                             float interpolation = 0.5f)
+{
+    interpolation = clamp(0.0f,1.0f,interpolation);
+    float p = 1.f - interpolation;
+    return sf::Color(
+               static_cast<sf::Uint8>(p* firstColor.r + interpolation * secondColor.r),
+               static_cast<sf::Uint8>(p * firstColor.g + interpolation * secondColor.g),
+               static_cast<sf::Uint8>(p * firstColor.b + interpolation * secondColor.b),
+               static_cast<sf::Uint8>(p * firstColor.a + interpolation * secondColor.a));
+
 }

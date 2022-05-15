@@ -18,14 +18,18 @@ using ComponentPointer = std::shared_ptr<Component>;
 class ComponentVisitor
 {
 public:
-    virtual ~ComponentVisitor() {}
+    virtual ~ComponentVisitor()
+    {
+    }
     virtual void visitComponent(ComponentPointer component) = 0;
 };
 
 class ComponentPool
 {
 public:
-    virtual ~ComponentPool() {}
+    virtual ~ComponentPool()
+    {
+    }
 public:
     template<class T>
     void addComponent(std::shared_ptr<T> pointer)

@@ -3,5 +3,5 @@
 class Updater
 {
 public:
-    virtual void update(float deltaTime) {}
+    virtual void update(float deltaTime) = 0;
 };
