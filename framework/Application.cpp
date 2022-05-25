@@ -4,6 +4,7 @@
 #include <SFML/Window/Event.hpp>
 #include <Application.h>
 #include <Message.h>
+#include <Widget/Desktop.h>
 
 class ApplicationData
 {
@@ -46,7 +47,7 @@ bool Application::execute(std::shared_ptr<Object> object)
         sf::Event event;
         while (data->window->pollEvent(event)) {
             if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
+                    ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
                 data->window->close();
                 break;
             }
@@ -122,4 +123,6 @@ Application::Application():
     data(new ApplicationData())
 {
     srand(time(nullptr));
+
+    addComponent(std::make_shared<Desktop>());
 }

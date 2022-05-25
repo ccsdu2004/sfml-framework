@@ -7,6 +7,8 @@ public:
     DesktopData()
     {
         stylePointer = std::make_shared<ComponentPool>();
+        stylePointer->addComponent(std::make_shared<LabelStyle>());
+        stylePointer->addComponent(std::make_shared<BasicButtonStyle>());
     }
 
     std::list<WidgetPointer> widgets;
@@ -46,7 +48,7 @@ void Desktop::addWidget(WidgetPointer widget, HMode hmode, VMode vmode, float xo
     auto size = widget->getSize();
     sf::FloatRect area(0, 0, windowSize.x, windowSize.y);
     auto position = Widget::adjustPosition(area, size, hmode, vmode, xoffset, yoffset);
-    widget->setPosition(position);
+    widget->setPosition(position + size * 0.5f);
     data->widgets.push_back(widget);
 }
 

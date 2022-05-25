@@ -1,6 +1,5 @@
 #include "MouseArea.h"
 #include "Application.h"
-#include <iostream>
 
 class MouseAreaData
 {
@@ -42,13 +41,14 @@ void MouseArea::onMouseExit()
 
 void MouseArea::onMousePressed(sf::Mouse::Button button)
 {
+    (void)button;
     data->oldMousePosition = sf::Mouse::getPosition(
                                  *Application::getInstance()->getWindow());
 }
 
 void MouseArea::onMouseReleased(sf::Mouse::Button button)
 {
-
+    (void)button;
 }
 
 void MouseArea::onMouseMoved(int x, int y)
@@ -64,6 +64,8 @@ void MouseArea::onMouseMoved(int x, int y)
         widget->move(dx, dy);
         data->oldMousePosition.x = x;
         data->oldMousePosition.y = y;
+
+        moved();
     }
 }
 

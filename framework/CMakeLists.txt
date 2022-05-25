@@ -67,8 +67,17 @@ add_library(framework
     Widget/WidgetStyle.cpp
     Widget/Widget.h
     Widget/Widget.cpp
+    Widget/WidgetLayout.h
+    Widget/WidgetLayout.cpp
     Widget/Desktop.h
     Widget/Desktop.cpp
+    Widget/BoxLayout.h
+    Widget/HBoxLayout.cpp
+    Widget/VBoxLayout.cpp
     Widget/MouseArea.h
     Widget/MouseArea.cpp
+    Widget/Label.h
+    Widget/Label.cpp
+    Widget/BasicButton.h
+    Widget/BasicButton.cpp
     )

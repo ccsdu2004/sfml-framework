@@ -1,6 +1,7 @@
 #pragma once
 #include <Entity.h>
 #include <Util.h>
+#include <Widget/WidgetStyle.h>
 
 class Widget;
 using WidgetPointer = std::shared_ptr<Widget>;
@@ -16,12 +17,14 @@ public:
     bool getPadding()const;
 
     void setWidth(float width);
+    void setFixedWidth(float width);
     float getWidth()const;
 
     void setHeight(float height);
+    void setFixedHeight(float height);
     float getHeight()const;
 
-    void setHintSize(const sf::Vector2f& size);
+    void setHintSize(const sf::Vector2f &size);
     sf::Vector2f getHintSize()const;
 public:
     void setParent(std::weak_ptr<Widget> parent);
@@ -47,10 +50,13 @@ public:
     void setMovable(bool enable);
     bool isMovable()const;
 public:
-    bool isUnderMouse();
+    bool isUnderMouse()const;
     bool containsPoint(const sf::Vector2i &point);
     virtual WidgetPointer getWidgetBelow(const sf::Vector2i &point);
     virtual bool doesHierarchyContain(WidgetPointer other)const;
+
+    void setWidgetStyle(std::shared_ptr<WidgetStyle> style);
+    std::shared_ptr<WidgetStyle> getWidgetStyle()const;
 protected:
     virtual void onActiveChanged();
     virtual void onVisibleChanged();
@@ -58,9 +64,15 @@ protected:
     virtual void onLostFocus();
     virtual void onMovableChanged();
 
+    virtual void onMouseEnter() override;
+    virtual void onMouseExit() override;
+
     virtual void onPositionChanged() override;
     virtual void onSizeChanged() override;
 
+    virtual void onStyleChanged();
+
+    virtual void onUpdateObject(float deltaTime) override;
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
     std::unique_ptr<class WidgetData> data;

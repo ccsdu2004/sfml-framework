@@ -13,6 +13,8 @@ public:
     RangeFloat widthRange = {0.0f, 3000.0f};
     RangeFloat heightRange = {0.0f, 3000.0f};
     sf::Vector2f hintSize;
+
+    std::shared_ptr<WidgetStyle> widgetStyle;
 };
 
 Widget::Widget(const sf::Vector2f &size,
@@ -42,6 +44,12 @@ void Widget::setWidth(float width)
     setSize(width, getHeight());
 }
 
+void Widget::setFixedWidth(float width)
+{
+    setWidth(width);
+    setWidthRange(RangeFloat(width, width));
+}
+
 float Widget::getWidth() const
 {
     return getSize().x;
@@ -50,6 +58,12 @@ float Widget::getWidth() const
 void Widget::setHeight(float height)
 {
     setSize(getWidth(), height);
+}
+
+void Widget::setFixedHeight(float height)
+{
+    setHeight(height);
+    setHeightRange(RangeFloat(height, height));
 }
 
 float Widget::getHeight() const
@@ -165,8 +179,7 @@ bool Widget::isFocused() const
 
 void Widget::setMovable(bool enable)
 {
-    if(data->movable != enable)
-    {
+    if (data->movable != enable) {
         data->movable = enable;
         onMovableChanged();
     }
@@ -177,7 +190,7 @@ bool Widget::isMovable()const
     return data->movable;
 }
 
-bool Widget::isUnderMouse()
+bool Widget::isUnderMouse() const
 {
     auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
     return getBoundingBox().contains(mousePosition.x, mousePosition.y);
@@ -200,9 +213,26 @@ bool Widget::doesHierarchyContain(WidgetPointer other) const
     return this == other.get();
 }
 
+void Widget::setWidgetStyle(std::shared_ptr<WidgetStyle> style)
+{
+    if (data->widgetStyle != style && style) {
+        data->widgetStyle = style;
+    }
+
+    onStyleChanged();
+}
+
+std::shared_ptr<WidgetStyle> Widget::getWidgetStyle() const
+{
+    return data->widgetStyle;
+}
+
 void Widget::onActiveChanged()
 {
-
+    if(isActive())
+        setBackgroundColor(data->widgetStyle->getActiveColor());
+    else
+        setBackgroundColor(data->widgetStyle->getDisableColor());
 }
 
 void Widget::onVisibleChanged()
@@ -225,6 +255,18 @@ void Widget::onMovableChanged()
 
 }
 
+void Widget::onMouseEnter()
+{
+    if(isActive())
+        setBackgroundColor(data->widgetStyle->getHoverColor());
+}
+
+void Widget::onMouseExit()
+{
+    if(isActive())
+        setBackgroundColor(data->widgetStyle->getActiveColor());
+}
+
 void Widget::onPositionChanged()
 {
 
@@ -237,6 +279,22 @@ void Widget::onSizeChanged()
 
     auto heightRange = getHeightRange();
     setHeightRange(heightRange);
+}
+
+void Widget::onStyleChanged()
+{
+    if(data->widgetStyle->outlineStyle) {
+        setOutlineColor(data->widgetStyle->outlineStyle->color);
+        setOutlineThickness(data->widgetStyle->outlineStyle->thickness);
+    }
+
+    auto color = data->widgetStyle->getActiveColor();
+    setBackgroundColor(color);
+}
+
+void Widget::onUpdateObject(float deltaTime)
+{
+    (void)deltaTime;
 }
 
 void Widget::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
