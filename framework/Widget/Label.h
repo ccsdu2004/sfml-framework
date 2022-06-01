@@ -12,7 +12,8 @@ public:
     void setText(const sf::String &text);
     sf::String getText()const;
 protected:
-    void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void onDrawWidget(sf::RenderTarget &target, sf::RenderStates states) const override;
+
     void onPositionChanged() override;
     void onStyleChanged() override;
 private:

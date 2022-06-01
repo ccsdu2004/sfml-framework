@@ -38,7 +38,7 @@ public:
         if (component)
             return;
 
-        if(!pointer)
+        if (!pointer)
             return;
 
         static_assert (std::is_base_of<Component, T>() && "component must be derived of Component");
@@ -51,6 +51,19 @@ public:
         auto  itr = components.begin();
         while (itr != components.end()) {
             auto ptr = std::dynamic_pointer_cast<T>(*itr);
+            if (ptr)
+                return ptr;
+            itr ++;
+        }
+        return nullptr;
+    }
+
+    template<class T>
+    std::shared_ptr<T> getComponentByName(const std::string &name)const
+    {
+        auto  itr = components.begin();
+        while (itr != components.end()) {
+            auto ptr = *itr;
             if (ptr)
                 return ptr;
             itr ++;

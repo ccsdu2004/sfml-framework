@@ -13,10 +13,3 @@ sf::Color WidgetStyle::getHoverColor() const
         return hoverColor.value();
     return normalColor;
 }
-
-sf::Color WidgetStyle::getActiveColor() const
-{
-    if (activeColor.has_value())
-        return activeColor.value();
-    return normalColor;
-}

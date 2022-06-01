@@ -8,7 +8,7 @@
 enum MessageType {
     Message_SFML = 0,
     Message_SOUND,
-    Message_USER,
+    Message_EXIT,
     Message_STATE,
     Message_Max
 };
@@ -16,7 +16,7 @@ enum MessageType {
 class Message
 {
 public:
-    Message(MessageType inputType = Message_USER):
+    Message(MessageType inputType = Message_SFML):
         type(inputType)
     {
     }

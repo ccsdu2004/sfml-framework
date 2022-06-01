@@ -1,3 +1,5 @@
+#include <Application.h>
+#include <Widget/Desktop.h>
 #include <Widget/WidgetLayout.h>
 
 class WidgetLayoutData
@@ -13,6 +15,9 @@ public:
 WidgetLayout::WidgetLayout():
     data(new WidgetLayoutData())
 {
+    auto style = Application::getInstance()->getComponent<Desktop>()->getWidgetStyle("WidgetStyle");
+    assert(style);
+    setWidgetStyle(style);
 }
 
 WidgetLayout::~WidgetLayout()
@@ -21,7 +26,7 @@ WidgetLayout::~WidgetLayout()
 
 void WidgetLayout::setMargin(float margin)
 {
-    if(data->margin != margin) {
+    if (data->margin != margin) {
         data->margin = margin;
         adjust();
     }
@@ -34,7 +39,7 @@ float WidgetLayout::getMargin()const
 
 void WidgetLayout::setSpacing(float spacing)
 {
-    if(data->spacing != spacing) {
+    if (data->spacing != spacing) {
         data->spacing = spacing;
         adjust();
     }
@@ -56,9 +61,10 @@ uint32_t WidgetLayout::getWidgetCount() const
     return data->widgets.size();
 }
 
-std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>> WidgetLayout::getWidgetByIndex(uint32_t index)
+std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>> WidgetLayout::getWidgetByIndex(
+                                                             uint32_t index)
 {
-    if(index >= getWidgetCount())
+    if (index >= getWidgetCount())
         return std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>>(nullptr, nullptr);
     return data->widgets.at(index);
 }
@@ -66,8 +72,8 @@ std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>> WidgetLayout::getWid
 WidgetPointer WidgetLayout::getWidgetBelow(const sf::Vector2i &point)
 {
     auto itr = data->widgets.begin();
-    while(itr != data->widgets.end()) {
-        if((*itr).first->getWidgetBelow(point))
+    while (itr != data->widgets.end()) {
+        if ((*itr).first->getWidgetBelow(point))
             return itr->first;
         itr ++;
     }
@@ -77,8 +83,8 @@ WidgetPointer WidgetLayout::getWidgetBelow(const sf::Vector2i &point)
 bool WidgetLayout::doesHierarchyContain(WidgetPointer other)const
 {
     auto itr = data->widgets.begin();
-    while(itr != data->widgets.end()) {
-        if(itr->first->doesHierarchyContain(other))
+    while (itr != data->widgets.end()) {
+        if (itr->first->doesHierarchyContain(other))
             return true;
         itr ++;
     }
@@ -88,8 +94,8 @@ bool WidgetLayout::doesHierarchyContain(WidgetPointer other)const
 bool WidgetLayout::process(std::shared_ptr<Message> message)
 {
     auto itr = data->widgets.begin();
-    while(itr != data->widgets.end()) {
-        if(itr->first->process(message))
+    while (itr != data->widgets.end()) {
+        if (itr->first->process(message))
             return true;
         itr ++;
     }
@@ -116,6 +122,15 @@ void WidgetLayout::onLostFocus()
 
 }
 
+void WidgetLayout::onMouseExit()
+{
+    auto itr = data->widgets.begin();
+    while (itr != data->widgets.end()) {
+        (*itr).first->onMouseExit();
+        itr ++;
+    }
+}
+
 void WidgetLayout::onMovableChanged()
 {
 
@@ -133,13 +148,13 @@ void WidgetLayout::onSizeChanged()
 
 void WidgetLayout::onUpdateObject(float deltaTime)
 {
-    if(data->dirty) {
+    if (data->dirty) {
         adjust();
         data->dirty = false;
     }
 
     auto itr = data->widgets.begin();
-    while(itr != data->widgets.end()) {
+    while (itr != data->widgets.end()) {
         auto widget = itr->first;
         widget->update(deltaTime);
         itr ++;
@@ -150,7 +165,7 @@ void WidgetLayout::onDrawObject(sf::RenderTarget &target, sf::RenderStates state
 {
     Entity::onDrawObject(target, states);
     auto itr = data->widgets.begin();
-    while(itr != data->widgets.end()) {
+    while (itr != data->widgets.end()) {
         auto widget = itr->first;
         widget->draw(target, states);
         itr ++;

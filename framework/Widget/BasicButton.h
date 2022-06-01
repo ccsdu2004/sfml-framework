@@ -11,7 +11,8 @@ enum BasicButtonState {
 class BasicButton : public Widget
 {
 public:
-    BasicButton(const sf::Vector2f &size = sf::Vector2f(96, 36), const std::optional<CornerStyle> &cornerStyle = std::optional<CornerStyle>());
+    BasicButton(const sf::Vector2f &size = sf::Vector2f(96, 36),
+                const std::optional<CornerStyle> &cornerStyle = std::optional<CornerStyle>());
     ~BasicButton();
 public:
     boost::signals2::signal<void()> pressed;
@@ -24,6 +25,7 @@ protected:
     virtual void onMousePressed(sf::Mouse::Button button) override;
     virtual void onMouseReleased(sf::Mouse::Button button) override;
 
+    virtual void onButtonStateChanged();
     virtual void onStyleChanged() override;
 private:
     std::unique_ptr<class BasicButtonData> data;

@@ -219,7 +219,8 @@ void Widget::setWidgetStyle(std::shared_ptr<WidgetStyle> style)
         data->widgetStyle = style;
     }
 
-    onStyleChanged();
+    if (data->widgetStyle)
+        onStyleChanged();
 }
 
 std::shared_ptr<WidgetStyle> Widget::getWidgetStyle() const
@@ -229,8 +230,8 @@ std::shared_ptr<WidgetStyle> Widget::getWidgetStyle() const
 
 void Widget::onActiveChanged()
 {
-    if(isActive())
-        setBackgroundColor(data->widgetStyle->getActiveColor());
+    if (isActive())
+        setBackgroundColor(data->widgetStyle->normalColor);
     else
         setBackgroundColor(data->widgetStyle->getDisableColor());
 }
@@ -257,14 +258,14 @@ void Widget::onMovableChanged()
 
 void Widget::onMouseEnter()
 {
-    if(isActive())
+    if (isActive() && isVisible())
         setBackgroundColor(data->widgetStyle->getHoverColor());
 }
 
 void Widget::onMouseExit()
 {
-    if(isActive())
-        setBackgroundColor(data->widgetStyle->getActiveColor());
+    if (isActive() && isVisible())
+        setBackgroundColor(data->widgetStyle->normalColor);
 }
 
 void Widget::onPositionChanged()
@@ -283,12 +284,12 @@ void Widget::onSizeChanged()
 
 void Widget::onStyleChanged()
 {
-    if(data->widgetStyle->outlineStyle) {
+    if (data->widgetStyle->outlineStyle) {
         setOutlineColor(data->widgetStyle->outlineStyle->color);
         setOutlineThickness(data->widgetStyle->outlineStyle->thickness);
     }
 
-    auto color = data->widgetStyle->getActiveColor();
+    auto color = data->widgetStyle->normalColor;
     setBackgroundColor(color);
 }
 
@@ -297,11 +298,16 @@ void Widget::onUpdateObject(float deltaTime)
     (void)deltaTime;
 }
 
+void Widget::onDrawWidget(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    Entity::onDrawObject(target, states);
+}
+
 void Widget::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
     if (!isVisible())
         return;
 
-    Entity::onDrawObject(target, states);
+    onDrawWidget(target, states);
 }
 

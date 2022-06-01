@@ -15,6 +15,8 @@ public:
     std::map<std::string, std::shared_ptr<sf::Font>> fonts;
     std::map<std::string, std::shared_ptr<sf::Image>> images;
     std::map<std::string, std::shared_ptr<sf::Texture>> textures;
+
+    std::shared_ptr<Desktop> desktop;
 };
 
 std::shared_ptr<Application> Application::instance(new Application());
@@ -47,7 +49,7 @@ bool Application::execute(std::shared_ptr<Object> object)
         sf::Event event;
         while (data->window->pollEvent(event)) {
             if ((event.type == sf::Event::Closed) ||
-                    ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
+                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
                 data->window->close();
                 break;
             }
@@ -64,6 +66,7 @@ bool Application::execute(std::shared_ptr<Object> object)
         updateComponent(deltaTime);
 
         data->window->draw(*object);
+        data->window->draw(*data->desktop);
 
         data->window->display();
 
@@ -81,6 +84,11 @@ void Application::setWindow(std::shared_ptr<sf::RenderWindow> inputWindow)
 std::shared_ptr<sf::RenderWindow> Application::getWindow() const
 {
     return data->window;
+}
+
+void Application::exit()
+{
+    data->window->close();
 }
 
 std::shared_ptr<sf::Font> Application::loadFont(const std::string file)
@@ -124,5 +132,6 @@ Application::Application():
 {
     srand(time(nullptr));
 
-    addComponent(std::make_shared<Desktop>());
+    data->desktop = std::make_shared<Desktop>();
+    addComponent(data->desktop);
 }

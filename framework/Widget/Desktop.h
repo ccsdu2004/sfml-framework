@@ -24,7 +24,7 @@ public:
     WidgetPointer widgetBelowCursor()const;
     bool isTopWidget(WidgetPointer widget)const;
 
-    ComponentPoolPointer getStylePointer()const;
+    std::shared_ptr<WidgetStyle> getWidgetStyle(const std::string &name);
 public:
     bool process(std::shared_ptr<Message> message) override;
     void update(float deltaTime) override;

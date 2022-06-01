@@ -19,6 +19,8 @@ public:
 
     void setWindow(std::shared_ptr<sf::RenderWindow> window);
     std::shared_ptr<sf::RenderWindow> getWindow()const;
+
+    void exit();
 public:
     std::shared_ptr<sf::Font> loadFont(const std::string file);
     std::shared_ptr<sf::Image> loadImage(const std::string file);

@@ -1,14 +1,29 @@
+#include <map>
 #include <Application.h>
 #include <Widget/Desktop.h>
+#include <Widget/WidgetStyle.h>
 
 class DesktopData
 {
 public:
     DesktopData()
     {
-        stylePointer = std::make_shared<ComponentPool>();
-        stylePointer->addComponent(std::make_shared<LabelStyle>());
-        stylePointer->addComponent(std::make_shared<BasicButtonStyle>());
+        {
+            auto style = std::make_shared<WidgetStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
+        {
+            auto style = std::make_shared<LabelStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
+        {
+            auto style = std::make_shared<BasicButtonStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
+        {
+            auto style = std::make_shared<ButtonStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
     }
 
     std::list<WidgetPointer> widgets;
@@ -16,7 +31,7 @@ public:
     WidgetPointer popupWidget;
     WidgetPointer belowCursorWidget;
 
-    ComponentPoolPointer stylePointer;
+    std::map<std::string, WidgetStylePointer> styles;
 };
 
 Desktop::Desktop():
@@ -115,9 +130,15 @@ bool Desktop::isTopWidget(WidgetPointer widget) const
            : false;
 }
 
-ComponentPoolPointer Desktop::getStylePointer() const
+std::shared_ptr<WidgetStyle> Desktop::getWidgetStyle(const std::string &name)
 {
-    return data->stylePointer;
+    auto itr = data->styles.begin();
+    while (itr != data->styles.end()) {
+        if (itr->first == name)
+            return itr->second;
+        itr ++;
+    }
+    return nullptr;
 }
 
 bool Desktop::process(std::shared_ptr<Message> message)

@@ -36,6 +36,7 @@ protected:
     void onVisibleChanged()override;
     void onGainFocus()override;
     void onLostFocus()override;
+    void onMouseExit() override;
     void onMovableChanged()override;
 
     void onPositionChanged() override;

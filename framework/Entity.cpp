@@ -32,6 +32,7 @@ public:
     std::shared_ptr<sf::RectangleShape> rectangle;
     uint32_t zValue = 0;
     sf::Transformable transform;
+    sf::Transform parentTransform;
     Bitmask bitmask;
 };
 
@@ -165,7 +166,7 @@ sf::Vector2f Entity::getSize() const
 
 sf::FloatRect Entity::getBoundingBox() const
 {
-    return data->transform.getTransform().transformRect(sf::FloatRect(sf::Vector2f(), getSize()));
+    return data->parentTransform.transformRect(sf::FloatRect(sf::Vector2f(), getSize()));
 }
 
 sf::Transform Entity::getTransform() const
@@ -229,9 +230,11 @@ void Entity::onUpdateObject(float deltaTime)
 
 void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    if (data->rectangle)
+    data->parentTransform = states.transform;
+
+    if (data->rectangle) {
         target.draw(*data->rectangle, states);
-    else
+    } else
         target.draw(*data->roundedRectangle, states);
 }
 

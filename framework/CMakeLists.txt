@@ -80,4 +80,6 @@ add_library(framework
     Widget/Label.cpp
     Widget/BasicButton.h
     Widget/BasicButton.cpp
+    Widget/Button.h
+    Widget/Button.cpp
     )

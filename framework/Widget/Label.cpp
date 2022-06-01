@@ -13,19 +13,15 @@ public:
     }
 
     std::shared_ptr<sf::Text> text;
-    std::shared_ptr<LabelStyle> style;
 };
 
 Label::Label(const sf::Vector2f &size, const std::optional<CornerStyle> &cornerStyle):
     Widget(size, cornerStyle),
     data(new LabelData())
 {
-    auto stylePool = Application::getInstance()->getComponent<Desktop>()->getStylePointer();
-    assert(stylePool);
-    data->style = stylePool->getComponent<LabelStyle>();
-    assert(data->style);
-
-    setWidgetStyle(data->style);
+    auto style = Application::getInstance()->getComponent<Desktop>()->getWidgetStyle("LabelStyle");
+    assert(style);
+    setWidgetStyle(style);
 }
 
 Label::~Label()
@@ -42,13 +38,20 @@ sf::String Label::getText() const
     return data->text->getString();
 }
 
+void Label::onDrawWidget(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    Widget::onDrawWidget(target, states);
+    target.draw(*data->text.get(), states);
+}
+
 void Label::onPositionChanged()
 {
+    auto style = std::dynamic_pointer_cast<LabelStyle>(getWidgetStyle());
     auto textBox = data->text->getGlobalBounds();
     auto position = Widget::adjustPosition(getBoundingBox(), sf::Vector2f(textBox.width,
-                                           textBox.height),
-                                           data->style->hMode,
-                                           data->style->vMode, getPadding(), getPadding());
+                                                                          textBox.height),
+                                           style->hMode,
+                                           style->vMode, getPadding(), getPadding());
 
     auto box = getBoundingBox();
     data->text->setPosition(position.x - box.left,
@@ -58,22 +61,15 @@ void Label::onPositionChanged()
 void Label::onStyleChanged()
 {
     Widget::onStyleChanged();
-    auto style = getWidgetStyle();
-    if (style && std::dynamic_pointer_cast<LabelStyle>(style)) {
-        data->style = std::dynamic_pointer_cast<LabelStyle>(style);
-    }
 
-    data->text->setFont(*Application::getInstance()->loadFont(data->style->font));
-    data->text->setCharacterSize(data->style->size);
-    data->text->setStyle(data->style->style);
-    data->text->setFillColor(data->style->textColor);
+    auto style = std::dynamic_pointer_cast<LabelStyle>(getWidgetStyle());
+
+    data->text->setFont(*Application::getInstance()->loadFont(style->font));
+    data->text->setCharacterSize(style->size);
+    data->text->setStyle(style->style);
+    data->text->setFillColor(style->textColor);
     data->text->setPosition(getSize() * 0.5f);
 
     onPositionChanged();
 }
 
-void Label::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    Widget::onDrawObject(target, states);
-    target.draw(*data->text.get(), states);
-}
