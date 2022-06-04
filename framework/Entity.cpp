@@ -166,7 +166,8 @@ sf::Vector2f Entity::getSize() const
 
 sf::FloatRect Entity::getBoundingBox() const
 {
-    return data->parentTransform.transformRect(sf::FloatRect(sf::Vector2f(), getSize()));
+    auto box = data->parentTransform.transformRect(sf::FloatRect(sf::Vector2f(), getSize()));
+    return getTransform().transformRect(box);
 }
 
 sf::Transform Entity::getTransform() const

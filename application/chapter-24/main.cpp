@@ -61,21 +61,21 @@ int main()
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"载入");
+        button->setText(L"??");
         boxLayout->addWidget(button, HMode_Center);
     }
     {
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"新游戏");
+        button->setText(L"???");
         boxLayout->addWidget(button, HMode_Center);
     }
     {
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"退出");
+        button->setText(L"??");
         button->released.connect(std::bind(&Application::exit, Application::getInstance()));
         boxLayout->addWidget(button, HMode_Center);
     }

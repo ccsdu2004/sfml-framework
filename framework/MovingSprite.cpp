@@ -57,5 +57,12 @@ void MovingSprite::onUpdateObject(float deltaTime)
     data->velocity += data->accelerate * deltaTime;
     float deltaRotate = data->rotateVelocity * deltaTime;
     setRotate(getRotate() + deltaRotate);
+
+    onUpdateMovingSprite(deltaTime);
+}
+
+void MovingSprite::onUpdateMovingSprite(float deltaTime)
+{
+    (void)deltaTime;
 }
 

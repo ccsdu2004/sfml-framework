@@ -22,6 +22,8 @@ public:
 
     void setDurationPerFrame(float duration = 200.0f);
     void setTexture(const std::string &image, const std::vector<sf::IntRect> &list);
+
+    bool needRemoved()const override;
 protected:
     void onUpdateObject(float deltaTime) override;
 private:

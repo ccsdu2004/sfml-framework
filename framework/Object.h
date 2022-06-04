@@ -24,6 +24,8 @@ public:
     virtual bool process(std::shared_ptr<Message> message)override;
     void update(float deltaTime);
 
+    virtual bool needRemoved()const;
+
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const;

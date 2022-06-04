@@ -11,6 +11,7 @@ public:
     bool singleShot = true;
     float duration = 120.0f;
     float currentTime = 0.0f;
+    bool needRemoved = false;
 
     std::shared_ptr<Sprite> createSprite(const sf::Texture& texture, const sf::IntRect& area)
     {
@@ -82,6 +83,11 @@ void Animation::setTexture(const std::string &image, const std::vector<sf::IntRe
     }
 }
 
+bool Animation::needRemoved() const
+{
+    return data->needRemoved;
+}
+
 void Animation::onUpdateObject(float deltaTime)
 {
     if(isPaused())
@@ -89,14 +95,19 @@ void Animation::onUpdateObject(float deltaTime)
 
     data->currentTime += deltaTime;
 
+    int current = getCurrentItem();
+    if(current < 0)
+        setCurrentItem(0);
+
     if(data->currentTime > data->duration) {
         data->currentTime = 0.0f;
         next();
     }
 
-    if(getCurrentItem() > getItemCount() && !data->singleShot)
+    if(current > getItemCount() && !data->singleShot)
         setCurrentItem(0);
-    else if(getCurrentItem() > getItemCount()) {
+    else if(current > getItemCount()) {
         finished();
+        data->needRemoved = true;
     }
 }

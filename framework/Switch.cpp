@@ -7,7 +7,7 @@ class SwitchData
 {
 public:
     std::vector<EntityPointer> list;
-    uint32_t index = 0;
+    int32_t index = -1;
 };
 
 Switch::Switch():
@@ -32,7 +32,7 @@ void Switch::prev()
 void Switch::clear()
 {
     data->list.clear();
-    data->index = ~0;
+    data->index = -1;
     onClear();
 }
 
@@ -43,7 +43,7 @@ void Switch::addItem(const EntityPointer entity)
     }
 }
 
-uint32_t Switch::getItemCount()const
+int32_t Switch::getItemCount()const
 {
     return data->list.size();
 }
@@ -53,7 +53,7 @@ void Switch::setCurrentItem(uint32_t index)
     data->index = index;
 }
 
-uint32_t Switch::getCurrentItem() const
+int32_t Switch::getCurrentItem() const
 {
     return data->index;
 }
@@ -64,7 +64,7 @@ void Switch::onClear()
 
 void Switch::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    if (data->list.size() <= data->index)
+    if (data->index < 0 || (uint32_t)data->index >= data->list.size())
         return;
 
     auto current = data->list[data->index];

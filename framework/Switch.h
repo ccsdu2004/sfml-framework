@@ -15,9 +15,9 @@ public:
     void clear();
     void addItem(EntityPointer entity);
 
-    uint32_t getItemCount()const;
+    int32_t getItemCount()const;
     void setCurrentItem(uint32_t index);
-    uint32_t getCurrentItem()const;
+    int32_t getCurrentItem()const;
 protected:
     virtual void onClear();
     void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;

@@ -199,6 +199,11 @@ sf::Vector2i TileMap::getTileMapSize()const
     return data->mapSize;
 }
 
+std::shared_ptr<Tile> TileMap::getTileByIndex(const sf::Vector2i &index)
+{
+    return getTileByIndex(index.x, index.y);
+}
+
 std::shared_ptr<Tile> TileMap::getTileByIndex(int x, int y)
 {
     auto id = getTileIDByPosition(x, y);

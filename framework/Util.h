@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <utility>
+#include <array>
 #include <boost/mp11.hpp>
 #include <boost/describe/enum.hpp>
 #include <boost/describe/enumerators.hpp>
@@ -125,6 +126,24 @@ E fromString(const std::string &string, E defaultE)
     return value;
 }
 
+template<class E> struct enum_descriptor {
+    E value;
+    char const * name;
+};
+
+template<class E, template<class... T> class L, class... T>
+constexpr std::array<enum_descriptor<E>, sizeof...(T)>
+describe_enumerators_as_array_impl( L<T...> )
+{
+    return { { { T::value, T::name }... } };
+}
+
+template<class E> constexpr auto describe_enumerators_as_array()
+{
+    return describe_enumerators_as_array_impl<E>( boost::describe::describe_enumerators<E>() );
+}
+
+
 inline float clipAngle(float angle)
 {
     if (angle > 360.0)
@@ -143,10 +162,10 @@ inline bool shouldRandDoIt(int p)
 inline sf::Color blendColors(const sf::Color &firstColor, const sf::Color &secondColor,
                              float interpolation = 0.5f)
 {
-    interpolation = clamp(0.0f,1.0f,interpolation);
+    interpolation = clamp(0.0f, 1.0f, interpolation);
     float p = 1.f - interpolation;
     return sf::Color(
-               static_cast<sf::Uint8>(p* firstColor.r + interpolation * secondColor.r),
+               static_cast<sf::Uint8>(p * firstColor.r + interpolation * secondColor.r),
                static_cast<sf::Uint8>(p * firstColor.g + interpolation * secondColor.g),
                static_cast<sf::Uint8>(p * firstColor.b + interpolation * secondColor.b),
                static_cast<sf::Uint8>(p * firstColor.a + interpolation * secondColor.a));

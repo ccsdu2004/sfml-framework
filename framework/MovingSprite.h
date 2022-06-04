@@ -17,6 +17,7 @@ public:
     float getRotateVelocity()const;
 private:
     void onUpdateObject(float deltaTime) override;
+    virtual void onUpdateMovingSprite(float deltaTime);
 private:
     std::unique_ptr<class MovingSpriteData> data;
 };

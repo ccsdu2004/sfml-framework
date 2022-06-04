@@ -10,6 +10,12 @@ class ObjectData
 public:
     std::list<std::shared_ptr<Object>> children;
     std::weak_ptr<Object> parent;
+
+    void removeIfNecessary()
+    {
+        auto fn = [](ObjectPointer object)->bool{return object->needRemoved();};
+        //children.remove_if(fn);
+    }
 };
 
 Object::Object():
@@ -67,6 +73,12 @@ void Object::update(float deltaTime)
 {
     onUpdateChildren(deltaTime);
     onUpdateObject(deltaTime);
+    data->removeIfNecessary();
+}
+
+bool Object::needRemoved() const
+{
+    return false;
 }
 
 void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const

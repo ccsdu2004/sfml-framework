@@ -1,5 +1,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Text.h>
+#include <iostream>
 
 class TextData
 {
@@ -87,7 +88,8 @@ void Text::setFont(std::shared_ptr<sf::Font> font)
 void Text::onPositionChanged()
 {
     auto box = data->text->getLocalBounds();
-    auto newPosition = adjustPosition(getBoundingBox(), sf::Vector2f(box.width, box.height),
+    auto objectBox = getBoundingBox();
+    auto newPosition = adjustPosition(objectBox, sf::Vector2f(box.width, box.height),
                                       data->hMode, data->vMode);
     data->text->setPosition(newPosition);
 }

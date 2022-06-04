@@ -40,7 +40,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::D) {
                 if (sprite->getPosition().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::W) {
@@ -49,7 +49,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::X) {
                 if (sprite->getPosition().y <
-                        Application::getInstance()->getWindow()->getSize().y - 5)
+                    Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
             }
@@ -64,8 +64,8 @@ private:
 int main()
 {
     auto size = sf::Vector2f(800, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-10",
-                                                     sf::Style::Close);
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-11",
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();

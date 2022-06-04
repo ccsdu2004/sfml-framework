@@ -2,6 +2,7 @@
 #include <optional>
 #include <memory>
 #include <boost/signals2.hpp>
+#include <boost/describe.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <Object.h>
@@ -57,6 +58,17 @@ enum TileDirection {
     TileDirection_Max,
 };
 
+BOOST_DESCRIBE_ENUM(TileDirection,
+                    TileDirection_0,
+                    TileDirection_60,
+                    TileDirection_90,
+                    TileDirection_120,
+                    TileDirection_180,
+                    TileDirection_240,
+                    TileDirection_270,
+                    TileDirection_300,
+                    TileDirection_Max)
+
 class TileMap : public Object, public Component
 {
 public:
@@ -71,6 +83,8 @@ public:
 
     float getTileSize()const;
     sf::Vector2i getTileMapSize()const;
+
+    std::shared_ptr<Tile> getTileByIndex(const sf::Vector2i& index);
     std::shared_ptr<Tile> getTileByIndex(int32_t x, int32_t y);
 
     void setTextVisible(bool visible);

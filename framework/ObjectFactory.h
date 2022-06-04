@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <memory>
 #include <functional>
 
 #define STR(str) #str
@@ -9,11 +10,11 @@ template<class Product, class ID>
 class ObjectFactory
 {
 public:
-    static Product *create(const ID &id)
+    static std::shared_ptr<Product> create(const ID &id)
     {
         auto itr = creator->find(id);
         if (itr != creator->end())
-            return itr->second();
+            return std::shared_ptr<Product>(itr->second());
         return nullptr;
     }
 

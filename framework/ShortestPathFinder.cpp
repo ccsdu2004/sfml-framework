@@ -54,7 +54,7 @@ uint32_t ShortestPathFinder::search(uint64_t from, uint64_t to, std::vector<uint
 
     data->buildPath(from, to, predecessor, list);
 
-    return list.empty() ? ~0 : distances[to];
+    return list.empty() ? 0 : distances[to];
 }
 
 void ShortestPathFinderData::buildPath(uint32_t from, uint32_t to, std::vector<vertex_descriptor> &predecessor, std::vector<uint32_t> &output)
