@@ -28,7 +28,7 @@ int main()
     app->setBackgroundColor(sf::Color::Blue);
     app->setWindow(window);
 
-    auto scene = std::make_shared<MineSweeperScene>();
+    auto scene = std::make_shared<WayFindingScene>();
     scene->initial();
 
     app->execute(scene);

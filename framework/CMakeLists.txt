@@ -30,8 +30,10 @@ add_library(framework
     Text.h
     TileMap.cpp
     TileMap.h
-    TileMapImpl.cpp
+    HexTileMap.cpp
     TileMapImpl.h
+    Rect4TileMap.cpp
+    MalRect4TileMap.cpp
     Scene.cpp
     Scene.h
     QuadTreeScene.cpp

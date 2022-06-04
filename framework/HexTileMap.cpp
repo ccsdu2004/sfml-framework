@@ -4,7 +4,7 @@
 
 #define R3 (1.73205)
 
-std::vector<sf::Vector2i> HexTileMap::getAdjacentTileByPosition(int x, int y)
+std::vector<sf::Vector2i> HexTileMap::getAdjacentTileByTileIndex(int x, int y)
 {
     std::vector<sf::Vector2i> output;
 
@@ -108,44 +108,7 @@ sf::Vector2i HexTileMap::getTileIndexByWorldPosition(int x, int y)
     return sf::Vector2i(i, j);
 }
 
-std::vector<sf::Vector2i> Rect4TileMap::getAdjacentTileByPosition(int x, int y)
+std::shared_ptr<Tile> HexTileMap::createTile(int32_t i, int32_t j, float tilesize)
 {
-    std::vector<sf::Vector2i> output;
-    output.push_back(sf::Vector2i(x, y - 1));
-    output.push_back(sf::Vector2i(x, y + 1));
-    output.push_back(sf::Vector2i(x - 1, y));
-    output.push_back(sf::Vector2i(x + 1, y));
-    return output;
+    return std::make_shared<Tile>(i, j, tilesize, TileMapType_Hex);
 }
-
-std::optional<sf::Vector2i> Rect4TileMap::getAdjacentTileByDirection(int32_t x, int32_t y, TileDirection direction)
-{
-    switch (direction) {
-        case 0:
-            return sf::Vector2i(x, y - 1);
-        case 90:
-            return sf::Vector2i(x + 1, y);
-        case 180:
-            return sf::Vector2i(x, y + 1);
-        case 270:
-            return sf::Vector2i(x - 1, y);
-        default:
-            break;
-    }
-    return std::optional<sf::Vector2i>();
-}
-
-sf::Vector2f Rect4TileMap::getWorldPositionByTileIndex(int x, int y)
-{
-    auto tile = getTileByIndex(x, y);
-    if (!tile)
-        return sf::Vector2f(-1, -1);
-
-    return tile->getPosition();
-}
-
-sf::Vector2i Rect4TileMap::getTileIndexByWorldPosition(int x, int y)
-{
-    return sf::Vector2i(x / getTileSize(), y / getTileSize());
-}
-

@@ -22,12 +22,18 @@ struct hash<sf::Vector2i> {
 };
 }
 
+enum TileMapType {
+    TileMapType_Hex = 0,
+    TileMapType_Grid,
+    TileMapType_MalGrid,
+};
+
 class Tile : public sf::ConvexShape
 {
 public:
     Tile() = delete;
-    Tile(int32_t x, int32_t y, float size = 48.0f);
-    ~Tile();
+    Tile(int32_t x, int32_t y, float size, TileMapType type);
+    virtual ~Tile();
 public:
     void setVisible(bool visible);
     bool isVisible()const;
@@ -39,11 +45,6 @@ class TileVisitor
 {
 public:
     virtual void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) = 0;
-};
-
-enum TileMapType {
-    TileMapType_Hex = 0,
-    TileMapType_Grid
 };
 
 enum TileDirection {
@@ -90,13 +91,14 @@ public:
     void setTextVisible(bool visible);
     bool isTextVisible()const;
 public:
-    virtual std::vector<sf::Vector2i> getAdjacentTileByPosition(int32_t x, int32_t y) = 0;
+    virtual std::vector<sf::Vector2i> getAdjacentTileByTileIndex(int32_t x, int32_t y) = 0;
     virtual std::optional<sf::Vector2i> getAdjacentTileByDirection(int32_t x, int32_t y, TileDirection direction) = 0;
     virtual sf::Vector2f getWorldPositionByTileIndex(int32_t x, int32_t y) = 0;
     virtual sf::Vector2i getTileIndexByWorldPosition(int32_t x, int32_t y) = 0;
 
     boost::signals2::signal<void(int32_t, int32_t)> tileClicked;
 protected:
+    virtual std::shared_ptr<Tile> createTile(int32_t i, int32_t j, float tilesize) = 0;
     void update(float deltaTime)override;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:

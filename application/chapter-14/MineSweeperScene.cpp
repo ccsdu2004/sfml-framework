@@ -74,10 +74,6 @@ void MineSweeperScene::initial()
     addChild(text);
 }
 
-bool MineSweeperScene::isMessageReceived() const
-{
-
-}
 void MineSweeperScene::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 {
     if (x == 0 || x == 17)

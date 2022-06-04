@@ -30,7 +30,7 @@ public:
     {
     }
 
-    StateSwitchMessage(const std::string& inputState,std::function<bool()> inputChecker):
+    StateSwitchMessage(const std::string& inputState, std::function<bool()> inputChecker):
         targetState(inputState),
         checker(inputChecker)
     {

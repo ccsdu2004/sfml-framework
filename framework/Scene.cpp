@@ -1,4 +1,3 @@
-#include <iostream>
 #include <map>
 #include <optional>
 #include <unordered_map>
@@ -139,6 +138,11 @@ void SceneManager::addScene(ScenePointer scene)
     data->scenes.insert(std::make_pair(scene->getName(), scene));
 }
 
+ScenePointer SceneManager::getCurrentScene() const
+{
+    return data->currentScene;
+}
+
 void SceneManager::switchTo(const std::string &scene)
 {
     auto find = data->scenes.find(scene);
@@ -157,9 +161,12 @@ void SceneManager::switchTo(const std::string &scene)
 
 bool SceneManager::process(std::shared_ptr<Message> message)
 {
+    bool done = false;
     if (data->currentScene)
-        return data->currentScene->process(message);
-    return Object::process(message);
+        done = data->currentScene->process(message);
+    if(!done)
+        return Object::process(message);
+    return done;
 }
 
 void SceneManager::onUpdateObject(float deltaTime)

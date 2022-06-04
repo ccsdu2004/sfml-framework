@@ -2,12 +2,12 @@
 #include <Animation.h>
 #include <StateMachine.h>
 
-class MineSweeperScene;
+class WayFindingScene;
 
 class SpriteAnimationState : public State
 {
 public:
-    SpriteAnimationState(std::shared_ptr<MineSweeperScene> inputScene, ObjectPointer inputSprite):
+    SpriteAnimationState(std::shared_ptr<WayFindingScene> inputScene, ObjectPointer inputSprite):
         State(inputSprite),
         scene(inputScene)
     {
@@ -28,6 +28,6 @@ private:
     AnimationPointer createAnimation();
 private:
     std::shared_ptr<Animation> animation;
-    std::weak_ptr<MineSweeperScene> scene;
+    std::weak_ptr<WayFindingScene> scene;
     uint32_t tileID;
 };

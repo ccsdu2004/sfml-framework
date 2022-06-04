@@ -62,7 +62,7 @@ void WayFindingTileVisitor::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> 
     if(start != sf::Vector2i(x, y))
         tiles.push_back(sf::Vector2i(x, y));
 
-    auto adjList = tileMap.lock()->getAdjacentTileByPosition(x, y);
+    auto adjList = tileMap.lock()->getAdjacentTileByTileIndex(x, y);
     auto itr = adjList.begin();
     while (itr != adjList.end()) {
         auto adjTile = tileMap.lock()->getTileByIndex(itr->x, itr->y);

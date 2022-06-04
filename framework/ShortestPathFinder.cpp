@@ -1,6 +1,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <ShortestPathFinder.h>
+#include <iostream>
 
 typedef boost::adjacency_list < boost::listS, boost::vecS, boost::directedS, boost::no_property, boost::property < boost::edge_weight_t, unsigned long > > graph_t;
 typedef boost::graph_traits < graph_t >::vertex_descriptor vertex_descriptor;

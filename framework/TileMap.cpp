@@ -21,7 +21,7 @@ public:
     float tileSize = 48.0f;
     Bitmask bitmask;
 
-    void updatePosition(int x, int y)
+    void updateHexPosition(int x, int y)
     {
         if (x % 2 == 0) {
             tile.setPosition(x * (1.5 * tileSize), 2 * 0.86602540f * tileSize * y);
@@ -29,28 +29,57 @@ public:
             tile.setPosition(x * (1.5 * tileSize), 2.0 * 0.86602540f * tileSize * y + 0.86602540f * tileSize);
         }
     }
+
+    void updateGridPosition(int x, int y)
+    {
+        tile.setPosition(x * tileSize * 2, y * tileSize * 2);
+    }
+
+    void updateGridMalPosition(int x, int y)
+    {
+        if(x % 2 == 0)
+            tile.setPosition(x * tileSize * 2, y * tileSize * 2);
+        else
+            tile.setPosition(x * tileSize * 2, y * tileSize * 2 + tileSize);
+    }
 private:
     Tile &tile;
 };
 
-Tile::Tile(int32_t x, int32_t y, float size):
+Tile::Tile(int32_t x, int32_t y, float size, TileMapType type):
     data(new TileData(*this, size))
 {
-    const float s = 1.f * (size);
-    const float h = 0.5f * (size);        //sin(30)
-    const float r = 0.86602540f * (size); //cos(30)
+    if(type == TileMapType_Hex) {
+        const float s = 1.f * (size);
+        const float h = 0.5f * (size);        //sin(30)
+        const float r = 0.86602540f * (size); //cos(30)
 
-    setPointCount(6);
-    setPoint(0, sf::Vector2f(0.f, -s));
-    setPoint(1, sf::Vector2f(-r, -h));
-    setPoint(2, sf::Vector2f(-r, +h));
-    setPoint(3, sf::Vector2f(0.f, +s));
-    setPoint(4, sf::Vector2f(+r, +h));
-    setPoint(5, sf::Vector2f(+r, -h));
-    rotate(30.0f);
+        setPointCount(6);
+        setPoint(0, sf::Vector2f(0.f, -s));
+        setPoint(1, sf::Vector2f(-r, -h));
+        setPoint(2, sf::Vector2f(-r, +h));
+        setPoint(3, sf::Vector2f(0.f, +s));
+        setPoint(4, sf::Vector2f(+r, +h));
+        setPoint(5, sf::Vector2f(+r, -h));
+        rotate(30.0f);
+        data->updateHexPosition(x, y);
+    } else if(type == TileMapType_Grid) {
+        setPointCount(4);
+        setPoint(0, sf::Vector2f(-size, -size));
+        setPoint(1, sf::Vector2f(size, -size));
+        setPoint(2, sf::Vector2f(size, size));
+        setPoint(3, sf::Vector2f(-size, size));
+        data->updateGridPosition(x, y);
+    } else if(type == TileMapType_MalGrid) {
+        setPointCount(4);
+        setPoint(0, sf::Vector2f(-size, -size));
+        setPoint(1, sf::Vector2f(size, -size));
+        setPoint(2, sf::Vector2f(size, size));
+        setPoint(3, sf::Vector2f(-size, size));
+        data->updateGridMalPosition(x, y);
+    }
 
     setVisible(true);
-    data->updatePosition(x, y);
 }
 
 #define TILE_VISIBLE 0
@@ -122,6 +151,10 @@ std::shared_ptr<TileMap> TileMap::createTileMap(TileMapType type)
 {
     if (type == TileMapType_Hex)
         return std::make_shared<HexTileMap>();
+    else if(type == TileMapType_Grid)
+        return std::make_shared<Rect4TileMap>();
+    else if(type == TileMapType_MalGrid)
+        return std::make_shared<MalRect4TileMap>();
     return nullptr;
 }
 
@@ -160,7 +193,7 @@ bool TileMap::init(int width, int height, float tilesize)
 
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
-            auto tile = std::make_shared<Tile>(i, j, tilesize);
+            auto tile = createTile(i, j, tilesize);
             tile->setOutlineThickness(2.0);
             tile->setFillColor(sf::Color::Black);
             tile->setOutlineColor(sf::Color::Green);

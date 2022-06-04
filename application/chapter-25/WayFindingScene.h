@@ -15,10 +15,10 @@ inline size_t getTileIDByPosition(int x, int y)
     return x * TILE_ID_OFFSET + y;
 }
 
-class MineSweeperScene : public QuadTreeScene
+class WayFindingScene : public QuadTreeScene
 {
 public:
-    MineSweeperScene();
+    WayFindingScene();
 public:
     void initial() override;
 private:

@@ -37,7 +37,7 @@ int main()
     tileMap->init(23, 15, 24);
     tileMap->setTextVisible(true);
 
-    auto list = tileMap->getAdjacentTileByPosition(8, 5);
+    auto list = tileMap->getAdjacentTileByTileIndex(8, 5);
     for (auto itr = list.begin(); itr != list.end(); itr++)
         tileMap->getTileByIndex(itr->x, itr->y)->setVisible(false);
 

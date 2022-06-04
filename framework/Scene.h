@@ -39,6 +39,7 @@ public:
 public:
     void setInitialScene(ScenePointer scene);
     void addScene(ScenePointer scene);
+    ScenePointer getCurrentScene()const;
 public:
     void switchTo(const std::string &scene);
 public:

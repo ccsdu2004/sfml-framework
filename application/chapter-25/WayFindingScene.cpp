@@ -44,7 +44,7 @@ private:
     std::shared_ptr<Label> helpLabel;
 };
 
-MineSweeperScene::MineSweeperScene()
+WayFindingScene::WayFindingScene()
 {
     tileMap = TileMap::createTileMap(TileMapType_Hex);
     tileMap->init(23, 15, 36);
@@ -53,7 +53,7 @@ MineSweeperScene::MineSweeperScene()
     addChild(tileMap);
 }
 
-void MineSweeperScene::initial()
+void WayFindingScene::initial()
 {
     auto position = tileMap->getTileByIndex(0, 0)->getPosition();
     tank = std::make_shared<WayFindingTank>("../resource/images/tank/tank5.png", position.x,
@@ -82,7 +82,7 @@ void MineSweeperScene::initial()
     shortPathStateMachine->start();
 }
 
-void MineSweeperScene::onUpdateMyScene(float deltaTime)
+void WayFindingScene::onUpdateMyScene(float deltaTime)
 {
     shortPathStateMachine->update(deltaTime);
 }

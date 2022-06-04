@@ -72,8 +72,7 @@ public:
 
         std::vector<uint32_t> output;
         shortestPathFinder->search(getIDByPosition(START_TILE.x, START_TILE.y), getIDByPosition(END_TILE.x,
-                                                                                                END_TILE.y), output);
-
+                                   END_TILE.y), output);
         auto itr = output.begin();
         while (itr != output.end()) {
             auto position = getPositionByID(*itr);
@@ -88,7 +87,7 @@ public:
         if (tile->getFillColor() == PATH_COLOR)
             tile->setFillColor(NORMAL_COLOR);
 
-        auto adjList = tileMap->getAdjacentTileByPosition(x, y);
+        auto adjList = tileMap->getAdjacentTileByTileIndex(x, y);
         auto itr = adjList.begin();
         while (itr != adjList.end()) {
             auto adjTile = tileMap->getTileByIndex(itr->x, itr->y);
@@ -109,7 +108,7 @@ int main()
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-9",
-                                                     sf::Style::Close, setting);
+                  sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
