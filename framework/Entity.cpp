@@ -11,10 +11,10 @@
 #define BITMASK_MOUSE_PRESSED   1
 #define BITMASK_MOUSE_RELEASED  2
 
-class EntityImpl
+class EntityData
 {
 public:
-    EntityImpl(const std::optional<CornerStyle> &cornerStyle)
+    EntityData(const std::optional<CornerStyle> &cornerStyle)
     {
         if (cornerStyle.has_value()) {
             auto style = cornerStyle.value();
@@ -70,7 +70,7 @@ sf::Vector2f Entity::adjustPosition(const sf::FloatRect &box, const sf::Vector2f
 }
 
 Entity::Entity(const sf::Vector2f &size, const std::optional<CornerStyle> &cornerStyle):
-    data(new EntityImpl(cornerStyle))
+    data(new EntityData(cornerStyle))
 {
     if (data->rectangle)
         data->rectangle->setSize(size);
@@ -157,6 +157,11 @@ void Entity::setSize(float width, float height)
     onPositionChanged();
 }
 
+void Entity::setSize(const sf::Vector2f &size)
+{
+    setSize(size.x, size.y);
+}
+
 sf::Vector2f Entity::getSize() const
 {
     if (data->rectangle)
@@ -177,10 +182,12 @@ sf::Transform Entity::getTransform() const
 
 void Entity::setBackgroundColor(const sf::Color &color)
 {
-    if (data->rectangle)
+    if (data->rectangle) {
         data->rectangle->setFillColor(color);
-    else
+    } else
         data->roundedRectangle->setFillColor(color);
+
+    onBackgroundChanged();
 }
 
 sf::Color Entity::getBackgroundColor() const
@@ -283,6 +290,10 @@ void Entity::onRotateChanged()
 void Entity::onScaleChanged()
 {
 
+}
+
+void Entity::onBackgroundChanged()
+{
 }
 
 bool EntityMouseListener::onListener(std::shared_ptr<Message> message)

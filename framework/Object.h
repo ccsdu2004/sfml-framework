@@ -7,6 +7,11 @@
 
 class ObjectVisitor;
 
+enum ObjectRenderOrder {
+    ObjectRenderOrder_ChildrenFirst,
+    ObjectRenderOrder_ParentFirst
+};
+
 class Object : public sf::Drawable, public MessageReceiver,
     public std::enable_shared_from_this<Object>
 {
@@ -26,6 +31,8 @@ public:
 
     virtual bool needRemoved()const;
 
+    void setObjectRenderOrder(ObjectRenderOrder order);
+    ObjectRenderOrder getObjectRenderOrder()const;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const;

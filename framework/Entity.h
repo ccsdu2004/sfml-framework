@@ -47,6 +47,7 @@ public:
     float getScale()const;
 
     void setSize(float width, float height);
+    void setSize(const sf::Vector2f& size);
     sf::Vector2f getSize()const;
 
     sf::FloatRect getBoundingBox()const;
@@ -76,8 +77,10 @@ protected:
     virtual void onSizeChanged();
     virtual void onRotateChanged();
     virtual void onScaleChanged();
+
+    virtual void onBackgroundChanged();
 private:
-    std::unique_ptr<class EntityImpl> data;
+    std::unique_ptr<class EntityData> data;
 };
 
 

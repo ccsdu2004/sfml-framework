@@ -5,6 +5,7 @@
 #include <Application.h>
 #include <Message.h>
 #include <Widget/Desktop.h>
+#include <SFML/Graphics/CircleShape.hpp>
 
 class ApplicationData
 {
@@ -67,6 +68,14 @@ bool Application::execute(std::shared_ptr<Object> object)
 
         data->window->draw(*object);
         data->window->draw(*data->desktop);
+
+        /*sf::View view;
+        view.setViewport(sf::FloatRect(0, 0, 0.5, 0.5));
+        data->window->setView(view);
+        data->window->draw(*object);
+
+        view = data->window->getDefaultView();
+        data->window->setView(view);*/
 
         data->window->display();
 

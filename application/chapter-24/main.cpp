@@ -61,27 +61,26 @@ int main()
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"ÔØÈë");
+        button->setText(L"è½½å…¥");
         boxLayout->addWidget(button, HMode_Center);
     }
     {
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"ÐÂÓÎÏ·");
+        button->setText(L"æ–°æ¸¸æˆ");
         boxLayout->addWidget(button, HMode_Center);
     }
     {
         auto button = std::make_shared<Button>();
         button->setWidgetStyle(buttonStyle);
         button->setSize(200, 60);
-        button->setText(L"ÍË³ö");
+        button->setText(L"é€€å‡º");
         button->released.connect(std::bind(&Application::exit, Application::getInstance()));
         boxLayout->addWidget(button, HMode_Center);
     }
 
     boxLayout->setBackgroundColor(sf::Color::Black);
-
 
     app->execute(scene);
     return 0;

@@ -83,7 +83,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x + sprite->getSize().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
@@ -112,7 +112,7 @@ int main()
 {
     auto size = sf::Vector2f(960, 640);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-8",
-                                                     sf::Style::Close);
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();

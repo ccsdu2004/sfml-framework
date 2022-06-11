@@ -4,17 +4,19 @@
 #include <Sprite.h>
 #include <Switch.h>
 #include <Animation.h>
+#include <iostream>
 
 class ObjectData
 {
 public:
     std::list<std::shared_ptr<Object>> children;
     std::weak_ptr<Object> parent;
+    ObjectRenderOrder renderOrder = ObjectRenderOrder_ParentFirst;
 
     void removeIfNecessary()
     {
         auto fn = [](ObjectPointer object)->bool{return object->needRemoved();};
-        //children.remove_if(fn);
+        children.remove_if(fn);
     }
 };
 
@@ -81,17 +83,34 @@ bool Object::needRemoved() const
     return false;
 }
 
+void Object::setObjectRenderOrder(ObjectRenderOrder order)
+{
+    data->renderOrder = order;
+}
+
+ObjectRenderOrder Object::getObjectRenderOrder() const
+{
+    return data->renderOrder;
+}
+
 void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     auto entity = dynamic_cast<const Entity *>(this);
     if (entity)
         states.transform *= entity->getTransform();
 
-    onDrawObject(target, states);
+    if(data->renderOrder == ObjectRenderOrder_ParentFirst) {
+        onDrawObject(target, states);
 
-    std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
-        object->draw(target, states);
-    });
+        std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
+            object->draw(target, states);
+        });
+    } else {
+        std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
+            object->draw(target, states);
+        });
+        onDrawObject(target, states);
+    }
 }
 
 void Object::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const

@@ -58,19 +58,6 @@ public:
         return nullptr;
     }
 
-    template<class T>
-    std::shared_ptr<T> getComponentByName(const std::string &name)const
-    {
-        auto  itr = components.begin();
-        while (itr != components.end()) {
-            auto ptr = *itr;
-            if (ptr)
-                return ptr;
-            itr ++;
-        }
-        return nullptr;
-    }
-
     void acceptComponent(ComponentVisitor *visitor)
     {
         if (!visitor)
