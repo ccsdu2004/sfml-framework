@@ -9,7 +9,7 @@
 class ObjectData
 {
 public:
-    std::list<std::shared_ptr<Object>> children;
+    std::list<ObjectPointer> children;
     std::weak_ptr<Object> parent;
     ObjectRenderOrder renderOrder = ObjectRenderOrder_ParentFirst;
 
@@ -29,22 +29,54 @@ Object::~Object()
 {
 }
 
-void Object::addChild(std::shared_ptr<Object> child)
+std::weak_ptr<Object> Object::getParent() const
 {
+    return data->parent;
+}
+
+void Object::addChild(ObjectPointer child)
+{
+    if (!child)
+        return;
+
+    auto weakParent = child->getParent();
+    if (!weakParent.expired()) {
+        auto childParent = weakParent.lock();
+        if (childParent == shared_from_this())
+            return;
+
+        childParent->removeChild(child);
+        return;
+    }
+
     data->children.push_back(child);
+    child->data->parent = weak_from_this();
 }
 
-void Object::removeChild(std::shared_ptr<Object> child)
+void Object::removeChild(ObjectPointer child)
 {
+    if (!child)
+        return;
+
     data->children.remove(child);
+    child->data->parent.reset();
 }
 
-void Object::removeChild(std::function<bool (std::shared_ptr<Object>)> fn)
+void Object::removeChild(std::function<bool (ObjectPointer)> fn)
 {
-    data->children.remove_if(fn);
+    auto thisFn = [&fn](ObjectPointer object)->bool {
+        bool ret = fn(object);
+        if (ret)
+        {
+            object->data->parent.reset();
+        }
+        return ret;
+    };
+
+    data->children.remove_if(thisFn);
 }
 
-void Object::foreachChild(std::function<void (std::shared_ptr<Object>)> fn)
+void Object::foreachChild(std::function<void (ObjectPointer)> fn)
 {
     std::for_each(data->children.begin(), data->children.end(), fn);
 }
@@ -54,7 +86,8 @@ void Object::acceptObject(ObjectVisitor *visitor)
     if (!visitor)
         return;
 
-    std::for_each(data->children.begin(), data->children.end(), [visitor](std::shared_ptr<Object> object) {
+    std::for_each(data->children.begin(),
+    data->children.end(), [visitor](std::shared_ptr<Object> object) {
         visitor->visitObject(object);
     });
 }
@@ -99,14 +132,16 @@ void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
     if (entity)
         states.transform *= entity->getTransform();
 
-    if(data->renderOrder == ObjectRenderOrder_ParentFirst) {
+    if (data->renderOrder == ObjectRenderOrder_ParentFirst) {
         onDrawObject(target, states);
 
-        std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
+        std::for_each(data->children.begin(), data->children.end(), [&target,
+        states](std::shared_ptr<Object> object) {
             object->draw(target, states);
         });
     } else {
-        std::for_each(data->children.begin(), data->children.end(), [&target, states](std::shared_ptr<Object> object) {
+        std::for_each(data->children.begin(), data->children.end(), [&target,
+        states](std::shared_ptr<Object> object) {
             object->draw(target, states);
         });
         onDrawObject(target, states);
@@ -121,7 +156,8 @@ void Object::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 
 void Object::onUpdateChildren(float deltaTime)
 {
-    std::for_each(data->children.begin(), data->children.end(), [deltaTime](std::shared_ptr<Object> object) {
+    std::for_each(data->children.begin(),
+    data->children.end(), [deltaTime](std::shared_ptr<Object> object) {
         object->update(deltaTime);
     });
 }

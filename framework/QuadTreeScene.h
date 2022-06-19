@@ -16,7 +16,7 @@ public:
 
     void addConllisionGroupID(SpriteGroupID groupID);
 private:
-    virtual void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites);
+    virtual void onConllision(SpritePointer current, SpritePointer target);
     void onUpdateChildren(float deltaTime)override;
     void onUpdateObject(float deltaTime) override;
     virtual void onUpdateMyScene(float deltaTime);

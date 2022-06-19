@@ -72,8 +72,6 @@ protected:
 
     virtual void onStyleChanged();
 
-    virtual void onUpdateObject(float deltaTime) override;
-
     virtual void onDrawWidget(sf::RenderTarget &target, sf::RenderStates states)const;
     void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:

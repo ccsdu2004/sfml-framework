@@ -69,7 +69,7 @@ int main()
 
     auto text = createText(font);
     text->setText(L"动画", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();

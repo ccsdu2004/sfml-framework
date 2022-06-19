@@ -32,7 +32,7 @@ class Tile : public sf::ConvexShape
 {
 public:
     Tile() = delete;
-    Tile(int32_t x, int32_t y, float size, TileMapType type);
+    Tile(int32_t x, int32_t y, float sideLength, TileMapType type);
     virtual ~Tile();
 public:
     void setVisible(bool visible);
@@ -102,7 +102,7 @@ protected:
     void update(float deltaTime)override;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
-    std::unique_ptr<class TileMapImpl> data;
+    std::unique_ptr<class TileMapData> data;
 };
 
 using TileMapPointer = std::shared_ptr<TileMap>;

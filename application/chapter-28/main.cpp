@@ -12,7 +12,7 @@ int main()
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-28",
-                  sf::Style::Close, setting);
+                                                     sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -26,8 +26,8 @@ int main()
     radar->addData(120, 72, sf::Color::Green);
     radar->autoRange();
 
-    radar->setPosition(300, 200);
     radar->setSize(300, 300);
+    radar->setCenter(sf::Vector2f(480, 380));
     radar->setBackgroundColor(sf::Color::Transparent);
 
     app->execute(radar);

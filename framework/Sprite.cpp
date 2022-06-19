@@ -17,6 +17,7 @@ public:
     sf::Color spriteColor = sf::Color::White;
     SpriteGroupID spriteGroupID;
     SpriteDecoratorPointer spriteDecorator;
+    std::weak_ptr<Sprite> spriteOwner;
     Bitmask bitmask;
 };
 
@@ -78,6 +79,19 @@ bool Sprite::isControllable()const
     return data->bitmask.contain(SPRITE_BITMASK_CONTROLLABLE);
 }
 
+void Sprite::setSpriteOwner(SpritePointer owner)
+{
+    if(owner != data->spriteOwner.lock()) {
+        data->spriteOwner = owner;
+        onOwnerChanged();
+    }
+}
+
+SpritePointer Sprite::getSpriteOwner() const
+{
+    return data->spriteOwner.lock();
+}
+
 void Sprite::setSpriteColor(const sf::Color &color)
 {
     data->spriteColor = color;
@@ -111,6 +125,8 @@ void Sprite::clearDecorator()
 
 void Sprite::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    //Entity::onDrawObject(target, states);
+
     if (data->spriteDecorator)
         target.draw(*data->spriteDecorator.get(), states);
 
@@ -156,6 +172,10 @@ void Sprite::onRotateChanged()
 void Sprite::onScaleChanged()
 {
 
+}
+
+void Sprite::onOwnerChanged()
+{
 }
 
 void SpriteVisitor::visitSprite(SpritePointer sprite)

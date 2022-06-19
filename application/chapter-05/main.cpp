@@ -6,15 +6,20 @@
 #include <Scene.h>
 #include <Sprite.h>
 
+auto screenSize = sf::Vector2f(800, 640);
+
 using namespace std;
 
-std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
+std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
     auto sprite = std::make_shared<Sprite>();
     sprite->setSpriteColor(sf::Color::Yellow);
-    sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
     sprite->addTexture(*texture);
+
+    sf::Vector2f size(texture->getSize().x, texture->getSize().y);
+    auto position = Entity::adjustPosition(sf::FloatRect(sf::Vector2f(), screenSize), size, HMode_Center, VMode_Center);
+    sprite->setPosition(position);
     return sprite;
 }
 
@@ -73,8 +78,7 @@ std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
 
 int main()
 {
-    auto size = sf::Vector2f(800, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-5",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y), "Chapter-5",
                   sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
@@ -88,7 +92,7 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", 400, 320);
+    auto sprite = createSprite("../resource/images/plane.png");
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
 
@@ -97,7 +101,7 @@ int main()
 
     auto text = createText(font);
     text->setText(L"消息监听", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     app->execute(scene);

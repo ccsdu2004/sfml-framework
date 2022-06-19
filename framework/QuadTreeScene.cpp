@@ -107,10 +107,28 @@ public:
         if(find == scene.data->conllisionPair.end())
             return;
 
+        sf::FloatRect spriteBox = sprite->getBoundingBox();
+
         auto quadTree = scene.data.get()->quadTree;
-        auto items = quadTree->search(sprite->getBoundingBox());
+        auto items = quadTree->search(spriteBox);
         if (items.size() > 1) {
-            scene.onConllision(sprite, items);
+            items.erase(sprite);
+
+            auto itr = items.begin();
+            while(itr != items.end()) {
+                auto item = *itr;
+                if(item->getSpriteOwner() == sprite ||
+                   item == sprite->getSpriteOwner())
+                    itr = items.erase(itr);
+                if(itr != items.end())
+                    itr ++;
+            }
+
+            for(auto item : items) {
+                auto itemBox = item->getBoundingBox();
+                if(spriteBox.intersects(itemBox))
+                    scene.onConllision(sprite, item);
+            }
         }
     }
 private:
@@ -160,10 +178,10 @@ void QuadTreeScene::addSpriteController(SpriteGroupID groupID, SpriteControllerP
     }
 }
 
-void QuadTreeScene::onConllision(SpritePointer current, const std::set<SpritePointer>& sprites)
+void QuadTreeScene::onConllision(SpritePointer current, SpritePointer target)
 {
     (void)current;
-    (void)sprites;
+    (void)target;
 }
 
 void QuadTreeScene::onUpdateChildren(float deltaTime)

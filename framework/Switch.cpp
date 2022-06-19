@@ -67,6 +67,8 @@ void Switch::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
     if (data->index < 0 || (uint32_t)data->index >= data->list.size())
         return;
 
+    states.transform = getGlobalTransform();
+
     auto current = data->list[data->index];
     data->list[data->index]->draw(target, states);
 }

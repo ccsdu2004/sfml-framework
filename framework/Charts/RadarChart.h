@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <SFML/Graphics/Color.hpp>
 #include <Entity.h>
 
 class RadarChart : public Entity

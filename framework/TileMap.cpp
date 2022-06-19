@@ -12,47 +12,47 @@ class TileData : public sf::Vector2i
 {
 public:
     TileData(Tile &inputTile, float size):
-        tileSize(size),
+        sideLength(size),
         tile(inputTile)
     {
     }
 
     int32_t type = 0;
-    float tileSize = 48.0f;
+    float sideLength = 48.0f;
     Bitmask bitmask;
 
     void updateHexPosition(int x, int y)
     {
         if (x % 2 == 0) {
-            tile.setPosition(x * (1.5 * tileSize), 2 * 0.86602540f * tileSize * y);
+            tile.setPosition(x * (1.5 * sideLength), 2 * 0.86602540f * sideLength * y);
         } else {
-            tile.setPosition(x * (1.5 * tileSize), 2.0 * 0.86602540f * tileSize * y + 0.86602540f * tileSize);
+            tile.setPosition(x * (1.5 * sideLength), 2.0 * 0.86602540f * sideLength * y + 0.86602540f * sideLength);
         }
     }
 
     void updateGridPosition(int x, int y)
     {
-        tile.setPosition(x * tileSize * 2, y * tileSize * 2);
+        tile.setPosition(x * sideLength * 2, y * sideLength * 2);
     }
 
     void updateGridMalPosition(int x, int y)
     {
         if(x % 2 == 0)
-            tile.setPosition(x * tileSize * 2, y * tileSize * 2);
+            tile.setPosition(x * sideLength * 2, y * sideLength * 2);
         else
-            tile.setPosition(x * tileSize * 2, y * tileSize * 2 + tileSize);
+            tile.setPosition(x * sideLength * 2, y * sideLength * 2 + sideLength);
     }
 private:
     Tile &tile;
 };
 
-Tile::Tile(int32_t x, int32_t y, float size, TileMapType type):
-    data(new TileData(*this, size))
+Tile::Tile(int32_t x, int32_t y, float sideLength, TileMapType type):
+    data(new TileData(*this, sideLength))
 {
     if(type == TileMapType_Hex) {
-        const float s = 1.f * (size);
-        const float h = 0.5f * (size);        //sin(30)
-        const float r = 0.86602540f * (size); //cos(30)
+        const float s = 1.f * (sideLength);
+        const float h = 0.5f * (sideLength);        //sin(30)
+        const float r = 0.86602540f * (sideLength); //cos(30)
 
         setPointCount(6);
         setPoint(0, sf::Vector2f(0.f, -s));
@@ -65,17 +65,17 @@ Tile::Tile(int32_t x, int32_t y, float size, TileMapType type):
         data->updateHexPosition(x, y);
     } else if(type == TileMapType_Grid) {
         setPointCount(4);
-        setPoint(0, sf::Vector2f(-size, -size));
-        setPoint(1, sf::Vector2f(size, -size));
-        setPoint(2, sf::Vector2f(size, size));
-        setPoint(3, sf::Vector2f(-size, size));
+        setPoint(0, sf::Vector2f(-sideLength, -sideLength));
+        setPoint(1, sf::Vector2f(sideLength, -sideLength));
+        setPoint(2, sf::Vector2f(sideLength, sideLength));
+        setPoint(3, sf::Vector2f(-sideLength, sideLength));
         data->updateGridPosition(x, y);
     } else if(type == TileMapType_MalGrid) {
         setPointCount(4);
-        setPoint(0, sf::Vector2f(-size, -size));
-        setPoint(1, sf::Vector2f(size, -size));
-        setPoint(2, sf::Vector2f(size, size));
-        setPoint(3, sf::Vector2f(-size, size));
+        setPoint(0, sf::Vector2f(-sideLength, -sideLength));
+        setPoint(1, sf::Vector2f(sideLength, -sideLength));
+        setPoint(2, sf::Vector2f(sideLength, sideLength));
+        setPoint(3, sf::Vector2f(-sideLength, sideLength));
         data->updateGridMalPosition(x, y);
     }
 
@@ -124,7 +124,7 @@ private:
     TileMap &tileMap;
 };
 
-class TileMapImpl
+class TileMapData
 {
 public:
     float tileSize = 32.0f;
@@ -159,7 +159,7 @@ std::shared_ptr<TileMap> TileMap::createTileMap(TileMapType type)
 }
 
 TileMap::TileMap():
-    data(new TileMapImpl)
+    data(new TileMapData)
 {
     auto listener = std::make_shared<TileMapMessageListener>(*this);
     addMessageListener(listener);
@@ -187,13 +187,13 @@ bool TileMap::init(int width, int height, float tilesize)
     data->font = std::make_shared<sf::Font>();
     data->font->loadFromFile("../resource/FZYTK.TTF");
 
-    data->tileSize = tilesize;
+    data->tileSize = tilesize * 0.5f;
     data->mapSize.x = width;
     data->mapSize.y = height;
 
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
-            auto tile = createTile(i, j, tilesize);
+            auto tile = createTile(i, j, data->tileSize);
             tile->setOutlineThickness(2.0);
             tile->setFillColor(sf::Color::Black);
             tile->setOutlineColor(sf::Color::Green);

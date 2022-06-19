@@ -10,7 +10,7 @@ public:
     ~FanShape() override;
 public:
     void setRadius(float radius);
-    float getRaduis()const;
+    float getRadius()const;
 
     void setRangeAngle(float start, float end);
     void setRangeAngle(const Range<float>& rangle);

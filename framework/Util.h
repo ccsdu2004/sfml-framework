@@ -7,6 +7,7 @@
 #include <boost/describe/enum.hpp>
 #include <boost/describe/enumerators.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
 
 template <class T>
@@ -49,6 +50,11 @@ template<class T>
 inline bool isEqual(T a, T b, T t = 1e-6)
 {
     return std::fabs(a - b) < t;
+}
+
+inline sf::Vector2f getRectCenter(const sf::FloatRect& area)
+{
+    return sf::Vector2f(area.left + area.width * 0.5f, area.top + area.height * 0.5f);
 }
 
 template<class T>
@@ -142,7 +148,6 @@ template<class E> constexpr auto describe_enumerators_as_array()
 {
     return describe_enumerators_as_array_impl<E>( boost::describe::describe_enumerators<E>() );
 }
-
 
 inline float clipAngle(float angle)
 {

@@ -21,18 +21,23 @@ public:
 
     void adjustLayoutHeight()
     {
-        maxHeight = 0.0f;
-
         auto count = layout.getWidgetCount();
+        if(count == 0)
+            return;
+
+        float maxWidth = 0.0f;
+        maxHeight = 0.0f;
         for (uint32_t i = 0; i < count; i++) {
             auto item = layout.getWidgetByIndex(i);
             auto widget = item.first;
             auto info = item.second;
+            maxWidth += widget->getWidth();
             maxHeight = std::max(maxHeight, widget->getHeight());
         }
 
+        maxWidth += layout.getMargin() * 2.0f + (count - 1) * layout.getSpacing();
         maxHeight = std::max(maxHeight, 20.0f);
-        layout.setHeight(maxHeight + 2 * layout.getMargin());
+        layout.setSize(maxWidth, maxHeight + 2 * layout.getMargin());
     }
 
     void adjustWidgets()
@@ -41,13 +46,14 @@ public:
         if (count == 0)
             return;
 
-        float prevWidgetLeft = layout.getWidgetByIndex(0).first->getWidth() * 0.5f + layout.getMargin();
-        float prevWidgetWidth = 0.0f;
+        float currentWidgetCenter = layout.getMargin();
 
         for (uint32_t i = 0; i < count; i++) {
             auto item = layout.getWidgetByIndex(i);
             auto widget = item.first;
             auto info = item.second;
+
+            currentWidgetCenter += widget->getWidth() * 0.5f;
 
             auto yoffset = widget->getHeight() * 0.5f + layout.getMargin();
             if (info && std::dynamic_pointer_cast<HBoxLayoutInfo>(info)) {
@@ -58,12 +64,11 @@ public:
                     yoffset = 0.5f * layout.getHeight();
             }
 
-            widget->setPosition(prevWidgetLeft, yoffset);
-            prevWidgetWidth = widget->getWidth();
-            prevWidgetLeft = widget->getPosition().x + widget->getWidth() + layout.getSpacing();
-        }
+            widget->setCenter(sf::Vector2f(currentWidgetCenter, yoffset));
 
-        layout.setWidth(prevWidgetLeft - prevWidgetWidth * 0.5f);
+            currentWidgetCenter += layout.getSpacing();
+            currentWidgetCenter += widget->getWidth() * 0.5f;
+        }
     }
 private:
     HBoxLayout &layout;

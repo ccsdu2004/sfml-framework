@@ -51,7 +51,7 @@ void Button::onPositionChanged()
     auto style = std::dynamic_pointer_cast<ButtonStyle>(getWidgetStyle());
     auto textBox = data->text->getGlobalBounds();
     auto position = Widget::adjustPosition(getBoundingBox(), sf::Vector2f(textBox.width,
-                                                                          textBox.height),
+                                           textBox.height),
                                            HMode_Center,
                                            VMode_Center, getPadding(), getPadding());
 
@@ -90,7 +90,7 @@ void Button::recalcTextPosition(float offsetx, float offsety)
     auto textBox = data->text->getGlobalBounds();
     auto box = getBoundingBox();
     auto position = Widget::adjustPosition(box, sf::Vector2f(textBox.width,
-                                                             textBox.height),
+                                           textBox.height),
                                            HMode_Center,
                                            VMode_Center, getPadding(), getPadding());
 

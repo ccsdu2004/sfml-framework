@@ -13,11 +13,11 @@ public:
 
     void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
 private:
-    void drawInnerCirclr(sf::RenderTarget& target, sf::RenderStates states) const;
-    void drawOuterCirclr(sf::RenderTarget& target, sf::RenderStates states) const;
-    void drawLine(sf::RenderTarget& target, sf::RenderStates states) const;
+    void drawInnerCirclr(sf::RenderTarget &target, sf::RenderStates states) const;
+    void drawOuterCirclr(sf::RenderTarget &target, sf::RenderStates states) const;
+    void drawLine(sf::RenderTarget &target, sf::RenderStates states) const;
 
-    void drawLegend(sf::RenderTarget& target, sf::RenderStates states) const;
+    void drawLegend(sf::RenderTarget &target, sf::RenderStates states) const;
     void onSizeChanged() override;
 public:
     double maxValue = 250 * 0.9;
@@ -41,7 +41,7 @@ RadarAxes::RadarAxes()
 void RadarAxes::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
     Entity::onDrawObject(target, states);
-    //states.transform *= getTransform();
+    states.transform = getGlobalTransform();
     drawOuterCirclr(target, states);
     drawInnerCirclr(target, states);
     drawLine(target, states);
@@ -94,14 +94,16 @@ void RadarAxes::drawLine(sf::RenderTarget &target, sf::RenderStates states) cons
     }
 }
 
-void RadarAxes::drawLegend(sf::RenderTarget& target, sf::RenderStates states) const
+void RadarAxes::drawLegend(sf::RenderTarget &target, sf::RenderStates states) const
 {
     constexpr double angle_step = 45.0;
     constexpr double MARGIN = 20.0;
     for (int i = 0; i < 8; i++) {
         double angle = angle_step * i;
         sf::Text legend;
-        legend.setString((std::stringstream() << angle).str());
+        std::stringstream stream;
+        stream << angle;
+        legend.setString(stream.str());
         legend.setFont(font);
         legend.setFillColor(fontColor);
         legend.setCharacterSize(15);
@@ -120,7 +122,9 @@ void RadarAxes::drawLegend(sf::RenderTarget& target, sf::RenderStates states) co
     for (int i = 0; i < 6; i++) {
         double value = value_step * i;
         sf::Text legend;
-        legend.setString((std::stringstream() << value).str());
+        std::stringstream stream;
+        stream << value;
+        legend.setString(stream.str());
         legend.setFont(font);
         legend.setFillColor(fontColor);
         legend.setCharacterSize(15);
@@ -139,7 +143,7 @@ void RadarAxes::onSizeChanged()
 class RadarChartData
 {
 public:
-    RadarChartData(RadarChart& radarChart):
+    RadarChartData(RadarChart &radarChart):
         chart(radarChart)
     {
     }
@@ -149,7 +153,8 @@ public:
         sf::Color color;
     };
 
-    void drawPoint(sf::RenderTarget& target, sf::RenderStates states, const Data& data, double maxValue, double radius) const
+    void drawPoint(sf::RenderTarget &target, sf::RenderStates states, const Data &data, double maxValue,
+                   double radius) const
     {
         constexpr double POINT_RADIUS(5.0);
 
@@ -166,7 +171,7 @@ public:
         target.draw(point, states);
     }
 
-    RadarChart& chart;
+    RadarChart &chart;
     std::vector<Data> datas;
     std::shared_ptr<RadarAxes> radarAxes;
 };
@@ -184,7 +189,7 @@ RadarChart::~RadarChart()
 {
 }
 
-void RadarChart::addData(double angle, double value, const sf::Color& color)
+void RadarChart::addData(double angle, double value, const sf::Color &color)
 {
     data->datas.push_back({angle, value, color});
 }
@@ -197,14 +202,14 @@ void RadarChart::clear()
 void RadarChart::autoRange()
 {
     auto max = std::numeric_limits<double>::lowest();
-    for (const auto& item : data->datas) {
+    for (const auto &item : data->datas) {
         max = std::max(item.value, max);
     }
 
     setMaxValue(max);
 }
 
-void RadarChart::setMaxValue(const double& value)
+void RadarChart::setMaxValue(const double &value)
 {
     data->radarAxes->maxValue = value;
 }
@@ -212,13 +217,13 @@ void RadarChart::setMaxValue(const double& value)
 void RadarChart::setFont(const std::string file)
 {
     auto pointer = Application::getInstance()->loadFont(file);
-    if(!pointer)
+    if (!pointer)
         return;
 
     data->radarAxes->font = *pointer;
 }
 
-void RadarChart::setFontColor(const sf::Color& color)
+void RadarChart::setFontColor(const sf::Color &color)
 {
     data->radarAxes->fontColor = color;
 }
@@ -228,7 +233,7 @@ sf::Color RadarChart::getFontColor()const
     return data->radarAxes->fontColor;
 }
 
-void RadarChart::setAxesColor(const sf::Color& color)
+void RadarChart::setAxesColor(const sf::Color &color)
 {
     data->radarAxes->axesColor = color;
 }
@@ -238,7 +243,7 @@ sf::Color RadarChart::getAxesColor()
     return data->radarAxes->axesColor;
 }
 
-void RadarChart::setScaleColor(const sf::Color& color)
+void RadarChart::setScaleColor(const sf::Color &color)
 {
     data->radarAxes->scaleColor = color;
 }
@@ -251,8 +256,8 @@ sf::Color RadarChart::getScaleColor() const
 void RadarChart::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
     double radius = std::max(getSize().x, getSize().y) * 0.5;
-    states.transform *= getTransform();
-    for (const auto& item : data->datas) {
+    states.transform = getGlobalTransform();
+    for (const auto &item : data->datas) {
         data->drawPoint(target, states, item, data->radarAxes->maxValue, radius);
     }
 }

@@ -53,6 +53,7 @@ float WidgetLayout::getSpacing()const
 void WidgetLayout::addWidget(WidgetPointer widget, std::shared_ptr<WidgetLayoutInfo> info)
 {
     data->widgets.push_back(std::make_pair(widget, info));
+    addChild(widget);
     data->dirty = true;
 }
 
@@ -62,7 +63,7 @@ uint32_t WidgetLayout::getWidgetCount() const
 }
 
 std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>> WidgetLayout::getWidgetByIndex(
-                                                             uint32_t index)
+            uint32_t index)
 {
     if (index >= getWidgetCount())
         return std::pair<WidgetPointer, std::shared_ptr<WidgetLayoutInfo>>(nullptr, nullptr);
@@ -89,17 +90,6 @@ bool WidgetLayout::doesHierarchyContain(WidgetPointer other)const
         itr ++;
     }
     return Widget::doesHierarchyContain(other);
-}
-
-bool WidgetLayout::process(std::shared_ptr<Message> message)
-{
-    auto itr = data->widgets.begin();
-    while (itr != data->widgets.end()) {
-        if (itr->first->process(message))
-            return true;
-        itr ++;
-    }
-    return Widget::process(message);
 }
 
 void WidgetLayout::onActiveChanged()
@@ -148,26 +138,9 @@ void WidgetLayout::onSizeChanged()
 
 void WidgetLayout::onUpdateObject(float deltaTime)
 {
+    (void)deltaTime;
     if (data->dirty) {
         adjust();
         data->dirty = false;
-    }
-
-    auto itr = data->widgets.begin();
-    while (itr != data->widgets.end()) {
-        auto widget = itr->first;
-        widget->update(deltaTime);
-        itr ++;
-    }
-}
-
-void WidgetLayout::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    Entity::onDrawObject(target, states);
-    auto itr = data->widgets.begin();
-    while (itr != data->widgets.end()) {
-        auto widget = itr->first;
-        widget->draw(target, states);
-        itr ++;
     }
 }

@@ -10,13 +10,13 @@ MineSweeperScene::MineSweeperScene()
     tileMap = TileMap::createTileMap(TileMapType_Hex);
     tileMap->init(18, 12, 36);
     tileMap->setTextVisible(true);
-
-    addChild(tileMap);
-    tileMap->accept(this);
 }
 
 void MineSweeperScene::initial()
 {
+    addChild(tileMap);
+    tileMap->accept(this);
+
     stateMachine = std::make_shared<StateMachine>();
 
     errorState = std::make_shared<SpriteErrorState>(mineSweeper);
@@ -96,7 +96,7 @@ void MineSweeperScene::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 void MineSweeperScene::addMine(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 {
     auto sprite = createSprite("../resource/images/cross.png", tile->getPosition().x,
-                               tile->getPosition().y); // size.x * 0.5f, 600);
+                               tile->getPosition().y);
     sprite->setScale(0.5f);
     sprite->setSpriteGroup(SpriteGroupID_PlayerA);
     sprite->setSpriteColor(sf::Color::Red);
@@ -108,13 +108,13 @@ std::shared_ptr<MovingSprite> MineSweeperScene::createSprite(const std::string &
         float y)
 {
     auto sprite = std::make_shared<MovingSprite>();
-    sprite->setPosition(x, y);
-    sprite->setSpriteStatus(SpriteStatus_Normal);
-    sprite->setScale(0.5f);
     auto texture = Application::getInstance()->loadTexture(image);
-    sprite->addTexture(*texture);
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
+    sprite->addTexture(*texture);
+    sprite->setCenter(sf::Vector2f(x, y));
+    sprite->setSpriteStatus(SpriteStatus_Normal);
+    sprite->setScale(0.5f);
     return sprite;
 }
 

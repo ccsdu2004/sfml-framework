@@ -48,16 +48,12 @@ public:
     {
     }
 public:
-    void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites) override
+    void onConllision(SpritePointer current, SpritePointer target) override
     {
-        (void)sprites;
         auto animation = createAnimation(current->getPosition());
         addChild(animation);
 
-        std::for_each(sprites.begin(), sprites.end(), [&current](SpritePointer sprite) {
-            if(current != sprite)
-                sprite->setSpriteStatus(SpriteStatus_Death);
-        });
+        target->setSpriteStatus(SpriteStatus_Death);
 
         auto message = std::make_shared<SoundMessagePlaySound>("../resource/sound/blast.wav");
         Application::getInstance()->getComponent<SoundManager>()->process(message);

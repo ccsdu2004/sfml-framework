@@ -87,7 +87,7 @@ void Text::setFont(std::shared_ptr<sf::Font> font)
 
 void Text::onPositionChanged()
 {
-    auto box = data->text->getLocalBounds();
+    auto box = getGlobalTransform().transformRect(data->text->getLocalBounds());
     auto objectBox = getBoundingBox();
     auto newPosition = adjustPosition(objectBox, sf::Vector2f(box.width, box.height),
                                       data->hMode, data->vMode);

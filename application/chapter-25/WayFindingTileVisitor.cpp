@@ -2,29 +2,32 @@
 
 WayFindingTileVisitor::WayFindingTileVisitor(TileMapPointer inputTileMap)
 {
-    tileMap = inputTileMap;
+    weakTileMap = inputTileMap;
     shortestPathFinder = std::make_shared<ShortestPathFinder>();
 }
 
 void WayFindingTileVisitor::compute(const sf::Vector2i &inputStart)
 {
+    std::cout << inputStart.x << " ->" << inputStart.y << std::endl;
     start = inputStart;
 
     blocks.clear();
     tiles.clear();
     shortestPathFinder->clear();
-    tileMap.lock()->accept(this);
+    weakTileMap.lock()->accept(this);
 
     buildTileMap();
 
     std::vector<uint32_t> output;
-    int steps = shortestPathFinder->search(getIDByPosition(start.x, start.y), getIDByPosition(end.x, end.y), output);
-    if(steps > 0) {
+    int steps = shortestPathFinder->search(getIDByPosition(inputStart.x, inputStart.y),
+                                           getIDByPosition(end.x,
+                                                           end.y), output);
+    if (steps > 0) {
         auto itr = output.begin();
         while (itr != output.end()) {
             auto position = getPositionByID(*itr);
             if (position != start && position != end)
-                tileMap.lock()->getTileByIndex(position.x, position.y)->setFillColor(PATH_COLOR);
+                weakTileMap.lock()->getTileByIndex(position.x, position.y)->setFillColor(PATH_COLOR);
             itr ++;
         }
     } else
@@ -33,7 +36,8 @@ void WayFindingTileVisitor::compute(const sf::Vector2i &inputStart)
 
 void WayFindingTileVisitor::buildTileMap()
 {
-    auto startTile = tileMap.lock()->getTileByIndex(start.x, start.y);
+    auto tileMap = weakTileMap.lock();
+    auto startTile = tileMap->getTileByIndex(start.x, start.y);
 
     std::random_shuffle(tiles.begin(), tiles.end());
 
@@ -43,29 +47,34 @@ void WayFindingTileVisitor::buildTileMap()
     itr ++;
 
     const int BLOCKS_COUNT = 100;
-    for(int i = 0; i < BLOCKS_COUNT; i++) {
+    for (int i = 0; i < BLOCKS_COUNT; i++) {
         auto position = *itr;
-        auto tile = tileMap.lock()->getTileByIndex(position.x, position.y);
+        auto tile = tileMap->getTileByIndex(position.x, position.y);
         tile->setFillColor(BLOCK_COLOR);
         blocks.push_back(position);
         itr ++;
     }
 
-    tileMap.lock()->getTileByIndex(start)->setFillColor(sf::Color::Yellow);
-    tileMap.lock()->getTileByIndex(end)->setFillColor(sf::Color::Green);
+    startTile = tileMap->getTileByIndex(start);
+    if (startTile)
+        startTile->setFillColor(sf::Color::Yellow);
+
+    auto endTile = tileMap->getTileByIndex(end);
+    if (endTile)
+        endTile->setFillColor(sf::Color::Green);
 }
 
 void WayFindingTileVisitor::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile)
 {
     tile->setFillColor(NORMAL_COLOR);
 
-    if(start != sf::Vector2i(x, y))
+    if (start != sf::Vector2i(x, y))
         tiles.push_back(sf::Vector2i(x, y));
 
-    auto adjList = tileMap.lock()->getAdjacentTileByTileIndex(x, y);
+    auto adjList = weakTileMap.lock()->getAdjacentTileByTileIndex(x, y);
     auto itr = adjList.begin();
     while (itr != adjList.end()) {
-        auto adjTile = tileMap.lock()->getTileByIndex(itr->x, itr->y);
+        auto adjTile = weakTileMap.lock()->getTileByIndex(itr->x, itr->y);
         if (adjTile && adjTile->getFillColor() != BLOCK_COLOR) {
             shortestPathFinder->addEdge(getIDByPosition(x, y), getIDByPosition(itr->x, itr->y), 1);
         }

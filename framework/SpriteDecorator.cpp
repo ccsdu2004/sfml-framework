@@ -77,10 +77,10 @@ void SpriteRingDecorator::update(const Sprite *sprite)
         return;
 
     auto box = sprite->getBoundingBox();
-    auto center = sprite->getPosition();
+    auto center = sprite->getCenter();
     float radius = distance(sf::Vector2f(box.left, box.top), center) * data->scaleFactor;
 
-    data->circle.setPosition(sf::Vector2f(-radius + box.width * 0.5f, -0.5f * box.height));
+    data->circle.setPosition(sf::Vector2f(-radius + box.width * 0.5f, -radius + box.height * 0.5f));
     data->circle.setRadius(radius);
 }
 
@@ -114,7 +114,7 @@ void SpriteFanShapeDecorator::setRadius(float radius)
 
 float SpriteFanShapeDecorator::getRadius() const
 {
-    return data->fan.getRaduis();
+    return data->fan.getRadius();
 }
 
 void SpriteFanShapeDecorator::setIncludedAngle(float angle)
@@ -146,11 +146,13 @@ void SpriteFanShapeDecorator::update(const Sprite *sprite)
         return;
 
     float angle = sprite->getRotate();
-    float radius = data->fan.getRaduis();
+    float radius = data->fan.getRadius();
 
     data->fan.setRangeAngle(angle - data->includeAngle * 0.5f,
                             angle + data->includeAngle * 0.5f);
-    data->fan.setPosition(sprite->getPosition() - sf::Vector2f(radius, radius));
+
+    auto size = sprite->getSize();
+    data->fan.setPosition(sprite->getPosition() + size * 0.5f - sf::Vector2f(radius, radius));
 }
 
 void SpriteFanShapeDecorator::draw(sf::RenderTarget &target, sf::RenderStates states) const

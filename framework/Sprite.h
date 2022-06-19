@@ -68,6 +68,9 @@ public:
     void setControllable(bool controllable);
     bool isControllable()const;
 
+    void setSpriteOwner(SpritePointer owner);
+    SpritePointer getSpriteOwner()const;
+
     boost::signals2::signal<void(SpritePointer)> spriteStatusChanged;
 public:
     void setSpriteColor(const sf::Color &color);
@@ -86,6 +89,8 @@ protected:
     virtual void onSizeChanged() override;
     virtual void onRotateChanged() override;
     virtual void onScaleChanged() override;
+
+    virtual void onOwnerChanged();
 private:
     std::unique_ptr<class SpriteData> data;
 };

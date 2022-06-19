@@ -25,7 +25,7 @@ void FanShape::setRadius(float radius)
     update();
 }
 
-float FanShape::getRaduis() const
+float FanShape::getRadius() const
 {
     return data->radius;
 }

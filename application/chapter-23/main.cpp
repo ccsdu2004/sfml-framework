@@ -60,7 +60,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"按F1弹出帮助提示", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     app->execute(scene);

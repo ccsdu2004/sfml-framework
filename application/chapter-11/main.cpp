@@ -9,13 +9,17 @@
 
 using namespace std;
 
-std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
+auto screenSize = sf::Vector2f(800, 640);
+
+std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
     auto pool = Application::getInstance()->getComponent<SpritePool<Sprite>>();
-    auto sprite = pool->createOrAwakeSprite();
-    sprite->setSpriteColor(sf::Color::Yellow);
-    sprite->setPosition(x, y);
     auto texture = Application::getInstance()->loadTexture(image);
+    auto sprite = pool->createOrAwakeSprite();
+    sprite->setSize(texture->getSize().x, texture->getSize().y);
+    sprite->setSpriteColor(sf::Color::Yellow);
+    sprite->setCenter(screenSize * 0.5f);
+
     sprite->addTexture(*texture);
     return sprite;
 }
@@ -34,22 +38,22 @@ public:
         auto sfml = std::dynamic_pointer_cast<SFMLMessage>(message);
         auto event = sfml->getEvent();
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Key::A) {
+            if (event.key.code == sf::Keyboard::Key::Left) {
                 if (sprite->getPosition().x > 5)
                     sprite->move(-5, 0);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::D) {
+            } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x <
-                    Application::getInstance()->getWindow()->getSize().x - 5)
+                        Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::W) {
+            } else if (event.key.code == sf::Keyboard::Key::Up) {
                 if (sprite->getPosition().y > 5)
                     sprite->move(0, -5);
                 return true;
-            } else if (event.key.code == sf::Keyboard::Key::X) {
+            } else if (event.key.code == sf::Keyboard::Key::Down) {
                 if (sprite->getPosition().y <
-                    Application::getInstance()->getWindow()->getSize().y - 5)
+                        Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
             }
@@ -63,9 +67,9 @@ private:
 
 int main()
 {
-    auto size = sf::Vector2f(800, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-11",
-                  sf::Style::Close);
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
+                                                     "Chapter-11",
+                                                     sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -86,10 +90,10 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"组件系统", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
-    auto sprite = createSprite("../resource/images/plane.png", 400, 320);
+    auto sprite = createSprite("../resource/images/plane.png");
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
     app->execute(scene);

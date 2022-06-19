@@ -1,6 +1,7 @@
 #include <TileMapImpl.h>
 
-std::optional<sf::Vector2i> Rect4TileMap::getAdjacentTileByDirection(int32_t x, int32_t y, TileDirection direction)
+std::optional<sf::Vector2i> Rect4TileMap::getAdjacentTileByDirection(int32_t x, int32_t y,
+                                                                     TileDirection direction)
 {
     switch (direction) {
         case 0:
@@ -47,4 +48,3 @@ std::vector<sf::Vector2i> Rect4TileMap::getAdjacentTileByTileIndex(int x, int y)
     output.push_back(sf::Vector2i(x + 1, y));
     return output;
 }
-

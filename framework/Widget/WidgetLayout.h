@@ -29,8 +29,6 @@ public:
 public:
     virtual WidgetPointer getWidgetBelow(const sf::Vector2i &point)override;
     virtual bool doesHierarchyContain(WidgetPointer other)const override;
-
-    virtual bool process(std::shared_ptr<Message> message) override;
 protected:
     void onActiveChanged()override;
     void onVisibleChanged()override;
@@ -43,8 +41,6 @@ protected:
     void onSizeChanged() override;
 
     void onUpdateObject(float deltaTime) override;
-    void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const override;
-
     virtual void adjust() = 0;
 private:
     std::unique_ptr<class WidgetLayoutData> data;

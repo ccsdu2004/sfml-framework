@@ -14,10 +14,10 @@ class SceneListener : public MessageListener
 public:
     bool onListener(std::shared_ptr<Message> message) override
     {
-        if(message->getType() == Message_SFML) {
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+        if (message->getType() == Message_SFML) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
                 auto scene = sceneManager->getCurrentScene()->getName();
-                if(scene == "scene1")
+                if (scene == "scene1")
                     sceneManager->switchTo("scene2");
                 else
                     sceneManager->switchTo("scene1");
@@ -38,14 +38,14 @@ public:
 
     bool onListener(std::shared_ptr<Message> message) override
     {
-        if(message->getType() == Message_SFML) {
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (message->getType() == Message_SFML) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
                 auto index = tileMap.lock()->getTileIndexByWorldPosition(mousePosition.x, mousePosition.y);
                 auto list = tileMap.lock()->getAdjacentTileByTileIndex(index.x, index.y);
-                for(auto item : list) {
+                for (auto item : list) {
                     auto tile = tileMap.lock()->getTileByIndex(item);
-                    if(tile)
+                    if (tile)
                         tile->setFillColor(sf::Color(rand() % 250, rand() % 250, rand() % 250, 128));
                 }
                 return true;
@@ -63,7 +63,7 @@ public:
     RectMapScene()
     {
         tileMap = TileMap::createTileMap(TileMapType_MalGrid);
-        tileMap->init(19, 14, 36);
+        tileMap->init(21, 19, 64);
         tileMap->setTextVisible(true);
         tileMap->addMessageListener(std::make_shared<MouseListener>(tileMap));
 
@@ -84,7 +84,7 @@ public:
     Scene2()
     {
         tileMap = TileMap::createTileMap(TileMapType_Grid);
-        tileMap->init(19, 14, 36);
+        tileMap->init(21, 19, 64);
         tileMap->setTextVisible(true);
         tileMap->addMessageListener(std::make_shared<MouseListener>(tileMap));
 
@@ -105,7 +105,7 @@ int main()
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-26",
-                  sf::Style::Close, setting);
+                                                     sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();

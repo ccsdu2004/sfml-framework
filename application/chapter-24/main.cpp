@@ -42,9 +42,11 @@ int main()
     app->setWindow(window);
 
     auto scene = std::make_shared<Scene>();
-    auto background = Application::getInstance()->loadTexture("../resource/images/tank/background.png");
-    scene->setBackground(*background);
+    auto image = Application::getInstance()->loadImage("../resource/images/tank/background.png");
 
+    sf::Texture texture;
+    texture.loadFromImage(*image);
+    scene->setBackground(texture);
     auto desktop = std::make_shared<Desktop>();
     scene->addComponent(desktop);
 

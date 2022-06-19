@@ -33,7 +33,7 @@ private:
 
     void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) override;
 private:
-    std::weak_ptr<TileMap> tileMap;
+    std::weak_ptr<TileMap> weakTileMap;
     std::shared_ptr<ShortestPathFinder> shortestPathFinder;
     sf::Vector2i start;
     sf::Vector2i end;

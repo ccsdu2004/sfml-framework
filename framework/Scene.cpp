@@ -54,7 +54,7 @@ std::shared_ptr<Text> Scene::createToastText()
     text->setOutlineColor(sf::Color::Yellow);
     text->setOutlineThickness(0.6f);
 
-    text->setPosition(80.0f, 30.0f);
+    text->setPosition(18.0f, 18.0f);
     return text;
 }
 
@@ -164,7 +164,7 @@ bool SceneManager::process(std::shared_ptr<Message> message)
     bool done = false;
     if (data->currentScene)
         done = data->currentScene->process(message);
-    if(!done)
+    if (!done)
         return Object::process(message);
     return done;
 }

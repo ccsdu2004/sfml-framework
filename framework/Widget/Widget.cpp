@@ -293,11 +293,6 @@ void Widget::onStyleChanged()
     setBackgroundColor(color);
 }
 
-void Widget::onUpdateObject(float deltaTime)
-{
-    (void)deltaTime;
-}
-
 void Widget::onDrawWidget(sf::RenderTarget &target, sf::RenderStates states) const
 {
     Entity::onDrawObject(target, states);

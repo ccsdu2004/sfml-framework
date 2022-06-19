@@ -9,7 +9,7 @@
 using namespace std;
 
 #define START_TILE (sf::Vector2i(0,0))
-#define END_TILE (sf::Vector2i(22,14))
+#define END_TILE (sf::Vector2i(16,11))
 
 #define BLOCK_COLOR sf::Color::Red
 #define PATH_COLOR sf::Color::Blue
@@ -72,7 +72,7 @@ public:
 
         std::vector<uint32_t> output;
         shortestPathFinder->search(getIDByPosition(START_TILE.x, START_TILE.y), getIDByPosition(END_TILE.x,
-                                   END_TILE.y), output);
+                                                                                                END_TILE.y), output);
         auto itr = output.begin();
         while (itr != output.end()) {
             auto position = getPositionByID(*itr);
@@ -107,8 +107,8 @@ int main()
     auto size = sf::Vector2f(800, 600);
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-9",
-                  sf::Style::Close, setting);
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-10",
+                                                     sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -116,7 +116,7 @@ int main()
     app->setWindow(window);
 
     auto tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(23, 15, 24);
+    tileMap->init(18, 12, 64);
     tileMap->setMessageReceived(true);
     tileMap->setTextVisible(true);
 

@@ -3,6 +3,7 @@
 #include <Application.h>
 #include <Entity.h>
 #include <Text.h>
+#include <Util.h>
 #include <Scene.h>
 #include <Sprite.h>
 #include <Animation.h>
@@ -10,35 +11,42 @@
 #include <QuadTreeScene.h>
 #include <SpriteDeleter.h>
 
+auto screenSize = sf::Vector2f(960, 640);
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
 using namespace std;
 
 std::shared_ptr<QuadTreeScene> scene;
 
-std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
+std::shared_ptr<Sprite> createSprite(const std::string &image, VMode vMode)
 {
     auto sprite = std::make_shared<Sprite>();
-    sprite->setPosition(x, y);
-    sprite->setSpriteStatus(SpriteStatus_Normal);
     auto texture = Application::getInstance()->loadTexture(image);
-    sprite->addTexture(*texture, sf::IntRect());
-    auto size = texture->getSize();
-    sprite->setSize(size.x, size.y);
+    sprite->addTexture(*texture);
+
+    sf::Vector2f size(texture->getSize().x, texture->getSize().y);
+    auto position = Entity::adjustPosition(sf::FloatRect(sf::Vector2f(), screenSize), size,
+                                           HMode_Center, vMode);
+    sprite->setPosition(position);
     return sprite;
 }
 
 class MyQuadTreeScene : public QuadTreeScene
 {
 public:
-    void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites) override
+    void onConllision(SpritePointer current, SpritePointer target) override
     {
-        (void)sprites;
-        auto animation = createAnimation(current->getPosition());
-        addChild(animation);
+        current->setSpriteStatus(SpriteStatus_Death);
+        sf::FloatRect area;
+        if (current->getBoundingBox().intersects(target->getBoundingBox(), area)) {
+            auto position = getRectCenter(area);
+            auto animation = createAnimation();
+            animation->setPosition(position);
+            addChild(animation);
+        }
     }
 private:
-    ObjectPointer createAnimation(const sf::Vector2f &pos)
+    std::shared_ptr<Animation> createAnimation()
     {
         std::vector<sf::IntRect> areas;
 
@@ -48,10 +56,13 @@ private:
         }
 
         std::shared_ptr<Animation> animation = std::make_shared<Animation>();
-        animation->setDurationPerFrame((rand() % 20) * 0.01f + 0.2f);
+        animation->setSize(85, 85);
+        animation->setDurationPerFrame(0.2f);
         animation->setSingleShot(true);
-        animation->setPosition(pos);
+
+        animation->setBackgroundColor(sf::Color::White);
         animation->setTexture("../resource/images/blast2.png", areas);
+        animation->setCurrentItem(0);
         animation->start();
         return animation;
     }
@@ -83,12 +94,14 @@ public:
             } else if (event.key.code == sf::Keyboard::Key::Space) {
                 auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
                 auto bullet = std::make_shared<MovingSprite>();
+                bullet->setSpriteStatus(SpriteStatus_Normal);
+                bullet->setSpriteOwner(sprite);
                 bullet->addTexture(*texture);
 
-                auto position = sprite->getPosition();
-                position.y -= sprite->getSize().y;
+                auto position = sprite->getCenter();
+                position.y -= sprite->getSize().y * 0.5f;
 
-                bullet->setPosition(position);
+                bullet->setCenter(position);
                 bullet->setVelocity(BULLET_SPEED);
                 bullet->setSpriteGroup(SpriteGroupID_Bullet);
                 scene->addChild(bullet);
@@ -104,8 +117,8 @@ private:
 
 int main()
 {
-    auto size = sf::Vector2f(960, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-9",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
+                                                     "Chapter-9",
                                                      sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
@@ -126,12 +139,12 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);
+    auto sprite = createSprite("../resource/images/plane.png", VMode_Bottom);
     sprite->setSpriteGroup(SpriteGroupID_PlayerB);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
 
-    auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
+    auto enemy = createSprite("../resource/images/enemy1.png", VMode_Top);
     enemy->setSpriteGroup(SpriteGroupID_PlayerB);
     scene->addChild(enemy);
 
@@ -140,7 +153,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"精灵删除器", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();

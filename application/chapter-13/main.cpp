@@ -24,10 +24,10 @@ public:
 
     void updateSprite(SpritePointer sprite, float deltaTime) override
     {
-        sprite->move(-240.0f * deltaTime);
-
         if (scene.expired())
             return;
+
+        sprite->move(-240.0f * deltaTime);
 
         sf::FloatRect sceneBox = scene.lock()->getBoundingBox();
 
@@ -80,7 +80,7 @@ int main()
 
     for (int i = 0; i < 20; i++) {
         auto sprite = createSprite("../resource/images/plane.png", rand() % 960,
-                                   rand() % 640); // size.x * 0.5f, 600);
+                                   rand() % 640);
         sprite->setRotate(-180.0f);
         sprite->setSpriteGroup(SpriteGroupID_PlayerA);
         sprite->setSpriteColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
@@ -92,7 +92,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"精灵控制器", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();

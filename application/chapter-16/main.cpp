@@ -9,20 +9,21 @@
 
 using namespace std;
 
-std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
+auto screenSize = sf::Vector2f(800, 640);
+
+std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
     auto sprite = std::make_shared<Sprite>();
-    sprite->setSpriteColor(sf::Color::Yellow);
-
-    auto spriteFanShapeDecorator = std::make_shared<SpriteFanShapeDecorator>();
-    spriteFanShapeDecorator->setRadius(96.0f);
-    spriteFanShapeDecorator->setFillColor(sf::Color::Cyan);
-    spriteFanShapeDecorator->setIncludedAngle(90.0f);
-    sprite->setDecorator(spriteFanShapeDecorator);
-
-    sprite->setPosition(x, y);
+    sprite->setSpriteColor(sf::Color::White);
     auto texture = Application::getInstance()->loadTexture(image);
     sprite->addTexture(*texture);
+
+    auto spriteFan = std::make_shared<SpriteFanShapeDecorator>();
+    spriteFan->setRadius(128.0f);
+    spriteFan->setFillColor(sf::Color::Red);
+    sprite->setDecorator(spriteFan);
+
+    sprite->setCenter(screenSize * 0.5f);
     return sprite;
 }
 
@@ -70,10 +71,10 @@ private:
 
 int main()
 {
-    auto size = sf::Vector2f(800, 640);
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-16",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
+                                                     "Chapter-15",
                                                      sf::Style::Close, settings);
     window->setVerticalSyncEnabled(true);
 
@@ -87,7 +88,7 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", 400, 320);
+    auto sprite = createSprite("../resource/images/plane.png");
 
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
@@ -97,7 +98,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"精灵视野", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     app->execute(scene);

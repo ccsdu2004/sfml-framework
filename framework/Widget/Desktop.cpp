@@ -24,6 +24,10 @@ public:
             auto style = std::make_shared<ButtonStyle>();
             styles.insert(std::make_pair(style->getClassName(), style));
         }
+        {
+            auto style = std::make_shared<ProgressBarStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
     }
 
     std::list<WidgetPointer> widgets;
@@ -63,7 +67,7 @@ void Desktop::addWidget(WidgetPointer widget, HMode hmode, VMode vmode, float xo
     auto size = widget->getSize();
     sf::FloatRect area(0, 0, windowSize.x, windowSize.y);
     auto position = Widget::adjustPosition(area, size, hmode, vmode, xoffset, yoffset);
-    widget->setPosition(position + size * 0.5f);
+    widget->setCenter(position + size * 0.5f);
     data->widgets.push_back(widget);
 }
 

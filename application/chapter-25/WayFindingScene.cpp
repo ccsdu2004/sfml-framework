@@ -18,7 +18,8 @@ public:
     {
         helpLabel = std::make_shared<Label>();
         helpLabel->setSize(320, 132);
-        helpLabel->setText(L"自动寻路坦克\n随机设置目标地址和路障\n计算最短路径\n坦克通过转向和前进到达目的地\n然后重新设置目的地并以此反复");
+        helpLabel->setText(
+            L"自动寻路坦克\n随机设置目标地址和路障\n计算最短路径\n坦克通过转向和前进到达目的地\n然后重新设置目的地并以此反复");
 
         auto style = std::make_shared<LabelStyle>();
         style->textColor = sf::Color::White;
@@ -32,8 +33,8 @@ public:
 
     bool onListener(std::shared_ptr<Message> message) override
     {
-        if(message->getType() == Message_SFML) {
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
+        if (message->getType() == Message_SFML) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
                 helpLabel->setVisible(!helpLabel->isVisible());
                 return true;
             }
@@ -47,7 +48,7 @@ private:
 WayFindingScene::WayFindingScene()
 {
     tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(23, 15, 36);
+    tileMap->init(23, 15, 72);
     tileMap->setTextVisible(true);
 
     addChild(tileMap);

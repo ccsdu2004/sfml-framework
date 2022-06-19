@@ -51,16 +51,12 @@ public:
     {
     }
 public:
-    void onConllision(SpritePointer current, const std::set<SpritePointer> &sprites) override
+    void onConllision(SpritePointer current, SpritePointer target) override
     {
-        (void)sprites;
         auto animation = createAnimation(current->getPosition());
         addChild(animation);
 
-        std::for_each(sprites.begin(), sprites.end(), [&current](SpritePointer sprite) {
-            if(current != sprite)
-                sprite->setSpriteStatus(SpriteStatus_Death);
-        });
+        target->setSpriteStatus(SpriteStatus_Death);
 
         auto message = std::make_shared<SoundMessagePlaySound>("../resource/sound/blast.wav");
         Application::getInstance()->getComponent<SoundManager>()->process(message);
@@ -76,10 +72,11 @@ private:
         }
 
         std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+        animation->setSize(85, 85);
         animation->setTexture("../resource/images/blast2.png", areas);
         animation->setDurationPerFrame(0.12f);
         animation->setSingleShot(true);
-        animation->setPosition(pos);
+        animation->setCenter(pos);
         animation->start();
         return animation;
     }
@@ -105,7 +102,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x + sprite->getSize().x <
-                    Application::getInstance()->getWindow()->getSize().x - 5)
+                        Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
@@ -113,10 +110,10 @@ public:
                 auto spritePool = scene->getComponent<SpritePool<Bullet>>();
                 std::shared_ptr<Bullet> bullet = spritePool->createOrAwakeSprite();
 
-                auto position = sprite->getPosition();
+                auto position = sprite->getCenter();
                 position.y -= sprite->getSize().y;
 
-                bullet->setPosition(position);
+                bullet->setCenter(position);
                 bullet->setVelocity(BULLET_SPEED);
                 bullet->setSpriteGroup(SpriteGroupID_Bullet);
                 scene->addChild(bullet);
@@ -157,19 +154,19 @@ public:
 
     void updateSprite(SpritePointer sprite, float deltaTime) override
     {
-        if(scene.expired())
+        if (scene.expired())
             return;
 
         auto movingSprite = std::dynamic_pointer_cast<MovingSprite>(sprite);
-        if(!movingSprite)
+        if (!movingSprite)
             return;
 
         movingSprite->update(deltaTime);
 
         auto box = movingSprite->getBoundingBox();
-        if(box.top + box.width > 240) {
+        if (box.top + box.width > 240) {
             movingSprite->setAcclerate(sf::Vector2f(0, -2));
-        } else if(box.top < -30) {
+        } else if (box.top < -30) {
             movingSprite->setVelocity(sf::Vector2f(0, 1));
             movingSprite->setAcclerate(sf::Vector2f(0, 1.6));
         }
@@ -191,7 +188,7 @@ int main()
 
     auto size = sf::Vector2f(960, 640);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-18",
-                  sf::Style::Close);
+                                                     sf::Style::Close);
     window->setVerticalSyncEnabled(true);
     app->setWindow(window);
 
@@ -230,7 +227,7 @@ int main()
 
     auto text = createText(font);
     text->setText(L"敌机首领", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();

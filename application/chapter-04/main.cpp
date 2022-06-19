@@ -36,16 +36,27 @@ std::shared_ptr<Text> createText(std::shared_ptr<sf::Font> font)
 
 void clickedTile(int32_t x, int32_t y)
 {
-    auto tile = tileMap->getTileByIndex(x,y);
-    if(tile)
+    auto tile = tileMap->getTileByIndex(x, y);
+    if (tile)
         tile->setFillColor(sf::Color::Red);
 }
 
+class MyTileVisitor : public TileVisitor
+{
+public:
+    void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) override
+    {
+        (void)x, void(y);
+        tile->setFillColor(sf::Color(rand() % 250, rand() % 250, rand() % 250));
+        tile->setOutlineColor(sf::Color(rand() % 250, rand() % 250, rand() % 250));
+    }
+};
+
 int main()
 {
-    auto size = sf::Vector2f(800, 600);
+    auto size = sf::Vector2f(960, 720);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-4",
-                  sf::Style::Close);
+                                                     sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -56,9 +67,12 @@ int main()
 
     tileMap = TileMap::createTileMap(TileMapType_Hex);
     tileMap->tileClicked.connect(clickedTile);
-    tileMap->init(48, 36, 32);
+    tileMap->init(48, 36, 64);
     tileMap->setMessageReceived(true);
     tileMap->setTextVisible(false);
+
+    auto visitor = std::make_shared<MyTileVisitor>();
+    tileMap->accept(visitor.get());
 
     object->addChild(tileMap);
 
@@ -108,7 +122,7 @@ int main()
 
     std::vector<sf::Color> spriteColor = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
-    for(int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         auto sprite = createSprite(units.at(rand() % units.size()), rand() % 800, rand() % 600);
         int index = rand() % modifers.size();
         sprite->addTexture(*Application::getInstance()->loadTexture(modifers[index]));
@@ -123,7 +137,7 @@ int main()
 
     auto text = createText(font);
     text->setText(L"精灵", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     object->addChild(text);
 
     app->execute(object);

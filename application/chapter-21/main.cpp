@@ -15,7 +15,7 @@ int main()
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-21",
-                                                     sf::Style::Close, setting);
+                  sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -35,10 +35,11 @@ int main()
         auto mouseArea = std::make_shared<MouseArea>(sf::Vector2f(240.0f, 80.0f));
         if (i == 0)
             boxLayout->addWidget(mouseArea, HMode_Left);
-        else if (i == 1)
+        else if (i == 1) {
             boxLayout->addWidget(mouseArea, HMode_Center);
-        else
+        } else {
             boxLayout->addWidget(mouseArea, HMode_Right);
+        }
         mouseArea->setBackgroundColor(sf::Color::Transparent);
         mouseArea->setOutlineColor(sf::Color::White);
         mouseArea->setOutlineThickness(1.0f);
@@ -49,7 +50,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"控件布局", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     app->execute(scene);

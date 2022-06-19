@@ -50,9 +50,17 @@ public:
     void setSize(const sf::Vector2f& size);
     sf::Vector2f getSize()const;
 
+    void setLeft(float left);
+    void setTop(float top);
+    void setRight(float right);
+    void setBottom(float bottom);
+    void setCenter(const sf::Vector2f& center);
+    sf::Vector2f getCenter()const;
+public:
     sf::FloatRect getBoundingBox()const;
 
     sf::Transform getTransform()const;
+    sf::Transform getGlobalTransform()const;
 
     void setBackgroundColor(const sf::Color &color);
     sf::Color getBackgroundColor()const;

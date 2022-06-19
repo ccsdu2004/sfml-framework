@@ -81,6 +81,26 @@ public:
     std::string font = "../resource/FZYTK.TTF";
     float size = 18.0f;
 
-    sf::Text::Style style;
+    sf::Text::Style style = sf::Text::Regular;
+    sf::Color textColor = sf::Color::White;
+};
+
+class ProgressBarStyle : public WidgetStyle
+{
+public:
+    ProgressBarStyle()
+    {
+    }
+
+    virtual std::string getClassName()const
+    {
+        return boost::core::demangle(typeid(*this).name());
+    }
+
+    sf::Color progressBarColor = sf::Color(180, 120, 120, 140);
+    std::string font = "../resource/FZYTK.TTF";
+    float size = 12.0f;
+
+    sf::Text::Style style = sf::Text::Regular;
     sf::Color textColor = sf::Color::White;
 };

@@ -87,18 +87,18 @@ Entity::~Entity()
 
 void Entity::setPosition(float x, float y)
 {
-    data->transform.setPosition(x, y);
-    onPositionChanged();
+    setPosition(sf::Vector2f(x, y));
 }
 
 void Entity::setPosition(const sf::Vector2f &position)
 {
-    setPosition(position.x, position.y);
+    data->transform.setPosition(data->transform.getOrigin() + position);
+    onPositionChanged();
 }
 
 sf::Vector2f Entity::getPosition() const
 {
-    return data->transform.getPosition();
+    return data->transform.getPosition() - data->transform.getOrigin();
 }
 
 void Entity::move(float dx, float dy)
@@ -169,15 +169,67 @@ sf::Vector2f Entity::getSize() const
     return data->roundedRectangle->getSize();
 }
 
+void Entity::setLeft(float left)
+{
+    auto position = getPosition();
+    setPosition(left, position.y);
+}
+
+void Entity::setTop(float top)
+{
+    auto position = getPosition();
+    setPosition(position.x, top);
+}
+
+void Entity::setRight(float right)
+{
+    auto position = getPosition();
+    setPosition(right - getSize().x, position.y);
+}
+
+void Entity::setBottom(float bottom)
+{
+    auto position = getPosition();
+    setPosition(position.x, bottom - getSize().y);
+}
+
+void Entity::setCenter(const sf::Vector2f &center)
+{
+    auto size = getSize();
+    setPosition(center.x - size.x * 0.5f, center.y - size.y * 0.5f);
+}
+
+sf::Vector2f Entity::getCenter() const
+{
+    return getPosition() + getSize() * 0.5f;
+}
+
 sf::FloatRect Entity::getBoundingBox() const
 {
-    auto box = data->parentTransform.transformRect(sf::FloatRect(sf::Vector2f(), getSize()));
-    return getTransform().transformRect(box);
+    sf::FloatRect area;
+    if (data->rectangle) {
+        area = data->rectangle->getLocalBounds();
+    } else
+        area = data->roundedRectangle->getLocalBounds();
+
+    return getGlobalTransform().transformRect(area);
 }
 
 sf::Transform Entity::getTransform() const
 {
     return data->transform.getTransform();
+}
+
+sf::Transform Entity::getGlobalTransform() const
+{
+    sf::Transform transform;
+    auto parent = getParent();
+    if (!parent.expired()) {
+        auto entityParent = std::dynamic_pointer_cast<Entity>(parent.lock());
+        if (entityParent)
+            transform = entityParent->getGlobalTransform();
+    }
+    return transform * getTransform();
 }
 
 void Entity::setBackgroundColor(const sf::Color &color)
@@ -238,7 +290,7 @@ void Entity::onUpdateObject(float deltaTime)
 
 void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    data->parentTransform = states.transform;
+    states.transform = getGlobalTransform();
 
     if (data->rectangle) {
         target.draw(*data->rectangle, states);

@@ -19,10 +19,12 @@ public:
     Object();
     virtual ~Object();
 public:
-    void addChild(std::shared_ptr<Object> child);
-    void removeChild(std::shared_ptr<Object> child);
-    void removeChild(std::function<bool(std::shared_ptr<Object>)> fn);
-    void foreachChild(std::function<void(std::shared_ptr<Object>)> fn);
+    void addChild(ObjectPointer child);
+    void removeChild(ObjectPointer child);
+    void removeChild(std::function<bool(ObjectPointer)> fn);
+    void foreachChild(std::function<void(ObjectPointer)> fn);
+
+    std::weak_ptr<Object> getParent()const;
 
     void acceptObject(ObjectVisitor *visitor);
 public:

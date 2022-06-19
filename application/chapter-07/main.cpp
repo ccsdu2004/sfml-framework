@@ -5,21 +5,24 @@
 #include <Scene.h>
 #include <Text.h>
 #include <MovingSprite.h>
+#include <Util.h>
 
+auto screenSize = sf::Vector2f(960, 640);
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
 using namespace std;
 
 std::shared_ptr<Scene> scene;
 
-std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
+std::shared_ptr<Sprite> createSprite(const std::string &image, VMode vMode)
 {
-    auto sprite = std::make_shared<MovingSprite>();
-    sprite->setPosition(x, y);
+    auto sprite = std::make_shared<Sprite>();
     auto texture = Application::getInstance()->loadTexture(image);
     sprite->addTexture(*texture);
-    auto size = texture->getSize();
-    sprite->setSize(size.x, size.y);
+
+    sf::Vector2f size(texture->getSize().x, texture->getSize().y);
+    auto position = Entity::adjustPosition(sf::FloatRect(sf::Vector2f(), screenSize), size, HMode_Center, vMode);
+    sprite->setPosition(position);
     return sprite;
 }
 
@@ -43,7 +46,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::D) {
                 if (sprite->getPosition().x + sprite->getSize().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
@@ -51,10 +54,10 @@ public:
                 auto bullet = std::make_shared<MovingSprite>();
                 bullet->addTexture(*texture);
 
-                auto position = sprite->getPosition();
+                auto position = getRectCenter(sprite->getBoundingBox());
                 position.y -= sprite->getSize().y;
 
-                bullet->setPosition(position);
+                bullet->setCenter(position);
                 bullet->setVelocity(BULLET_SPEED);
                 scene->addChild(bullet);
                 return true;
@@ -69,9 +72,8 @@ private:
 
 int main()
 {
-    auto size = sf::Vector2f(960, 640);
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-7",
-                                                     sf::Style::Close);
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y), "Chapter-7",
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -84,11 +86,11 @@ int main()
     auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
     scene->setBackground(*background);
 
-    auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);
+    auto sprite = createSprite("../resource/images/plane.png", VMode_Bottom);
     scene->addMessageListener(std::make_shared<SpriteMessageListener>(sprite));
     scene->addChild(sprite);
 
-    auto enemy = createSprite("../resource/images/enemy1.png", size.x * 0.5f, 40);
+    auto enemy = createSprite("../resource/images/enemy1.png", VMode_Top);
     scene->addChild(enemy);
 
     auto font = std::make_shared<sf::Font>();
@@ -96,7 +98,7 @@ int main()
 
     auto text = scene->createToastText();
     text->setText(L"游戏场景", false);
-    text->setPosition(80, 30);
+    text->setPosition(30, 30);
     scene->addChild(text);
 
     auto sceneManager = std::make_shared<SceneManager>();
