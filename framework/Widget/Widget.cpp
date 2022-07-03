@@ -41,6 +41,8 @@ bool Widget::getPadding() const
 
 void Widget::setWidth(float width)
 {
+    if(getWidth() == width)
+        return;
     setSize(width, getHeight());
 }
 
@@ -57,6 +59,9 @@ float Widget::getWidth() const
 
 void Widget::setHeight(float height)
 {
+    if(getHeight() == height)
+        return;
+
     setSize(getWidth(), height);
 }
 
@@ -295,6 +300,7 @@ void Widget::onStyleChanged()
 
 void Widget::onDrawWidget(sf::RenderTarget &target, sf::RenderStates states) const
 {
+
     Entity::onDrawObject(target, states);
 }
 

@@ -35,6 +35,9 @@ public:
     Tile(int32_t x, int32_t y, float sideLength, TileMapType type);
     virtual ~Tile();
 public:
+    void setTileType(const std::string& type);
+    std::string getTileType()const;
+
     void setVisible(bool visible);
     bool isVisible()const;
 private:

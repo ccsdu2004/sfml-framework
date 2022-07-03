@@ -2,6 +2,7 @@
 #include <Application.h>
 #include <Text.h>
 #include <Scene.h>
+#include <ResourceManager.h>
 #include <SoundManager.h>
 #include <Widget/Desktop.h>
 #include <Widget/BoxLayout.h>
@@ -42,7 +43,8 @@ int main()
     app->setWindow(window);
 
     auto scene = std::make_shared<Scene>();
-    auto image = Application::getInstance()->loadImage("../resource/images/tank/background.png");
+    auto imageManager = Application::getInstance()->getComponent<ResourceManager<sf::Image>>();
+    auto image = imageManager->loadFromFile("../resource/images/tank/background.png");
 
     sf::Texture texture;
     texture.loadFromImage(*image);

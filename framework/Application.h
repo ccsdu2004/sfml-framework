@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <Object.h>
@@ -21,11 +20,11 @@ public:
     void setWindow(std::shared_ptr<sf::RenderWindow> window);
     std::shared_ptr<sf::RenderWindow> getWindow()const;
 
+    std::shared_ptr<SceneManager> getSceneManager()const;
+
     void exit();
 public:
-    std::shared_ptr<sf::Font> loadFont(const std::string file);
-    std::shared_ptr<sf::Image> loadImage(const std::string file);
-    std::shared_ptr<sf::Texture> loadTexture(const std::string file);
+    std::shared_ptr<sf::Texture> loadTexture(const std::string& file, const sf::IntRect& area = sf::IntRect());
 private:
     Application();
     std::unique_ptr<class ApplicationData> data;

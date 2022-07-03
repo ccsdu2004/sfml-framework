@@ -14,7 +14,7 @@ public:
     HelpListener()
     {
         helpLabel = std::make_shared<Label>();
-        helpLabel->setSize(320, 108);
+        helpLabel->setSize(300, 108);
         helpLabel->setText(L"帮助\n点击键盘方向键控制坦克旋转\n点击上键控制坦克前进\n点击空格弹出本提示框");
 
         auto style = std::make_shared<LabelStyle>();

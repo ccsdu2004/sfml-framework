@@ -17,9 +17,10 @@ public:
     {
     }
 
-    int32_t type = 0;
     float sideLength = 48.0f;
     Bitmask bitmask;
+
+    std::string type;
 
     void updateHexPosition(int x, int y)
     {
@@ -86,6 +87,16 @@ Tile::Tile(int32_t x, int32_t y, float sideLength, TileMapType type):
 
 Tile::~Tile()
 {
+}
+
+void Tile::setTileType(const std::string &type)
+{
+    data->type = type;
+}
+
+std::string Tile::getTileType() const
+{
+    return data->type;
 }
 
 void Tile::setVisible(bool visible)

@@ -12,6 +12,9 @@ public:
     void setTargetWidget(std::shared_ptr<Widget> target);
     std::shared_ptr<Widget> getTargetWidget()const;
 
+    void setText(const sf::String& text);
+    sf::String getText()const;
+
     boost::signals2::signal<void(void)> moved;
 private:
     void onMouseEnter() override;
@@ -19,6 +22,8 @@ private:
     void onMousePressed(sf::Mouse::Button button) override;
     void onMouseReleased(sf::Mouse::Button button) override;
     void onMouseMoved(int x, int y) override;
+
+    void onStyleChanged() override;
 private:
     std::unique_ptr<class MouseAreaData> data;
 };

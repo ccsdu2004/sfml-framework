@@ -2,15 +2,20 @@
 #include <ctime>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <Application.h>
 #include <Message.h>
+#include <Scene.h>
+#include <ResourceManager.h>
 #include <Widget/Desktop.h>
-#include <SFML/Graphics/CircleShape.hpp>
 
 class ApplicationData
 {
 public:
     std::shared_ptr<sf::RenderWindow> window;
+    std::shared_ptr<Object> rootObject;
     sf::Color backgroundColor;
 
     std::map<std::string, std::shared_ptr<sf::Font>> fonts;
@@ -40,6 +45,8 @@ bool Application::execute(std::shared_ptr<Object> object)
 {
     assert(data->window);
     assert(object);
+
+    data->rootObject = object;
 
     auto fn = [&]()->std::shared_ptr<MessageReceiver> {return object;};
     auto listener = std::make_shared<ProxyMessageListener<Object>>(fn);
@@ -95,43 +102,24 @@ std::shared_ptr<sf::RenderWindow> Application::getWindow() const
     return data->window;
 }
 
+std::shared_ptr<SceneManager> Application::getSceneManager() const
+{
+    return std::dynamic_pointer_cast<SceneManager>(data->rootObject);
+}
+
 void Application::exit()
 {
     data->window->close();
 }
 
-std::shared_ptr<sf::Font> Application::loadFont(const std::string file)
-{
-    auto itr = data->fonts.find(file);
-    if (itr != data->fonts.end())
-        return (*itr).second;
-
-    auto font = std::make_shared<sf::Font>();
-    font->loadFromFile(file);
-    data->fonts.insert(std::make_pair(file, font));
-    return font;
-}
-
-std::shared_ptr<sf::Image> Application::loadImage(const std::string file)
-{
-    auto itr = data->images.find(file);
-    if (itr != data->images.end())
-        return (*itr).second;
-
-    auto image = std::make_shared<sf::Image>();
-    image->loadFromFile(file);
-    data->images.insert(std::make_pair(file, image));
-    return image;
-}
-
-std::shared_ptr<sf::Texture> Application::loadTexture(const std::string file)
+std::shared_ptr<sf::Texture> Application::loadTexture(const std::string& file, const sf::IntRect& area)
 {
     auto itr = data->textures.find(file);
     if (itr != data->textures.end())
         return (*itr).second;
 
     auto texture = std::make_shared<sf::Texture>();
-    texture->loadFromFile(file);
+    texture->loadFromFile(file, area);
     data->textures.insert(std::make_pair(file, texture));
     return texture;
 }
@@ -143,4 +131,13 @@ Application::Application():
 
     data->desktop = std::make_shared<Desktop>();
     addComponent(data->desktop);
+
+    auto imageResourceManager = std::make_shared<ResourceManager<sf::Image>>();
+    addComponent(imageResourceManager);
+
+    auto textureResourceManager = std::make_shared<ResourceManager<sf::Texture>>();
+    addComponent(textureResourceManager);
+
+    auto fontResourceManager = std::make_shared<ResourceManager<sf::Font>>();
+    addComponent(fontResourceManager);
 }

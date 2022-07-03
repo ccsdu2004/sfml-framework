@@ -21,9 +21,11 @@ public:
 
     sf::Color normalColor = sf::Color(128, 153, 128, 180);
     std::optional<sf::Color> disableColor = sf::Color(102, 102, 102, 140);
+    std::optional<sf::Color> pressedColor = sf::Color(142, 102, 102, 140);
     std::optional<sf::Color> hoverColor;
 
     std::optional<OutlineStyle> outlineStyle;
+    std::optional<OutlineStyle> outlinePressedStyle;
 
     sf::Color getDisableColor()const;
     sf::Color getHoverColor()const;
@@ -103,4 +105,30 @@ public:
 
     sf::Text::Style style = sf::Text::Regular;
     sf::Color textColor = sf::Color::White;
+};
+
+class ImageBoxStyle : public WidgetStyle
+{
+public:
+    virtual std::string getClassName()const
+    {
+        return boost::core::demangle(typeid(*this).name());
+    }
+};
+
+class PanelStyle : public WidgetStyle
+{
+public:
+    PanelStyle()
+    {
+        titleStyle = std::make_shared<LabelStyle>();
+        titleStyle->textColor = sf::Color::White;
+    }
+
+    std::shared_ptr<LabelStyle> titleStyle;
+
+    virtual std::string getClassName()const
+    {
+        return boost::core::demangle(typeid(*this).name());
+    }
 };

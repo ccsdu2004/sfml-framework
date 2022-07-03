@@ -1,4 +1,5 @@
 #include <Application.h>
+#include <ResourceManager.h>
 #include <Widget/Desktop.h>
 #include <Widget/Button.h>
 
@@ -66,7 +67,10 @@ void Button::onStyleChanged()
 
     auto style = std::dynamic_pointer_cast<ButtonStyle>(getWidgetStyle());
 
-    data->text->setFont(*Application::getInstance()->loadFont(style->font));
+    auto fontManager = Application::getInstance()->getComponent<ResourceManager<sf::Font>>();
+    auto font = fontManager->loadFromFile(style->font);
+    data->text->setFont(*font);
+
     data->text->setCharacterSize(style->size);
     data->text->setStyle(style->style);
     data->text->setFillColor(style->textColor);

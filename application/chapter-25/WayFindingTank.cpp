@@ -1,3 +1,4 @@
+#include <SFML/Graphics/Texture.hpp>
 #include <Application.h>
 #include "SpriteForwardState.h"
 #include "WayFindingTank.h"

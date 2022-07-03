@@ -4,6 +4,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <Application.h>
+#include <ResourceManager.h>
 #include "RadarChart.h"
 
 class RadarAxes : public Entity
@@ -31,7 +32,8 @@ public:
 
 RadarAxes::RadarAxes()
 {
-    auto pointer = Application::getInstance()->loadFont("../resource/accid.ttf");
+    auto fontManager = Application::getInstance()->getComponent<ResourceManager<sf::Font>>();
+    auto pointer = fontManager->loadFromFile("../resource/accid.ttf");
     assert(pointer);
     font = *pointer;
 
@@ -216,7 +218,8 @@ void RadarChart::setMaxValue(const double &value)
 
 void RadarChart::setFont(const std::string file)
 {
-    auto pointer = Application::getInstance()->loadFont(file);
+    auto fontManager = Application::getInstance()->getComponent<ResourceManager<sf::Font>>();
+    auto pointer = fontManager->loadFromFile(file);
     if (!pointer)
         return;
 

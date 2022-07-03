@@ -28,6 +28,14 @@ public:
             auto style = std::make_shared<ProgressBarStyle>();
             styles.insert(std::make_pair(style->getClassName(), style));
         }
+        {
+            auto style = std::make_shared<ImageBoxStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
+        {
+            auto style = std::make_shared<PanelStyle>();
+            styles.insert(std::make_pair(style->getClassName(), style));
+        }
     }
 
     std::list<WidgetPointer> widgets;

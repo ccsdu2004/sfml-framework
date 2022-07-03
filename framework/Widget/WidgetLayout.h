@@ -37,8 +37,8 @@ protected:
     void onMouseExit() override;
     void onMovableChanged()override;
 
-    void onPositionChanged() override;
-    void onSizeChanged() override;
+    virtual void onPositionChanged() override;
+    virtual void onSizeChanged() override;
 
     void onUpdateObject(float deltaTime) override;
     virtual void adjust() = 0;

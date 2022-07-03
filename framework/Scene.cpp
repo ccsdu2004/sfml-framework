@@ -4,8 +4,9 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Scene.h>
-#include <Widget/Desktop.h>
 #include <Application.h>
+#include <ResourceManager.h>
+#include <Widget/Desktop.h>
 
 class SceneData
 {
@@ -42,7 +43,8 @@ void Scene::setBackground(const sf::Texture &texture)
 
 std::shared_ptr<Text> Scene::createToastText()
 {
-    auto font = Application::getInstance()->loadFont("../resource/FZYTK.TTF");
+    auto fontManager = Application::getInstance()->getComponent<ResourceManager<sf::Font>>();
+    auto font = fontManager->loadFromFile("../resource/FZYTK.TTF");
 
     auto text = std::make_shared<Text>();
     text->setFont(font);

@@ -33,6 +33,8 @@ class Scene;
 using ScenePointer = std::shared_ptr<Scene>;
 using SceneWeakPointer = std::weak_ptr<Scene>;
 
+class SceneManager;
+
 class SpriteDeleter;
 using SpriteDeleterPointer = std::shared_ptr<SpriteDeleter>;
 
