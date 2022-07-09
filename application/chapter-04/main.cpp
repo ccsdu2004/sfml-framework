@@ -6,6 +6,7 @@
 #include <Text.h>
 #include <Sprite.h>
 #include <TileMap.h>
+#include <ResourceManager.h>
 
 using namespace std;
 
@@ -15,7 +16,8 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
 {
     auto sprite = std::make_shared<Sprite>();
     sprite->setPosition(x, y);
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
     return sprite;
 }
@@ -56,7 +58,7 @@ int main()
 {
     auto size = sf::Vector2f(960, 720);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-4",
-                                                     sf::Style::Close);
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -122,12 +124,14 @@ int main()
 
     std::vector<sf::Color> spriteColor = {sf::Color::White, sf::Color::Red, sf::Color::Green, sf::Color::Blue};
 
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
     for (int i = 0; i < 30; i++) {
         auto sprite = createSprite(units.at(rand() % units.size()), rand() % 800, rand() % 600);
         int index = rand() % modifers.size();
-        sprite->addTexture(*Application::getInstance()->loadTexture(modifers[index]));
+        sprite->addTexture(*textureManager->loadFromFile(modifers[index]));
         index = rand() % sizes.size();
-        sprite->addTexture(*Application::getInstance()->loadTexture(sizes[index]));
+        sprite->addTexture(*textureManager->loadFromFile(sizes[index]));
         sprite->setSpriteColor(spriteColor[rand() % spriteColor.size()]);
         object->addChild(sprite);
     }

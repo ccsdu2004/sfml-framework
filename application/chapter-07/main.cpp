@@ -6,6 +6,7 @@
 #include <Text.h>
 #include <MovingSprite.h>
 #include <Util.h>
+#include <ResourceManager.h>
 
 auto screenSize = sf::Vector2f(960, 640);
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
@@ -17,7 +18,9 @@ std::shared_ptr<Scene> scene;
 std::shared_ptr<Sprite> createSprite(const std::string &image, VMode vMode)
 {
     auto sprite = std::make_shared<Sprite>();
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
 
     sf::Vector2f size(texture->getSize().x, texture->getSize().y);
@@ -50,7 +53,9 @@ public:
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
-                auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
+                auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+                auto texture = textureManager->loadFromFile("../resource/images/bullet.png");
                 auto bullet = std::make_shared<MovingSprite>();
                 bullet->addTexture(*texture);
 
@@ -83,7 +88,8 @@ int main()
     scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png", VMode_Bottom);

@@ -4,86 +4,19 @@
 #include <Scene.h>
 #include <TileMap.h>
 #include <SoundManager.h>
+#include <Camera.h>
 #include <ResourceManager.h>
+#include <HelpListener.h>
 #include <Widget/Desktop.h>
 #include <Widget/TableLayout.h>
 #include <Widget/ImageBox.h>
+#include <Widget/Label.h>
 #include <Widget/Panel.h>
+#include <CameraTrackingObject.h>
 
 using namespace std;
 
-class TileImageSelector : public Panel
-{
-public:
-    void create()
-    {
-        auto style = std::make_shared<PanelStyle>();
-        style->titleStyle->normalColor = sf::Color(60, 60, 60, 255);
-        style->outlineStyle = {sf::Color(98, 98, 98, 250), 3.2f};
-        style->normalColor = sf::Color(32, 32, 32, 240);
-        setWidgetStyle(style);
-
-        setTitle(L"瓦片编辑器");
-
-        auto tableLayout = std::make_shared<TableLayout>(12, 4);
-        tableLayout->setSpacing(2.0f);
-
-        auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
-
-        std::shared_ptr<ImageBoxStyle> imageBoxStyle = std::make_shared<ImageBoxStyle>();
-        imageBoxStyle->pressedColor = sf::Color(228, 128, 128, 240);
-        imageBoxStyle->outlinePressedStyle = {sf::Color::Blue, 2.4f};
-
-        uint32_t row = 0;
-        uint32_t col = 0;
-
-        std::shared_ptr<WidgetGroup> widgetGroup = std::make_shared<WidgetGroup>();
-
-        for(int i = 0; i < 8; i++)
-            for(int j = 0; j < 6; j++) {
-                sf::IntRect rect;
-                rect.left = i * 32;
-                rect.top = j * 32;
-                rect.width = 32;
-                rect.height = 32;
-
-                auto name = std::to_string(i) + "," + std::to_string(j);
-                auto texture = textureManager->loadFromFile("../resource/images/tileset.png", name, rect);
-
-                auto imageBox = std::make_shared<ImageBox>(sf::Vector2f(32, 32));
-                imageBox->setWidgetGroup(widgetGroup);
-                imageBox->clicked.connect([&](std::shared_ptr<ImageBox> imageBox) {
-                    onImageBoxClicked(imageBox);
-                });
-                imageBox->setWidgetStyle(imageBoxStyle);
-                imageBox->setTexture(*texture);
-                tableLayout->addWidget(imageBox, row, col);
-                col ++;
-                if(col % 4 == 0) {
-                    col = 0;
-                    row ++;
-                }
-            }
-
-        setContextWidget(tableLayout);
-    }
-public:
-    void onImageBoxClicked(std::shared_ptr<ImageBox> imageBox)
-    {
-        selectedImageBox = imageBox;
-    }
-
-    const sf::Texture* getTexture()const
-    {
-        if(!selectedImageBox)
-            return nullptr;
-        return selectedImageBox->getTexture();
-    }
-private:
-    std::shared_ptr<ImageBox> selectedImageBox;
-};
-
-shared_ptr<TileImageSelector> panel;
+#define APP_SIZE sf::Vector2f(960,720)
 
 class MouseListener : public MessageListener
 {
@@ -96,17 +29,30 @@ public:
     bool onListener(std::shared_ptr<Message> message) override
     {
         if (message->getType() == Message_SFML) {
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
-                auto index = tileMap.lock()->getTileIndexByWorldPosition(mousePosition.x, mousePosition.y);
-                auto tile = tileMap.lock()->getTileByIndex(index);
-                if (tile) {
-                    auto texture = panel->getTexture();
-                    if(texture) {
-                        tile->setFillColor(sf::Color::White);
-                        tile->setTexture(texture);
-                    }
-                }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+                auto camera = Application::getInstance()->getComponent<Camera>();
+                auto view = camera->getView();
+                auto center = view.getCenter();
+                center.x -= 5.0f;
+                camera->setCenter(center);
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+                auto camera = Application::getInstance()->getComponent<Camera>();
+                auto view = camera->getView();
+                auto center = view.getCenter();
+                center.x += 5.0f;
+                camera->setCenter(center);
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+                auto camera = Application::getInstance()->getComponent<Camera>();
+                auto view = camera->getView();
+                auto center = view.getCenter();
+                center.y -= 5.0f;
+                camera->setCenter(center);
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+                auto camera = Application::getInstance()->getComponent<Camera>();
+                auto view = camera->getView();
+                auto center = view.getCenter();
+                center.y += 5.0f;
+                camera->setCenter(center);
             }
             return true;
         }
@@ -123,19 +69,30 @@ public:
     RectMapScene()
     {
         tileMap = TileMap::createTileMap(TileMapType_Hex);
-        tileMap->init(28, 22, 48);
+        tileMap->init(56, 44, 48);
 
         addChild(tileMap);
 
         setName("scene");
-        auto text = createToastText();
-        text->setText(L"地图编辑", false);
-        addChild(text);
 
+        auto text = createToastText();
+        text->setText(L"摄像机跟随", false);
+
+        auto cameraTracking = std::make_shared<CameraTrackingObject>();
+        cameraTracking->setTarget(text);
+        cameraTracking->setTargetPosition(sf::Vector2f(20, 20));
+
+        addChild(cameraTracking);
+
+        tileMap->setTextVisible(true);
         tileMap->accept(this);
 
-        auto listener = std::make_shared<MouseListener>(tileMap);
-        tileMap->addMessageListener(listener);
+        sf::String help(L"帮助\n点击键盘上下左右按键可移动地图\n点击F1弹出本提示框");
+        auto helpListener = std::make_shared<HelpListener>(help, sf::Vector2f(324, 95));
+        addMessageListener(helpListener);
+
+        auto mouseListener = std::make_shared<MouseListener>(tileMap);
+        addMessageListener(mouseListener);
     }
 
     void visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> tile) override
@@ -143,7 +100,7 @@ public:
         (void)x, (void)y;
         tile->setScale(0.95f, 0.95f);
         tile->setVisible(true);
-        tile->setFillColor(sf::Color::Green);
+        tile->setFillColor(sf::Color(rand() % 250, rand() % 250, rand() % 250));
     }
 private:
     std::shared_ptr<TileMap> tileMap;
@@ -151,27 +108,23 @@ private:
 
 int main()
 {
-    auto size = sf::Vector2f(960, 720);
+    auto size = sf::Vector2f(APP_SIZE);
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-32",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-33",
                   sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 
     Application::getInstance()->setWindow(window);
+    auto camera = std::make_shared<Camera>();
+    Application::getInstance()->addComponent(camera);
+    camera->setArea(sf::FloatRect(0, 0, APP_SIZE.x, APP_SIZE.y));
 
     auto scene = std::make_shared<RectMapScene>();
     auto sceneManager = std::make_shared<SceneManager>();
     sceneManager->addScene(scene);
     sceneManager->setInitialScene(scene);
 
-    auto desktop = std::make_shared<Desktop>();
-    scene->addComponent(desktop);
-
-    panel = std::make_shared<TileImageSelector>();
-    panel->create();
-
-    desktop->addWidget(panel, HMode_Center, VMode_Center);
     Application::getInstance()->execute(sceneManager);
     return 0;
 }

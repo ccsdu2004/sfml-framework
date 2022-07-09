@@ -1,4 +1,5 @@
-#include "Application.h"
+#include <Application.h>
+#include <ResourceManager.h>
 #include "MineSweeperScene.h"
 #include "SpriteErrorState.h"
 #include "SpriteIdleState.h"
@@ -54,13 +55,15 @@ void MineSweeperScene::initial()
 }
 
 std::shared_ptr<MovingSprite> MineSweeperScene::createSprite(const std::string &image, float x,
-                                                             float y)
+        float y)
 {
     auto sprite = std::make_shared<MovingSprite>();
     sprite->setPosition(x, y);
     sprite->setSpriteStatus(SpriteStatus_Normal);
     sprite->setScale(0.3f);
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
@@ -83,7 +86,7 @@ void MineSweeperScene::makeSpriteForward()
         return;
 
     auto message = std::make_shared<StateSwitchMessage>("forward",
-                                                        std::bind(&MineSweeperScene::shouldForward, this));
+                   std::bind(&MineSweeperScene::shouldForward, this));
     stateMachine->process(message);
 }
 
@@ -111,7 +114,7 @@ bool MineSweeperScene::shouldForward()
     auto tileIndex = tileMap->getTileIndexByWorldPosition(position.x, position.y);
     int direction = mineSweeper->getRotate();
     auto targetTileIndex = tileMap->getAdjacentTileByDirection(tileIndex.x, tileIndex.y,
-                                                               (TileDirection)direction);
+                           (TileDirection)direction);
     if (targetTileIndex.has_value()) {
         tileIndex = targetTileIndex.value();
         return nullptr != tileMap->getTileByIndex(tileIndex.x, tileIndex.y);

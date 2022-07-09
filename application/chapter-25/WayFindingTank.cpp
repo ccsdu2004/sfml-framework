@@ -1,5 +1,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <Application.h>
+#include <ResourceManager.h>
 #include "SpriteForwardState.h"
 #include "WayFindingTank.h"
 
@@ -8,7 +9,8 @@ WayFindingTank::WayFindingTank(const std::string &image, float x, float y)
     setPosition(x, y);
     //setSpriteStatus(SpriteStatus_Normal);
     setScale(0.3f);
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto texture = textureManager->loadFromFile(image);
     assert(texture);
     addTexture(*texture);
     auto size = texture->getSize();

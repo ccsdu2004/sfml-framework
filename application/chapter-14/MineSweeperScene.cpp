@@ -4,11 +4,12 @@
 #include "SpriteAnimationState.h"
 #include "SpriteForwardState.h"
 #include "SpriteRotateState.h"
+#include "ResourceManager.h"
 
 MineSweeperScene::MineSweeperScene()
 {
     tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(18, 12, 36);
+    tileMap->init(20, 14, 64);
     tileMap->setTextVisible(true);
 }
 
@@ -108,7 +109,9 @@ std::shared_ptr<MovingSprite> MineSweeperScene::createSprite(const std::string &
         float y)
 {
     auto sprite = std::make_shared<MovingSprite>();
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
     sprite->addTexture(*texture);

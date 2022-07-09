@@ -12,6 +12,7 @@ public:
     std::list<ObjectPointer> children;
     std::weak_ptr<Object> parent;
     ObjectRenderOrder renderOrder = ObjectRenderOrder_ParentFirst;
+    bool objectRender = true;
 
     void removeIfNecessary()
     {
@@ -126,6 +127,15 @@ ObjectRenderOrder Object::getObjectRenderOrder() const
     return data->renderOrder;
 }
 
+void Object::setRenderObject(bool render)
+{
+    data->objectRender = render;
+}
+
+bool Object::isRenderObject() const
+{
+    return data->objectRender;
+}
 void Object::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     auto entity = dynamic_cast<const Entity *>(this);

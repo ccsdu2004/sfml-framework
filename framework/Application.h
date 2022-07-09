@@ -23,8 +23,6 @@ public:
     std::shared_ptr<SceneManager> getSceneManager()const;
 
     void exit();
-public:
-    std::shared_ptr<sf::Texture> loadTexture(const std::string& file, const sf::IntRect& area = sf::IntRect());
 private:
     Application();
     std::unique_ptr<class ApplicationData> data;

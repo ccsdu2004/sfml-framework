@@ -2,6 +2,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Application.h>
 #include <Sprite.h>
+#include <ResourceManager.h>
 #include <Animation.h>
 
 class AnimationData
@@ -70,7 +71,9 @@ void Animation::setTexture(const std::string &image, const std::vector<sf::IntRe
 {
     clear();
 
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     if(!texture)
         return;
 

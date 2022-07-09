@@ -11,6 +11,7 @@
 #include <SpriteDeleter.h>
 #include <SoundManager.h>
 #include <SpritePool.h>
+#include <ResourceManager.h>
 
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
 
@@ -22,7 +23,8 @@ class Bullet : public MovingSprite
 public:
     Bullet()
     {
-        auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
+        auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+        auto texture = textureManager->loadFromFile("../resource/images/bullet.png");
         addTexture(*texture);
         setVelocity(BULLET_SPEED);
         setSpriteGroup(SpriteGroupID_Bullet);
@@ -34,7 +36,8 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
     auto sprite = std::make_shared<Sprite>();
     sprite->setPosition(x, y);
     sprite->setSpriteStatus(SpriteStatus_Normal);
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture, sf::IntRect());
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
@@ -50,7 +53,7 @@ public:
 public:
     void onConllision(SpritePointer current, SpritePointer target) override
     {
-        auto animation = createAnimation(current->getPosition());
+        auto animation = createAnimation(current->getCenter());
         addChild(animation);
 
         target->setSpriteStatus(SpriteStatus_Death);
@@ -109,7 +112,7 @@ public:
                 auto position = sprite->getPosition();
                 position.y -= sprite->getSize().y;
 
-                bullet->setPosition(position);
+                bullet->setCenter(position);
                 bullet->setVelocity(BULLET_SPEED);
                 bullet->setSpriteGroup(SpriteGroupID_Bullet);
                 scene->addChild(bullet);
@@ -170,7 +173,9 @@ int main()
     spriteDeleter = SpriteDeleter::create(SpriteDeleter_Direct);
     scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png", size.x * 0.5f, 600);

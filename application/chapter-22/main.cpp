@@ -45,7 +45,7 @@ int main()
         mouseArea->setTargetWidget(boxLayout);
 
         if(i > 0)
-            mouseArea->setActive(false);
+            ;//mouseArea->setActive(false);
     }
 
     boxLayout->setBackgroundColor(sf::Color::Black);

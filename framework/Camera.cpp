@@ -1,15 +1,11 @@
 #include <Camera.h>
+#include <Application.h>
 
 class CameraData
 {
 public:
-    CameraData()
-    {
-        view.setCenter(0, 0);
-        view.setSize(640.0f, 480.0f);
-    }
-
     sf::View view;
+    bool dirty = false;
 };
 
 Camera::Camera():
@@ -21,22 +17,40 @@ Camera::~Camera()
 {
 }
 
-sf::View& Camera::getView()const
+sf::View Camera::getView() const
 {
     return data->view;
 }
 
-bool Camera::needRemoved() const
+void Camera::setArea(const sf::FloatRect &area)
 {
-
+    data->view.reset(area);
+    data->dirty = true;
 }
 
-void Camera::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
+void Camera::setCenter(const sf::Vector2f &center)
 {
-
+    data->view.setCenter(center);
+    data->dirty = true;
 }
 
-void Camera::onUpdateObject(float deltaTime)
+void Camera::setViewport(const sf::FloatRect &area)
 {
+    data->view.setViewport(area);
+    data->dirty = true;
+}
 
+void Camera::update(float deltaTime)
+{
+    (void)deltaTime;
+    if(data->dirty) {
+        data->dirty = false;
+        Application::getInstance()->getWindow()->setView(data->view);
+
+        auto center = getView().getCenter();
+        auto size = getView().getSize();
+        auto leftTop = center - size * 0.5f;
+
+        onChanged(leftTop);
+    }
 }

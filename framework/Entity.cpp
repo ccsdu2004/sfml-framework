@@ -290,6 +290,8 @@ void Entity::onUpdateObject(float deltaTime)
 
 void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const
 {
+    if (!isRenderObject())
+        return;
     states.transform = getGlobalTransform();
 
     if (data->rectangle) {

@@ -35,6 +35,8 @@ public:
 
     void setObjectRenderOrder(ObjectRenderOrder order);
     ObjectRenderOrder getObjectRenderOrder()const;
+    void setRenderObject(bool render = true);
+    bool isRenderObject()const;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     virtual void onDrawObject(sf::RenderTarget &target, sf::RenderStates states) const;

@@ -5,6 +5,7 @@
 #include <Text.h>
 #include <Scene.h>
 #include <Sprite.h>
+#include <ResourceManager.h>
 
 auto screenSize = sf::Vector2f(800, 640);
 
@@ -14,7 +15,10 @@ std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
     auto sprite = std::make_shared<Sprite>();
     sprite->setSpriteColor(sf::Color::Yellow);
-    auto texture = Application::getInstance()->loadTexture(image);
+
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
 
     sf::Vector2f size(texture->getSize().x, texture->getSize().y);
@@ -89,7 +93,9 @@ int main()
     auto scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png");

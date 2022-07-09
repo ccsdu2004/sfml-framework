@@ -6,6 +6,7 @@
 #include <Scene.h>
 #include <Sprite.h>
 #include <SpritePool.h>
+#include <ResourceManager.h>
 
 using namespace std;
 
@@ -13,8 +14,10 @@ auto screenSize = sf::Vector2f(800, 640);
 
 std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
     auto pool = Application::getInstance()->getComponent<SpritePool<Sprite>>();
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto texture = textureManager->loadFromFile(image);
     auto sprite = pool->createOrAwakeSprite();
     sprite->setSize(texture->getSize().x, texture->getSize().y);
     sprite->setSpriteColor(sf::Color::Yellow);
@@ -44,7 +47,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Up) {
@@ -53,7 +56,7 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Down) {
                 if (sprite->getPosition().y <
-                        Application::getInstance()->getWindow()->getSize().y - 5)
+                    Application::getInstance()->getWindow()->getSize().y - 5)
                     sprite->move(0, 5);
                 return true;
             }
@@ -68,8 +71,8 @@ private:
 int main()
 {
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
-                                                     "Chapter-11",
-                                                     sf::Style::Close);
+                  "Chapter-11",
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -82,7 +85,8 @@ int main()
     auto scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto font = std::make_shared<sf::Font>();

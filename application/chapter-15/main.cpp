@@ -6,6 +6,7 @@
 #include <Scene.h>
 #include <Sprite.h>
 #include <SpriteDecorator.h>
+#include <ResourceManager.h>
 
 using namespace std;
 
@@ -15,7 +16,9 @@ std::shared_ptr<Sprite> createSprite(const std::string &image)
 {
     auto sprite = std::make_shared<Sprite>();
     sprite->setSpriteColor(sf::Color::White);
-    auto texture = Application::getInstance()->loadTexture(image);
+
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
 
     auto spriteRing = std::make_shared<SpriteRingDecorator>();
@@ -71,8 +74,8 @@ int main()
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
-                                                     "Chapter-15",
-                                                     sf::Style::Close, settings);
+                  "Chapter-15",
+                  sf::Style::Close, settings);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -82,7 +85,8 @@ int main()
     auto scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png");

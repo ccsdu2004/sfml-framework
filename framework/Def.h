@@ -11,6 +11,8 @@ enum SpriteGroupID : uint32_t {
     SpriteGroupID_Max
 };
 
+class Application;
+
 class Object;
 using ObjectPointer = std::shared_ptr<Object>;
 

@@ -7,6 +7,8 @@
 #include <MovingSprite.h>
 #include <QuadTreeScene.h>
 #include <SpriteController.h>
+#include <ResourceManager.h>
+#include <ResourceManager.h>
 
 #define OFFSET 10
 
@@ -51,7 +53,9 @@ std::shared_ptr<Sprite> createSprite(const std::string &image, float x, float y)
     auto sprite = std::make_shared<Sprite>();
     sprite->setPosition(x, y);
     sprite->setSpriteStatus(SpriteStatus_Normal);
-    auto texture = Application::getInstance()->loadTexture(image);
+
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture, sf::IntRect());
     auto size = texture->getSize();
     sprite->setSize(size.x, size.y);
@@ -62,7 +66,7 @@ int main()
 {
     auto size = sf::Vector2f(960, 640);
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-13",
-                                                     sf::Style::Close);
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -72,7 +76,8 @@ int main()
     scene = std::make_shared<QuadTreeScene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto controller = std::make_shared<MySpriteController>();

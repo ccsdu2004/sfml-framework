@@ -18,10 +18,6 @@ public:
     std::shared_ptr<Object> rootObject;
     sf::Color backgroundColor;
 
-    std::map<std::string, std::shared_ptr<sf::Font>> fonts;
-    std::map<std::string, std::shared_ptr<sf::Image>> images;
-    std::map<std::string, std::shared_ptr<sf::Texture>> textures;
-
     std::shared_ptr<Desktop> desktop;
 };
 
@@ -47,6 +43,7 @@ bool Application::execute(std::shared_ptr<Object> object)
     assert(object);
 
     data->rootObject = object;
+    data->rootObject->setApplication(this);
 
     auto fn = [&]()->std::shared_ptr<MessageReceiver> {return object;};
     auto listener = std::make_shared<ProxyMessageListener<Object>>(fn);
@@ -110,18 +107,6 @@ std::shared_ptr<SceneManager> Application::getSceneManager() const
 void Application::exit()
 {
     data->window->close();
-}
-
-std::shared_ptr<sf::Texture> Application::loadTexture(const std::string& file, const sf::IntRect& area)
-{
-    auto itr = data->textures.find(file);
-    if (itr != data->textures.end())
-        return (*itr).second;
-
-    auto texture = std::make_shared<sf::Texture>();
-    texture->loadFromFile(file, area);
-    data->textures.insert(std::make_pair(file, texture));
-    return texture;
 }
 
 Application::Application():

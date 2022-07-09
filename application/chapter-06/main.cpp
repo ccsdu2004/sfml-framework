@@ -4,6 +4,7 @@
 #include <Scene.h>
 #include <Animation.h>
 #include <Text.h>
+#include <ResourceManager.h>
 
 #define WIN_SIZE 640
 
@@ -58,7 +59,9 @@ int main()
     auto scene = std::make_shared<Scene>();
     scene->setName("scene");
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/grid.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto background = textureManager->loadFromFile("../resource/images/grid.png");
     scene->setBackground(*background);
 
     for(int i = 0; i < 100; i++)

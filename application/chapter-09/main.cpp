@@ -10,6 +10,7 @@
 #include <MovingSprite.h>
 #include <QuadTreeScene.h>
 #include <SpriteDeleter.h>
+#include <ResourceManager.h>
 
 auto screenSize = sf::Vector2f(960, 640);
 #define BULLET_SPEED sf::Vector2f(0, -160.0f)
@@ -21,7 +22,9 @@ std::shared_ptr<QuadTreeScene> scene;
 std::shared_ptr<Sprite> createSprite(const std::string &image, VMode vMode)
 {
     auto sprite = std::make_shared<Sprite>();
-    auto texture = Application::getInstance()->loadTexture(image);
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+
+    auto texture = textureManager->loadFromFile(image);
     sprite->addTexture(*texture);
 
     sf::Vector2f size(texture->getSize().x, texture->getSize().y);
@@ -88,11 +91,12 @@ public:
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Right) {
                 if (sprite->getPosition().x + sprite->getSize().x <
-                        Application::getInstance()->getWindow()->getSize().x - 5)
+                    Application::getInstance()->getWindow()->getSize().x - 5)
                     sprite->move(5, 0);
                 return true;
             } else if (event.key.code == sf::Keyboard::Key::Space) {
-                auto texture = Application::getInstance()->loadTexture("../resource/images/bullet.png");
+                auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+                auto texture = textureManager->loadFromFile("../resource/images/bullet.png");
                 auto bullet = std::make_shared<MovingSprite>();
                 bullet->setSpriteStatus(SpriteStatus_Normal);
                 bullet->setSpriteOwner(sprite);
@@ -118,8 +122,8 @@ private:
 int main()
 {
     auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(screenSize.x, screenSize.y),
-                                                     "Chapter-9",
-                                                     sf::Style::Close);
+                  "Chapter-9",
+                  sf::Style::Close);
     window->setVerticalSyncEnabled(true);
 
     auto app = Application::getInstance();
@@ -136,7 +140,8 @@ int main()
     auto spriteDeleter = SpriteDeleter::create(SpriteDeleter_Slop);
     scene->addSpriteDeleter(SpriteGroupID_Bullet, spriteDeleter);
 
-    auto background = Application::getInstance()->loadTexture("../resource/images/background.png");
+    auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
+    auto background = textureManager->loadFromFile("../resource/images/background.png");
     scene->setBackground(*background);
 
     auto sprite = createSprite("../resource/images/plane.png", VMode_Bottom);
