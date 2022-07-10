@@ -7,7 +7,6 @@
 WayFindingTank::WayFindingTank(const std::string &image, float x, float y)
 {
     setPosition(x, y);
-    //setSpriteStatus(SpriteStatus_Normal);
     setScale(0.3f);
     auto textureManager = Application::getInstance()->getComponent<ResourceManager<sf::Texture>>();
     auto texture = textureManager->loadFromFile(image);
@@ -17,15 +16,15 @@ WayFindingTank::WayFindingTank(const std::string &image, float x, float y)
     setSize(size.x, size.y);
 }
 
-void WayFindingTank::init(TileMapPointer inputTileMap)
+void WayFindingTank::init(TileMapPointer tileMap)
 {
-    tileMap = inputTileMap;
+    this->tileMap = tileMap;
 
     tankStateMachine = std::make_shared<StateMachine>();
 
     errorState = std::make_shared<SpriteErrorState>();
-    idleState = std::make_shared<SpriteIdleState>(inputTileMap, shared_from_this());
-    forwardState = std::make_shared<SpriteForwardState>(inputTileMap, shared_from_this());
+    idleState = std::make_shared<SpriteIdleState>(tileMap, shared_from_this());
+    forwardState = std::make_shared<SpriteForwardState>(tileMap, shared_from_this());
     turnLeftState = std::make_shared<SpriteTurnLeftState>(shared_from_this());
     turnRightState = std::make_shared<SpriteTurnRightState>(shared_from_this());
 

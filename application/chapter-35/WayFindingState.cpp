@@ -15,13 +15,19 @@ void WayFindingState::onEnter()
     auto tank = tankWeak.lock();
 
     if(angle.has_value()) {
-        int v = angle.value() - tank->getRotate();
-        if(v == 0)
+        int current = tank->getRotate();
+        int target = angle.value();
+
+        if(current == target)
             tank->makeForward();
-        else if(v < 0)
-            tank->makeTurnLeft();
-        else
-            tank->makeTurnRight();
+        else if(std::abs(current - target) == 180)
+            rand() % 2 == 0 ? tank->makeTurnRight() : tank->makeTurnLeft();
+        else {
+            if(current + 60 == target || current + 120 == target || current == target + 300 || current == target + 240)
+                tank->makeTurnRight();
+            else
+                tank->makeTurnLeft();
+        }
     } else {
         auto position = tank->getCenter();
         auto index = tileMapWeak.lock()->getTileIndexByWorldPosition(position.x, position.y);

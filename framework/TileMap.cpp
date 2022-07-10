@@ -265,11 +265,6 @@ bool TileMap::isTextVisible()const
     return data->textVisible;
 }
 
-void TileMap::update(float deltaTime)
-{
-    (void)deltaTime;
-}
-
 void TileMap::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     auto itr = data->tiles.begin();

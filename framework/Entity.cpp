@@ -92,8 +92,12 @@ void Entity::setPosition(float x, float y)
 
 void Entity::setPosition(const sf::Vector2f &position)
 {
+    if(getPosition() == position)
+        return;
+
     data->transform.setPosition(data->transform.getOrigin() + position);
     onPositionChanged();
+    positionChanged(position);
 }
 
 sf::Vector2f Entity::getPosition() const
@@ -292,6 +296,7 @@ void Entity::onDrawObject(sf::RenderTarget &target, sf::RenderStates states) con
 {
     if (!isRenderObject())
         return;
+
     states.transform = getGlobalTransform();
 
     if (data->rectangle) {

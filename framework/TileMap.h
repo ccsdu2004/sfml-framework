@@ -6,7 +6,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <Object.h>
-#include <Component.h>
 
 namespace std
 {
@@ -73,7 +72,7 @@ BOOST_DESCRIBE_ENUM(TileDirection,
                     TileDirection_300,
                     TileDirection_Max)
 
-class TileMap : public Object, public Component
+class TileMap : public Object
 {
 public:
     static std::shared_ptr<TileMap> createTileMap(TileMapType type);
@@ -102,7 +101,6 @@ public:
     boost::signals2::signal<void(int32_t, int32_t)> tileClicked;
 protected:
     virtual std::shared_ptr<Tile> createTile(int32_t i, int32_t j, float tilesize) = 0;
-    void update(float deltaTime)override;
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 protected:
     std::unique_ptr<class TileMapData> data;

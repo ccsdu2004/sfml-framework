@@ -176,3 +176,6 @@ inline sf::Color blendColors(const sf::Color &firstColor, const sf::Color &secon
                static_cast<sf::Uint8>(p * firstColor.a + interpolation * secondColor.a));
 
 }
+
+sf::FloatRect expandRect(const sf::FloatRect& a, const sf::FloatRect& b);
+

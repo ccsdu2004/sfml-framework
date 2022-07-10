@@ -5,6 +5,7 @@
 #include <TileMap.h>
 #include <SoundManager.h>
 #include <Camera.h>
+#include <Util.h>
 #include <ResourceManager.h>
 #include <HelpListener.h>
 #include <Widget/Desktop.h>
@@ -13,6 +14,7 @@
 #include <Widget/Label.h>
 #include <Widget/Panel.h>
 #include <CameraTrackingObject.h>
+#include <iostream>
 
 using namespace std;
 
@@ -53,6 +55,14 @@ public:
                 auto center = view.getCenter();
                 center.y += 5.0f;
                 camera->setCenter(center);
+            } else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                auto mousePosition = sf::Mouse::getPosition(*Application::getInstance()->getWindow());
+                sf::Vector2f position = Application::getInstance()->getWindow()->mapPixelToCoords(mousePosition);
+                auto index = tileMap.lock()->getTileIndexByWorldPosition(position.x, position.y);
+                auto tile = tileMap.lock()->getTileByIndex(index);
+                if (tile) {
+                    tile->setFillColor(sf::Color::Blue);
+                }
             }
             return true;
         }
@@ -87,9 +97,7 @@ public:
         tileMap->setTextVisible(true);
         tileMap->accept(this);
 
-        sf::String help(L"帮助\n点击键盘上下左右按键可移动地图\n点击F1弹出本提示框");
-        auto helpListener = std::make_shared<HelpListener>(help, sf::Vector2f(324, 95));
-        addMessageListener(helpListener);
+        Application::getInstance()->getComponent<Camera>()->setGlobalArea(tileMapArea);
 
         auto mouseListener = std::make_shared<MouseListener>(tileMap);
         addMessageListener(mouseListener);
@@ -101,6 +109,9 @@ public:
         tile->setScale(0.95f, 0.95f);
         tile->setVisible(true);
         tile->setFillColor(sf::Color(rand() % 250, rand() % 250, rand() % 250));
+
+        auto box = tile->getGlobalBounds();
+        tileMapArea = expandRect(tileMapArea, box);
     }
 private:
     std::shared_ptr<TileMap> tileMap;
@@ -112,7 +123,7 @@ int main()
     auto size = sf::Vector2f(APP_SIZE);
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-33",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-34",
                   sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 

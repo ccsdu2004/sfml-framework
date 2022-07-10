@@ -44,7 +44,7 @@ void SpriteForwardState::onLeave()
     std::shared_ptr<TileMap> tileMapPointer = tileMap.lock();
 
     auto tile = tileMapPointer->getTileIndexByWorldPosition(targetPosition.x, targetPosition.y);
-    tileMapPointer->getTileByIndex(tile)->setFillColor(sf::Color::Yellow);
+    tileMapPointer->getTileByIndex(tile)->setFillColor(sf::Color(120, 180, 120, 120));
 }
 
 void SpriteForwardState::update(float deltaTime)

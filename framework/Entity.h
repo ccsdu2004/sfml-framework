@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <memory>
+#include <boost/signals2.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <Object.h>
 #include <CornerStyle.h>
@@ -37,6 +38,8 @@ public:
     void setPosition(const sf::Vector2f &position);
     sf::Vector2f getPosition()const;
 
+    boost::signals2::signal<void(const sf::Vector2f&)> positionChanged;
+
     void move(float dx, float dy);
     void move(float distance);
 
@@ -47,14 +50,14 @@ public:
     float getScale()const;
 
     void setSize(float width, float height);
-    void setSize(const sf::Vector2f& size);
+    void setSize(const sf::Vector2f &size);
     sf::Vector2f getSize()const;
 
     void setLeft(float left);
     void setTop(float top);
     void setRight(float right);
     void setBottom(float bottom);
-    void setCenter(const sf::Vector2f& center);
+    void setCenter(const sf::Vector2f &center);
     sf::Vector2f getCenter()const;
 public:
     sf::FloatRect getBoundingBox()const;

@@ -1,4 +1,5 @@
 #include <map>
+#include <CameraTrackingObject.h>
 #include <Application.h>
 #include <Widget/Desktop.h>
 #include <Widget/WidgetStyle.h>

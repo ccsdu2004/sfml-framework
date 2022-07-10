@@ -1,3 +1,6 @@
+#include <Util.h>
+#include <Application.h>
+#include <Camera.h>
 #include "WayFindingTileVisitor.h"
 #include <iostream>
 
@@ -17,6 +20,8 @@ void WayFindingTileVisitor::compute(const sf::Vector2i &inputStart)
     weakTileMap.lock()->accept(this);
 
     buildTileMap();
+
+    Application::getInstance()->getComponent<Camera>()->setGlobalArea(tileMapArea);
 
     std::vector<uint32_t> output;
     int steps = shortestPathFinder->search(getIDByPosition(inputStart.x, inputStart.y),
@@ -46,7 +51,7 @@ void WayFindingTileVisitor::buildTileMap()
 
     itr ++;
 
-    const int BLOCKS_COUNT = 100;
+    const int BLOCKS_COUNT = 400;
     for (int i = 0; i < BLOCKS_COUNT; i++) {
         auto position = *itr;
         auto tile = tileMap->getTileByIndex(position.x, position.y);
@@ -80,4 +85,7 @@ void WayFindingTileVisitor::visit(uint32_t x, uint32_t y, std::shared_ptr<Tile> 
         }
         itr ++;
     }
+
+    auto box = tile->getGlobalBounds();
+    tileMapArea = expandRect(tileMapArea, box);
 }

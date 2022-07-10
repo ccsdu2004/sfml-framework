@@ -43,8 +43,6 @@ bool Application::execute(std::shared_ptr<Object> object)
     assert(object);
 
     data->rootObject = object;
-    data->rootObject->setApplication(this);
-
     auto fn = [&]()->std::shared_ptr<MessageReceiver> {return object;};
     auto listener = std::make_shared<ProxyMessageListener<Object>>(fn);
     addMessageListener(listener);
