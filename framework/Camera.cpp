@@ -52,17 +52,30 @@ void Camera::setGlobalArea(const sf::FloatRect &area)
 void Camera::setCenter(const sf::Vector2f &center)
 {
     auto size = data->view.getSize();
-    if(center.x - size.x * 0.5f < data->globalArea.left)
-        return;
-    if(center.y - size.y * 0.5f < data->globalArea.top)
+    auto oldCenter = data->view.getCenter();
+
+    bool updateX = false;
+    bool updateY = false;
+
+    if(center.x - size.x * 0.5f >= data->globalArea.left &&
+       center.x + size.x * 0.5f <= data->globalArea.left + data->globalArea.width) {
+        updateX = true;
+    }
+
+    if(center.y - size.y * 0.5f >= data->globalArea.top &&
+       center.y + size.y * 0.5f <= data->globalArea.top + data->globalArea.height)
+        updateY = true;
+
+    if(updateX == false && updateY == false)
         return;
 
-    if(center.x + size.x * 0.5f > data->globalArea.left + data->globalArea.width)
-        return;
-    if(center.y + size.y * 0.5f > data->globalArea.top + data->globalArea.height)
-        return;
+    auto newCenter = center;
+    if(!updateX)
+        newCenter.x = oldCenter.x;
+    if(!updateY)
+        newCenter.y = oldCenter.y;
 
-    data->view.setCenter(center);
+    data->view.setCenter(newCenter);
     data->dirty = true;
 }
 

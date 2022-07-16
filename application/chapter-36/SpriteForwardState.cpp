@@ -25,12 +25,13 @@ void SpriteForwardState::onEnter()
     if(option.has_value()) {
         tileIndex = option.value();
         auto tile = tileMapPointer->getTileByIndex(tileIndex.x, tileIndex.y);
-        tile->setFillColor(sf::Color::Blue);
         targetPosition = tile->getPosition();
 
         auto diffPosition = targetPosition - spritePosition;
         sprite->setVelocity(sf::Vector2f(diffPosition.x * FORWARD_SPEED, diffPosition.y * FORWARD_SPEED));
     }
+
+    lastDistance = std::numeric_limits<float>::max();
 }
 
 void SpriteForwardState::onLeave()
@@ -41,6 +42,11 @@ void SpriteForwardState::onLeave()
     auto sprite = std::dynamic_pointer_cast<MovingSprite>(getTarget().lock());
     sprite->setVelocity(sf::Vector2f(0, 0));
     sprite->setCenter(targetPosition);
+
+    std::shared_ptr<TileMap> tileMapPointer = tileMap.lock();
+
+    auto tile = tileMapPointer->getTileIndexByWorldPosition(targetPosition.x, targetPosition.y);
+    tileMapPointer->getTileByIndex(tile)->setFillColor(sf::Color(120, 180, 120, 120));
 }
 
 void SpriteForwardState::update(float deltaTime)
@@ -54,6 +60,10 @@ void SpriteForwardState::update(float deltaTime)
     auto spritePosition = sprite->getCenter();
 
     float distance = distance2(targetPosition.x, targetPosition.y, spritePosition.x, spritePosition.y);
-    if(distance < 1.0f)
+    if(distance <= lastDistance)
+        lastDistance = distance;
+    else {
+        sprite->setCenter(targetPosition);
         setFinished();
+    }
 }

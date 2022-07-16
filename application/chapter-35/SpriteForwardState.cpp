@@ -58,6 +58,6 @@ void SpriteForwardState::update(float deltaTime)
     auto spritePosition = sprite->getCenter();
 
     float distance = distance2(targetPosition.x, targetPosition.y, spritePosition.x, spritePosition.y);
-    if(distance < 2.0f)
+    if(distance < 3.0f)
         setFinished();
 }

@@ -9,6 +9,8 @@
 #include <Message.h>
 #include <Scene.h>
 #include <ResourceManager.h>
+#include <Camera.h>
+#include <MiniMap.h>
 #include <Widget/Desktop.h>
 
 class ApplicationData
@@ -71,13 +73,9 @@ bool Application::execute(std::shared_ptr<Object> object)
         data->window->draw(*object);
         data->window->draw(*data->desktop);
 
-        /*sf::View view;
-        view.setViewport(sf::FloatRect(0, 0, 0.5, 0.5));
-        data->window->setView(view);
-        data->window->draw(*object);
-
-        view = data->window->getDefaultView();
-        data->window->setView(view);*/
+        auto miniMap = getComponent<MiniMap>();
+        if(miniMap)
+            miniMap->draw(object);
 
         data->window->display();
 

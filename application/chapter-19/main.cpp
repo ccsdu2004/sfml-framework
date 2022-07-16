@@ -20,7 +20,7 @@ int main()
     auto size = sf::Vector2f(900, 720);
     auto setting = sf::ContextSettings();
     setting.antialiasingLevel = 12;
-    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-14",
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(size.x, size.y), "Chapter-19",
                   sf::Style::Close, setting);
     window->setVerticalSyncEnabled(true);
 

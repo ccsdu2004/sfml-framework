@@ -14,7 +14,7 @@ MineSweeperScene::MineSweeperScene()
     addMessageListener(listener);
 
     tileMap = TileMap::createTileMap(TileMapType_Hex);
-    tileMap->init(18, 12, 36);
+    tileMap->init(20, 14, 64);
     tileMap->setTextVisible(true);
 
     addChild(tileMap);

@@ -6,7 +6,7 @@
 #include <StateMachine.h>
 #include <Util.h>
 
-#define ROTATE_SPEED 18.0f
+#define ROTATE_SPEED 36.0f
 
 class SpriteTurnLeftState : public State
 {
@@ -14,9 +14,7 @@ public:
     SpriteTurnLeftState(ObjectPointer inputSprite);
 public:
     void onEnter() override;
-
     void onLeave() override;
-
     void update(float deltaTime) override;
 private:
     float startAngle = 0.0f;
@@ -28,9 +26,7 @@ public:
     SpriteTurnRightState(ObjectPointer inputSprite);
 public:
     void onEnter() override;
-
     void onLeave() override;
-
     void update(float deltaTime) override;
 private:
     float startAngle = 0.0f;

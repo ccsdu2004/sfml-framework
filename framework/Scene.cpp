@@ -52,6 +52,7 @@ std::shared_ptr<Text> Scene::createToastText()
     text->setTextColor(sf::Color::White);
     text->setSize(120, 36);
     text->setBackgroundColor(sf::Color::Black);
+    text->setHMode(HMode_Left);
 
     text->setOutlineColor(sf::Color::Yellow);
     text->setOutlineThickness(0.6f);
